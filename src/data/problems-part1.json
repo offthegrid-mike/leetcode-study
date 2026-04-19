@@ -25,6 +25,9 @@
     "related": [
       2,
       4
+    ],
+    "companies": [
+      "netflix"
     ]
   },
   {
@@ -54,6 +57,9 @@
     "related": [
       1,
       4
+    ],
+    "companies": [
+      "apple"
     ]
   },
   {
@@ -82,6 +88,13 @@
     "related": [
       10,
       11
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -110,6 +123,11 @@
     "key_insight": "Sorting each string creates a canonical form that all anagrams share, enabling hash map grouping.",
     "related": [
       2
+    ],
+    "companies": [
+      "amazon",
+      "apple",
+      "microsoft"
     ]
   },
   {
@@ -139,6 +157,12 @@
     "key_insight": "Bucket sort by frequency achieves O(n) time — better than the O(n log k) heap approach.",
     "related": [
       4
+    ],
+    "companies": [
+      "amazon",
+      "apple",
+      "netflix",
+      "meta"
     ]
   },
   {
@@ -191,6 +215,9 @@
     "key_insight": "Product except self = prefix product × suffix product. Two passes avoid division entirely.",
     "related": [
       14
+    ],
+    "companies": [
+      "apple"
     ]
   },
   {
@@ -217,7 +244,11 @@
     "time_complexity_explanation": "We visit each of the 81 cells exactly once, performing constant-time set operations at each cell.",
     "space_complexity_explanation": "The sets for rows, columns, and boxes store at most 81 entries total (9 sets × 9 digits per dimension).",
     "key_insight": "Map each cell to its 3×3 box with (row // 3, col // 3) and use sets to check all three constraints in one pass.",
-    "related": []
+    "related": [],
+    "companies": [
+      "amazon",
+      "apple"
+    ]
   },
   {
     "id": 9,
@@ -244,6 +275,11 @@
     "key_insight": "Only start counting from sequence beginnings (where num-1 is absent) to ensure each element is visited at most twice.",
     "related": [
       1
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "microsoft"
     ]
   },
   {
@@ -271,6 +307,11 @@
     "key_insight": "Two pointers from both ends let you check palindrome properties in-place without creating a new string.",
     "related": [
       3
+    ],
+    "companies": [
+      "apple",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -327,6 +368,12 @@
     "key_insight": "Reduce 3Sum to Two Sum II by sorting and fixing one element, then using two pointers. Skip duplicates at all levels.",
     "related": [
       11
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -355,6 +402,11 @@
     "key_insight": "Move the shorter line's pointer inward — the area is bottlenecked by the shorter side, so only changing it can help.",
     "related": [
       14
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "microsoft"
     ]
   },
   {
@@ -384,6 +436,12 @@
     "related": [
       13,
       27
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "microsoft"
     ]
   },
   {
@@ -410,7 +468,14 @@
     "time_complexity_explanation": "A single pass through the prices array, updating the minimum price and maximum profit at each step.",
     "space_complexity_explanation": "Only two variables are needed: minimum price so far and maximum profit.",
     "key_insight": "Track the running minimum buy price — the optimal sell is always at the maximum difference from the lowest point so far.",
-    "related": []
+    "related": [],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 16,
@@ -439,6 +504,14 @@
     "related": [
       17,
       19
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "netflix",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -525,6 +598,9 @@
     "related": [
       16,
       18
+    ],
+    "companies": [
+      "meta"
     ]
   },
   {
@@ -580,6 +656,14 @@
     "key_insight": "A stack naturally handles nested structure — the most recent unmatched opener should match the next closer.",
     "related": [
       24
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "netflix",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -606,7 +690,11 @@
     "time_complexity_explanation": "Each push, pop, top, and getMin operation is O(1) since we only access the top of the stack.",
     "space_complexity_explanation": "Each element pushed stores an extra minimum value, so space grows linearly with the number of elements.",
     "key_insight": "Store (value, current_min) pairs so the minimum is always accessible at the top of the stack.",
-    "related": []
+    "related": [],
+    "companies": [
+      "apple",
+      "microsoft"
+    ]
   },
   {
     "id": 23,
@@ -659,6 +747,11 @@
     "key_insight": "Only add ')' when close < open — this single rule guarantees all generated combinations are valid.",
     "related": [
       21
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "microsoft"
     ]
   },
   {
@@ -687,6 +780,9 @@
     "related": [
       26,
       27
+    ],
+    "companies": [
+      "netflix"
     ]
   },
   {
@@ -743,6 +839,9 @@
     "related": [
       14,
       25
+    ],
+    "companies": [
+      "google"
     ]
   },
   {
@@ -826,6 +925,11 @@
     "key_insight": "Binary search on the answer — when the search space is a range of valid answers, binary search finds the optimal one.",
     "related": [
       28
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "netflix"
     ]
   },
   {
@@ -880,6 +984,11 @@
     "key_insight": "In a rotated sorted array, one half is always sorted — determine which half and whether the target falls within it.",
     "related": [
       31
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "microsoft"
     ]
   },
   {
@@ -909,6 +1018,9 @@
     "key_insight": "Timestamps arrive in order so the list is naturally sorted — binary search gives O(log n) lookups for the floor timestamp.",
     "related": [
       28
+    ],
+    "companies": [
+      "netflix"
     ]
   },
   {
@@ -934,7 +1046,14 @@
     "time_complexity_explanation": "Binary search on the smaller array takes O(log(min(m,n))) steps to find the correct partition.",
     "space_complexity_explanation": "Only a constant number of variables for partition indices and boundary values are needed.",
     "key_insight": "Binary search on the partition point of the smaller array — a correct partition means all left elements ≤ all right elements.",
-    "related": []
+    "related": [],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 35,
@@ -963,6 +1082,10 @@
       36,
       38,
       45
+    ],
+    "companies": [
+      "google",
+      "apple"
     ]
   },
   {
@@ -991,6 +1114,12 @@
     "related": [
       35,
       44
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "microsoft"
     ]
   },
   {
@@ -1074,7 +1203,12 @@
     "time_complexity_explanation": "Two passes through the n-node list: one to create copy nodes and one to assign next/random pointers.",
     "space_complexity_explanation": "The hash map stores one entry per original node, mapping it to its copy.",
     "key_insight": "A hash map from original to copy nodes lets you resolve random pointers in a second pass.",
-    "related": []
+    "related": [],
+    "companies": [
+      "amazon",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 40,
@@ -1101,6 +1235,12 @@
     "key_insight": "Reverse-order storage means digits align perfectly for addition — just simulate grade-school addition with carry.",
     "related": [
       36
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -1184,7 +1324,15 @@
     "time_complexity_explanation": "Both get and put are O(1) because hash map lookup and doubly linked list insertion/removal are each O(1).",
     "space_complexity_explanation": "The hash map and doubly linked list together store at most 'capacity' entries.",
     "key_insight": "Hash map + doubly linked list gives O(1) for both lookup and order manipulation. JS Map maintains insertion order natively.",
-    "related": []
+    "related": [],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "netflix",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 44,
@@ -1213,6 +1361,12 @@
     "key_insight": "A min-heap of k elements efficiently selects the global minimum. Divide-and-conquer merge is an alternative O(n log k) approach.",
     "related": [
       36
+    ],
+    "companies": [
+      "amazon",
+      "apple",
+      "meta",
+      "microsoft"
     ]
   },
   {
@@ -1240,6 +1394,9 @@
     "key_insight": "Reverse each k-group independently, using a predecessor pointer to reconnect reversed segments to the rest of the list.",
     "related": [
       35
+    ],
+    "companies": [
+      "microsoft"
     ]
   },
   {
@@ -1328,6 +1485,9 @@
     "related": [
       47,
       59
+    ],
+    "companies": [
+      "meta"
     ]
   },
   {
@@ -1468,6 +1628,9 @@
     "key_insight": "Process nodes in batches of queue.size() to separate levels — this is the core BFS level-order pattern.",
     "related": [
       54
+    ],
+    "companies": [
+      "apple"
     ]
   },
   {
@@ -1496,6 +1659,9 @@
     "key_insight": "The right side view is simply the last node at each BFS level — a small modification to level-order traversal.",
     "related": [
       53
+    ],
+    "companies": [
+      "meta"
     ]
   },
   {

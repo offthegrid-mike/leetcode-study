@@ -50,6 +50,13 @@ export async function renderProblemView(container, problem, progressData, allPro
       <span class="problem-category-tag" style="border-color:${getCategoryColor(problem.category)};color:${getCategoryColor(problem.category)}">${problem.category}</span>
       ${problem.patterns.map(p => `<span class="pattern-tag">${p}</span>`).join('')}
     </div>
+    ${problem.companies && problem.companies.length ? `
+    <div class="company-tags">
+      ${problem.companies.map(c => {
+        const label = c === 'meta' ? 'Meta' : c.charAt(0).toUpperCase() + c.slice(1);
+        return `<span class="company-tag" title="Asked by ${label}">🏢 ${label}</span>`;
+      }).join('')}
+    </div>` : ''}
     <a href="${problem.leetcode_url}" target="_blank" rel="noopener" class="leetcode-link">Open on LeetCode ↗</a>
   `;
   page.appendChild(header);

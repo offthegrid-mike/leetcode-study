@@ -10,6 +10,8 @@ import { renderPatterns } from './components/patterns.js';
 import { renderKnowledge } from './components/knowledge.js';
 import { renderSettings } from './components/settings.js';
 import { renderMockInterview } from './components/mock-interview.js';
+import { renderCompanies } from './components/companies.js';
+import { renderSystemDesign } from './components/system-design.js';
 
 class App {
   constructor() {
@@ -209,6 +211,12 @@ class App {
           break;
         case 'mock-interview':
           renderMockInterview(this.mainContent, this.problems, this.progress);
+          break;
+        case 'companies':
+          renderCompanies(this.mainContent, this.problems, this.progress);
+          break;
+        case 'system-design':
+          renderSystemDesign(this.mainContent);
           break;
         default:
           renderDashboard(this.mainContent, this.problems, this.progress);

@@ -6,7 +6,10 @@
     "category": "Arrays & Hashing",
     "difficulty": "Easy",
     "leetcode_url": "https://leetcode.com/problems/longest-common-prefix/",
-    "patterns": ["String Matching", "Vertical Scanning"],
+    "patterns": [
+      "String Matching",
+      "Vertical Scanning"
+    ],
     "hints": [
       "Compare characters across all strings at the same position.",
       "Use the first string as the reference prefix and shorten it whenever a mismatch is found.",
@@ -20,7 +23,18 @@
     "time_complexity_explanation": "S is the total number of characters across all strings. In the worst case we compare every character once.",
     "space_complexity_explanation": "We only store the prefix in-place, reusing the first string's memory.",
     "key_insight": "The common prefix can only shrink as you examine more strings — use the first string as a baseline and trim it down.",
-    "related": [2, 6, 61]
+    "related": [
+      2,
+      6,
+      61
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "apple",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 145,
@@ -29,7 +43,10 @@
     "category": "Math & Bit Manipulation",
     "difficulty": "Easy",
     "leetcode_url": "https://leetcode.com/problems/roman-to-integer/",
-    "patterns": ["Hash Map", "Linear Scan"],
+    "patterns": [
+      "Hash Map",
+      "Linear Scan"
+    ],
     "hints": [
       "Map each Roman symbol to its integer value and scan left to right.",
       "Roman numerals subtract when a smaller value appears before a larger value.",
@@ -43,7 +60,16 @@
     "time_complexity_explanation": "We iterate through the string once, and each lookup in the map is O(1). n is the length of the string.",
     "space_complexity_explanation": "The Roman numeral map has a fixed size of 7 entries regardless of input.",
     "key_insight": "A smaller value appearing before a larger value always means subtraction — this single rule handles all six special cases (IV, IX, XL, XC, CD, CM).",
-    "related": [133, 134, 135]
+    "related": [
+      133,
+      134,
+      135
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "microsoft"
+    ]
   },
   {
     "id": 146,
@@ -52,7 +78,10 @@
     "category": "Math & Bit Manipulation",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/integer-to-roman/",
-    "patterns": ["Greedy", "Hash Map"],
+    "patterns": [
+      "Greedy",
+      "Hash Map"
+    ],
     "hints": [
       "Think greedily — always use the largest Roman numeral that fits into the remaining value.",
       "Pre-define all 13 value-symbol pairs including subtraction forms like 900 (CM) and 400 (CD).",
@@ -66,7 +95,11 @@
     "time_complexity_explanation": "The input is bounded by 3999, so the number of iterations is bounded by a constant (at most 15 'M' symbols for 3000).",
     "space_complexity_explanation": "The lookup tables and output string are bounded by constant size given the fixed input range.",
     "key_insight": "By including all six subtractive forms (IV, IX, XL, XC, CD, CM) in the value table, the greedy algorithm works perfectly without any special-case logic.",
-    "related": [134, 133, 136]
+    "related": [
+      134,
+      133,
+      136
+    ]
   },
   {
     "id": 147,
@@ -75,7 +108,10 @@
     "category": "Arrays & Hashing",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/next-permutation/",
-    "patterns": ["Two Pointers", "In-place Manipulation"],
+    "patterns": [
+      "Two Pointers",
+      "In-place Manipulation"
+    ],
     "hints": [
       "The next permutation is found by making the smallest possible increase from the right side.",
       "Find the rightmost position where the sequence stops decreasing (a 'dip'), then find the smallest element to its right that is larger, and swap them.",
@@ -89,7 +125,17 @@
     "time_complexity_explanation": "We make at most two linear scans (finding i, finding j) and one linear reversal — all O(n) where n is the array length.",
     "space_complexity_explanation": "All operations are performed in-place with only a constant number of pointer variables.",
     "key_insight": "The suffix to the right of the descent point is always in descending order, so reversing it gives the smallest possible arrangement for that suffix.",
-    "related": [73, 71, 74]
+    "related": [
+      73,
+      71,
+      74
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "meta",
+      "microsoft"
+    ]
   },
   {
     "id": 148,
@@ -98,7 +144,10 @@
     "category": "Greedy",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/jump-game-ii/",
-    "patterns": ["Greedy", "BFS"],
+    "patterns": [
+      "Greedy",
+      "BFS"
+    ],
     "hints": [
       "Think in 'levels' like BFS — all positions reachable with the same number of jumps form one level.",
       "Track the farthest reachable index within the current level; when you reach the end of the level, you must jump.",
@@ -112,7 +161,14 @@
     "time_complexity_explanation": "A single pass through the array where n is the length of nums.",
     "space_complexity_explanation": "Only three integer variables are maintained regardless of input size.",
     "key_insight": "Model jumps as BFS levels — always extend to the farthest reachable position within each level, and count one jump per level transition.",
-    "related": [117, 116, 93]
+    "related": [
+      117,
+      116,
+      93
+    ],
+    "companies": [
+      "amazon"
+    ]
   },
   {
     "id": 149,
@@ -121,7 +177,10 @@
     "category": "Greedy",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/gas-station/",
-    "patterns": ["Greedy", "Linear Scan"],
+    "patterns": [
+      "Greedy",
+      "Linear Scan"
+    ],
     "hints": [
       "If the total gas is at least the total cost, a valid starting station must exist.",
       "Simulate driving around and track your running fuel. When it goes negative, the current start is invalid.",
@@ -135,7 +194,11 @@
     "time_complexity_explanation": "Two linear passes — one for summing totals and one for finding the start — each O(n) where n is the number of stations.",
     "space_complexity_explanation": "Only a constant number of variables are used.",
     "key_insight": "If you can't reach station j from station i, then no station between i and j can be a valid starting point either — this lets you skip ahead rather than brute-force every start.",
-    "related": [116, 117, 122]
+    "related": [
+      116,
+      117,
+      122
+    ]
   },
   {
     "id": 150,
@@ -144,7 +207,9 @@
     "category": "Binary Search",
     "difficulty": "Easy",
     "leetcode_url": "https://leetcode.com/problems/sqrtx/",
-    "patterns": ["Binary Search"],
+    "patterns": [
+      "Binary Search"
+    ],
     "hints": [
       "The integer square root is the largest integer whose square does not exceed x.",
       "Binary search between 1 and x/2 for the answer.",
@@ -158,7 +223,15 @@
     "time_complexity_explanation": "Binary search halves the search space each iteration, giving O(log x) iterations over a range of size x/2.",
     "space_complexity_explanation": "Only a constant number of pointer variables are used.",
     "key_insight": "After the binary search loop, hi always points to the largest integer whose square is <= x — the floor square root.",
-    "related": [28, 34, 135]
+    "related": [
+      28,
+      34,
+      135
+    ],
+    "companies": [
+      "amazon",
+      "apple"
+    ]
   },
   {
     "id": 151,
@@ -167,7 +240,10 @@
     "category": "1-D Dynamic Programming",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/perfect-squares/",
-    "patterns": ["Dynamic Programming", "BFS"],
+    "patterns": [
+      "Dynamic Programming",
+      "BFS"
+    ],
     "hints": [
       "Think of this as an unbounded coin change problem where the coins are perfect squares.",
       "Build dp[i] = minimum number of perfect squares that sum to i.",
@@ -181,7 +257,11 @@
     "time_complexity_explanation": "For each value from 1 to n, we try all perfect squares up to it, which is O(sqrt(i)) per value, giving O(n * sqrt(n)) total.",
     "space_complexity_explanation": "The dp array has n+1 entries.",
     "key_insight": "This is identical in structure to the coin change problem — perfect squares are the 'coins' and you want the minimum count to sum to n.",
-    "related": [100, 93, 94]
+    "related": [
+      100,
+      93,
+      94
+    ]
   },
   {
     "id": 152,
@@ -190,7 +270,10 @@
     "category": "1-D Dynamic Programming",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/ugly-number-ii/",
-    "patterns": ["Dynamic Programming", "Three Pointers"],
+    "patterns": [
+      "Dynamic Programming",
+      "Three Pointers"
+    ],
     "hints": [
       "Generate ugly numbers in order — each ugly number is 2x, 3x, or 5x of a previous ugly number.",
       "Use three pointers tracking which ugly number each factor (2, 3, 5) should multiply next.",
@@ -204,7 +287,11 @@
     "time_complexity_explanation": "We compute exactly n ugly numbers, one per iteration, with O(1) work per step.",
     "space_complexity_explanation": "The ugly array stores all n generated ugly numbers.",
     "key_insight": "All ugly numbers are products of previous ugly numbers times 2, 3, or 5 — three pointers ensure we never miss or duplicate a candidate.",
-    "related": [93, 100, 64]
+    "related": [
+      93,
+      100,
+      64
+    ]
   },
   {
     "id": 153,
@@ -213,7 +300,10 @@
     "category": "1-D Dynamic Programming",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
-    "patterns": ["Kadane's Algorithm", "Dynamic Programming"],
+    "patterns": [
+      "Kadane's Algorithm",
+      "Dynamic Programming"
+    ],
     "hints": [
       "There are two cases: the max subarray is either entirely within the array, or it wraps around.",
       "A wrapping subarray equals the total sum minus the minimum non-wrapping subarray.",
@@ -227,7 +317,11 @@
     "time_complexity_explanation": "A single pass through the array computing both max and min Kadane values simultaneously.",
     "space_complexity_explanation": "Only a constant number of tracking variables are needed.",
     "key_insight": "A circular subarray that wraps around is equivalent to the total sum minus some non-wrapping middle subarray — so minimizing the middle maximizes the wrap-around portion.",
-    "related": [101, 116, 95]
+    "related": [
+      101,
+      116,
+      95
+    ]
   },
   {
     "id": 154,
@@ -236,7 +330,10 @@
     "category": "2-D Dynamic Programming",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/longest-palindromic-subsequence/",
-    "patterns": ["Dynamic Programming", "Interval DP"],
+    "patterns": [
+      "Dynamic Programming",
+      "Interval DP"
+    ],
     "hints": [
       "Think about matching characters from both ends of the string.",
       "Define dp[i][j] as the length of the longest palindromic subsequence in s[i..j].",
@@ -250,7 +347,11 @@
     "time_complexity_explanation": "We fill an n×n DP table with O(1) work per cell, giving O(n^2) total where n is the string length.",
     "space_complexity_explanation": "The DP table is n×n.",
     "key_insight": "When both endpoints match, we can include them and recurse on the inner substring — this is the key recurrence that makes interval DP work here.",
-    "related": [106, 97, 98]
+    "related": [
+      106,
+      97,
+      98
+    ]
   },
   {
     "id": 155,
@@ -259,7 +360,10 @@
     "category": "2-D Dynamic Programming",
     "difficulty": "Hard",
     "leetcode_url": "https://leetcode.com/problems/palindrome-partitioning-ii/",
-    "patterns": ["Dynamic Programming", "Precomputation"],
+    "patterns": [
+      "Dynamic Programming",
+      "Precomputation"
+    ],
     "hints": [
       "Precompute a 2D palindrome table so you can check any substring in O(1).",
       "Define cuts[j] = minimum number of cuts for s[0..j-1].",
@@ -273,7 +377,11 @@
     "time_complexity_explanation": "Building the palindrome table takes O(n^2). The cuts DP is also O(n^2). n is the string length.",
     "space_complexity_explanation": "The palindrome table requires O(n^2) space.",
     "key_insight": "Precomputing palindrome substrings in O(n^2) transforms the cut DP into a clean linear recurrence lookup.",
-    "related": [77, 97, 106]
+    "related": [
+      77,
+      97,
+      106
+    ]
   },
   {
     "id": 156,
@@ -282,7 +390,10 @@
     "category": "Trees",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
-    "patterns": ["BFS", "Tree Traversal"],
+    "patterns": [
+      "BFS",
+      "Tree Traversal"
+    ],
     "hints": [
       "For a perfect binary tree, every node has exactly two children — use this property.",
       "Once you set the next pointers at level k, you can use them to traverse level k and set level k+1 pointers.",
@@ -296,7 +407,11 @@
     "time_complexity_explanation": "We visit every node exactly once to set its children's next pointers. n is the number of nodes.",
     "space_complexity_explanation": "We only use a constant number of pointer variables — no queue or recursion stack needed.",
     "key_insight": "Once the next pointers at level k are set, you can traverse level k using those pointers to wire up level k+1 — making this an O(1) space solution.",
-    "related": [53, 54, 46]
+    "related": [
+      53,
+      54,
+      46
+    ]
   },
   {
     "id": 157,
@@ -305,7 +420,10 @@
     "category": "Trees",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/",
-    "patterns": ["DFS", "In-place Manipulation"],
+    "patterns": [
+      "DFS",
+      "In-place Manipulation"
+    ],
     "hints": [
       "The flattened list follows pre-order traversal (root, left, right).",
       "Process nodes in reverse pre-order: right subtree first, then left, then root.",
@@ -319,7 +437,11 @@
     "time_complexity_explanation": "Every node is visited exactly once in the DFS traversal.",
     "space_complexity_explanation": "The recursion stack uses O(h) space where h is the height of the tree (O(log n) for balanced, O(n) for skewed).",
     "key_insight": "By traversing in reverse pre-order (right, left, root), each node can be wired to the already-processed 'prev' node, building the list in correct pre-order without needing extra memory.",
-    "related": [35, 46, 58]
+    "related": [
+      35,
+      46,
+      58
+    ]
   },
   {
     "id": 158,
@@ -328,7 +450,10 @@
     "category": "Trees",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/count-complete-tree-nodes/",
-    "patterns": ["Binary Search", "Tree Traversal"],
+    "patterns": [
+      "Binary Search",
+      "Tree Traversal"
+    ],
     "hints": [
       "A naive DFS is O(n) — can you do better by exploiting the complete tree property?",
       "Compare the height of the leftmost path versus the rightmost path.",
@@ -342,7 +467,11 @@
     "time_complexity_explanation": "At each level we do O(log n) work to compute heights, and we recurse O(log n) levels deep, giving O(log^2 n).",
     "space_complexity_explanation": "The recursion stack is O(log n) deep since we always eliminate at least half the tree.",
     "key_insight": "In a complete binary tree, comparing the leftmost and rightmost heights tells you whether the subtree is perfect (and thus countable in O(1)) — this is the key to beating O(n).",
-    "related": [47, 53, 28]
+    "related": [
+      47,
+      53,
+      28
+    ]
   },
   {
     "id": 159,
@@ -351,7 +480,10 @@
     "category": "Trees",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
-    "patterns": ["BFS", "Queue"],
+    "patterns": [
+      "BFS",
+      "Queue"
+    ],
     "hints": [
       "Standard level-order BFS collects nodes in left-to-right order per level.",
       "For odd levels (0-indexed), keep left-to-right; for even levels, reverse the collected level.",
@@ -365,7 +497,14 @@
     "time_complexity_explanation": "Every node is visited exactly once during BFS.",
     "space_complexity_explanation": "The queue holds at most O(n/2) nodes at the widest level, and the result stores all n values.",
     "key_insight": "BFS naturally gives you left-to-right order — simply reversing alternate levels gives the zigzag effect without any change to the traversal.",
-    "related": [53, 54, 46]
+    "related": [
+      53,
+      54,
+      46
+    ],
+    "companies": [
+      "microsoft"
+    ]
   },
   {
     "id": 160,
@@ -374,7 +513,10 @@
     "category": "Graphs",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/all-paths-source-target/",
-    "patterns": ["DFS", "Backtracking"],
+    "patterns": [
+      "DFS",
+      "Backtracking"
+    ],
     "hints": [
       "Use DFS from node 0 and collect paths that reach the last node.",
       "Since the graph is a DAG, no cycle detection is needed.",
@@ -388,7 +530,14 @@
     "time_complexity_explanation": "In the worst case there are 2^n paths, each of length O(n). n is the number of nodes.",
     "space_complexity_explanation": "Storing all paths requires O(2^n * n) space in the worst case; the recursion stack is O(n).",
     "key_insight": "Because the graph is a DAG (directed, acyclic), simple DFS with backtracking finds all paths without needing a visited set.",
-    "related": [80, 87, 81]
+    "related": [
+      80,
+      87,
+      81
+    ],
+    "companies": [
+      "netflix"
+    ]
   },
   {
     "id": 161,
@@ -397,7 +546,10 @@
     "category": "Graphs",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/find-the-celebrity/",
-    "patterns": ["Two Pointers", "Candidate Elimination"],
+    "patterns": [
+      "Two Pointers",
+      "Candidate Elimination"
+    ],
     "hints": [
       "A celebrity knows nobody but is known by everybody — use this asymmetry to eliminate candidates.",
       "If person A knows person B, A is not the celebrity. If A does not know B, B is not the celebrity.",
@@ -411,7 +563,11 @@
     "time_complexity_explanation": "The elimination pass makes n-1 calls to knows(), and the verification pass makes at most 2*(n-1) calls — O(n) total.",
     "space_complexity_explanation": "Only a single candidate variable is maintained.",
     "key_insight": "Every call to knows() eliminates exactly one person from candidacy — either the current candidate (if they know i) or i (if the candidate doesn't know them) — making O(n) elimination possible.",
-    "related": [80, 90, 89]
+    "related": [
+      80,
+      90,
+      89
+    ]
   },
   {
     "id": 162,
@@ -420,7 +576,10 @@
     "category": "Heap / Priority Queue",
     "difficulty": "Hard",
     "leetcode_url": "https://leetcode.com/problems/lfu-cache/",
-    "patterns": ["Hash Map", "Doubly Linked List"],
+    "patterns": [
+      "Hash Map",
+      "Doubly Linked List"
+    ],
     "hints": [
       "You need O(1) get and put — a heap would give O(log n) for updates, so use hash maps instead.",
       "Maintain three structures: key→value, key→frequency, and frequency→ordered set of keys.",
@@ -434,7 +593,11 @@
     "time_complexity_explanation": "All operations — get, put, and the internal _update — perform only O(1) hash map and ordered dictionary operations.",
     "space_complexity_explanation": "We store at most 'capacity' keys across the three hash map structures.",
     "key_insight": "Using an OrderedDict (insertion-ordered map) per frequency bucket gives O(1) LRU eviction within a frequency group, and tracking min_freq explicitly avoids any O(log n) heap operations.",
-    "related": [43, 70, 69]
+    "related": [
+      43,
+      70,
+      69
+    ]
   },
   {
     "id": 163,
@@ -443,7 +606,10 @@
     "category": "Two Pointers",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/sort-colors/",
-    "patterns": ["Two Pointers", "Dutch National Flag"],
+    "patterns": [
+      "Two Pointers",
+      "Dutch National Flag"
+    ],
     "hints": [
       "Count 0s, 1s, and 2s then overwrite — but can you do it in one pass?",
       "Use three pointers: lo (boundary of 0s), mid (current), hi (boundary of 2s).",
@@ -457,7 +623,14 @@
     "time_complexity_explanation": "Single pass with three pointers — mid and hi together span the array exactly once.",
     "space_complexity_explanation": "Only three pointer variables are used; sorting is done in-place.",
     "key_insight": "When swapping a 2 from mid with hi, you don't advance mid because the newly placed value at mid (from hi) hasn't been examined yet — this is the subtle but crucial detail of the Dutch National Flag algorithm.",
-    "related": [10, 11, 12]
+    "related": [
+      10,
+      11,
+      12
+    ],
+    "companies": [
+      "microsoft"
+    ]
   },
   {
     "id": 164,
@@ -466,7 +639,10 @@
     "category": "Two Pointers",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/rotate-array/",
-    "patterns": ["Two Pointers", "Reversal"],
+    "patterns": [
+      "Two Pointers",
+      "Reversal"
+    ],
     "hints": [
       "Think about what a k-step right rotation looks like: the last k elements move to the front.",
       "One approach: reverse the entire array, then reverse the first k elements, then reverse the rest.",
@@ -480,7 +656,15 @@
     "time_complexity_explanation": "Three reversal passes each touch at most n elements in total.",
     "space_complexity_explanation": "All operations are in-place with only index variables.",
     "key_insight": "Reversing the whole array and then reversing two halves is equivalent to a rotation — this triple-reversal trick achieves O(1) space vs. the intuitive O(n) extra array approach.",
-    "related": [130, 131, 35]
+    "related": [
+      130,
+      131,
+      35
+    ],
+    "companies": [
+      "apple",
+      "microsoft"
+    ]
   },
   {
     "id": 165,
@@ -489,7 +673,10 @@
     "category": "Math & Bit Manipulation",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/spiral-matrix-ii/",
-    "patterns": ["Matrix Simulation", "Boundary Tracking"],
+    "patterns": [
+      "Matrix Simulation",
+      "Boundary Tracking"
+    ],
     "hints": [
       "Fill the matrix layer by layer, starting from the outermost ring moving inward.",
       "Track four boundaries: top, bottom, left, right — shrink them after filling each edge.",
@@ -503,7 +690,11 @@
     "time_complexity_explanation": "Every cell in the n×n matrix is filled exactly once.",
     "space_complexity_explanation": "The output matrix is not counted as extra space; only four boundary variables are needed.",
     "key_insight": "Maintaining four shrinking boundaries elegantly handles all edge cases including the center cell of odd-sized matrices.",
-    "related": [131, 132, 130]
+    "related": [
+      131,
+      132,
+      130
+    ]
   },
   {
     "id": 166,
@@ -512,7 +703,9 @@
     "category": "Math & Bit Manipulation",
     "difficulty": "Easy",
     "leetcode_url": "https://leetcode.com/problems/power-of-two/",
-    "patterns": ["Bit Manipulation"],
+    "patterns": [
+      "Bit Manipulation"
+    ],
     "hints": [
       "Powers of two have exactly one bit set in their binary representation.",
       "Subtracting 1 from a power of two flips the set bit and sets all lower bits.",
@@ -526,7 +719,11 @@
     "time_complexity_explanation": "A single bitwise AND operation and comparison — constant time regardless of input.",
     "space_complexity_explanation": "No extra space is used.",
     "key_insight": "Powers of two have exactly one set bit, so n & (n-1) always removes that lone bit, giving 0 — an elegant O(1) bitwise check.",
-    "related": [133, 134, 135]
+    "related": [
+      133,
+      134,
+      135
+    ]
   },
   {
     "id": 167,
@@ -535,7 +732,10 @@
     "category": "Sliding Window",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/longest-turbulent-subarray/",
-    "patterns": ["Sliding Window", "Two Pointers"],
+    "patterns": [
+      "Sliding Window",
+      "Two Pointers"
+    ],
     "hints": [
       "A turbulent subarray alternates strictly between increasing and decreasing comparisons.",
       "Use a sliding window: expand right and shrink left when the turbulence condition breaks.",
@@ -549,7 +749,11 @@
     "time_complexity_explanation": "Single pass through the array with O(1) work per element.",
     "space_complexity_explanation": "Only a constant number of pointer and comparison variables are used.",
     "key_insight": "When the turbulence breaks due to two consecutive same-direction comparisons, the new window must start from the previous element (right-1), not right — because (right-1, right) still forms a valid 2-element turbulent window.",
-    "related": [15, 16, 20]
+    "related": [
+      15,
+      16,
+      20
+    ]
   },
   {
     "id": 168,
@@ -558,7 +762,10 @@
     "category": "Sliding Window",
     "difficulty": "Medium",
     "leetcode_url": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/",
-    "patterns": ["Sliding Window", "Prefix Sum"],
+    "patterns": [
+      "Sliding Window",
+      "Prefix Sum"
+    ],
     "hints": [
       "You take k cards from either end — equivalently, you leave n-k consecutive cards in the middle.",
       "Instead of maximizing the cards you take, minimize the sum of the n-k cards you leave.",
@@ -572,6 +779,10 @@
     "time_complexity_explanation": "One pass to compute total, one pass for the sliding window — both O(n) where n is the number of cards.",
     "space_complexity_explanation": "Only a constant number of sum variables are maintained.",
     "key_insight": "Picking k cards from either end is equivalent to NOT picking a contiguous window of n-k cards — minimizing the middle window maximizes the score.",
-    "related": [15, 19, 16]
+    "related": [
+      15,
+      19,
+      16
+    ]
   }
 ]
