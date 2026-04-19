@@ -9,6 +9,7 @@ import { renderQuiz } from './components/quiz.js';
 import { renderPatterns } from './components/patterns.js';
 import { renderKnowledge } from './components/knowledge.js';
 import { renderSettings } from './components/settings.js';
+import { renderMockInterview } from './components/mock-interview.js';
 
 class App {
   constructor() {
@@ -205,6 +206,9 @@ class App {
           break;
         case 'settings':
           renderSettings(this.mainContent);
+          break;
+        case 'mock-interview':
+          renderMockInterview(this.mainContent, this.problems, this.progress);
           break;
         default:
           renderDashboard(this.mainContent, this.problems, this.progress);

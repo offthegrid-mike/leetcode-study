@@ -1,4 +1,4 @@
-import { createElement, escapeHtml, getCategoryColor, formatDate, timeAgo } from '../utils/helpers.js';
+import { createElement, escapeHtml, getCategoryColor, formatDate, timeAgo, showToast } from '../utils/helpers.js';
 import { getAllProgress, getStats, getStudySessions } from '../lib/storage.js';
 import { getReviewStats } from '../lib/spaced-rep.js';
 
@@ -90,6 +90,111 @@ function computeAchievementStats(stats, problems, progress) {
   };
 }
 
+export function computeWeakAreas(problems, progress, allProgress) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const categoryScores = CATEGORIES.map(cat => {
+    const catProblems = problems.filter(p => p.category === cat);
+    if (catProblems.length === 0) return null;
+
+    const catTotal = catProblems.length;
+    let catMastered = 0;
+    let catAttempted = 0;
+    let easeSum = 0;
+    let easeCount = 0;
+    let overdueCount = 0;
+    let reviewableCount = 0;
+    let recentFailures = 0;
+    let recentQuizCount = 0;
+    const suggestable = [];
+
+    catProblems.forEach(p => {
+      const prog = progress[p.id];
+      if (!prog) return;
+
+      catAttempted++;
+      if (prog.status === 'mastered') catMastered++;
+
+      if (typeof prog.easeFactor === 'number') {
+        easeSum += prog.easeFactor;
+        easeCount++;
+      }
+
+      if (prog.nextReview && prog.repetitions > 0) {
+        reviewableCount++;
+        const rd = new Date(prog.nextReview);
+        rd.setHours(0, 0, 0, 0);
+        if (rd < now) overdueCount++;
+      }
+
+      if (Array.isArray(prog.quizHistory)) {
+        const recent = prog.quizHistory.slice(-5);
+        recentQuizCount += recent.length;
+        recentFailures += recent.filter(q => (q.quality ?? q.score ?? 5) < 3).length;
+      }
+
+      if (prog.status !== 'mastered') {
+        suggestable.push({ problem: p, prog });
+      }
+    });
+
+    // No attempted problems → default high weakness
+    if (catAttempted === 0) {
+      return {
+        category: cat,
+        score: 0.7,
+        attempted: 0,
+        total: catTotal,
+        mastered: 0,
+        suggestions: catProblems.slice(0, 2).map(p => ({ problem: p, prog: null })),
+      };
+    }
+
+    // 1. Completion ratio (weight 0.3)
+    const completionWeakness = 1 - (catMastered / catTotal);
+
+    // 2. Average ease factor (weight 0.3) — normalized: ease 1.3–2.5 → 1–0
+    let easeWeakness = 0.5;
+    if (easeCount > 0) {
+      const avgEase = easeSum / easeCount;
+      easeWeakness = Math.max(0, Math.min(1, (2.5 - avgEase) / 1.2));
+    }
+
+    // 3. Overdue ratio (weight 0.2)
+    const overdueWeakness = reviewableCount > 0 ? overdueCount / reviewableCount : 0;
+
+    // 4. Recent failures (weight 0.2)
+    const failureWeakness = recentQuizCount > 0 ? recentFailures / recentQuizCount : 0;
+
+    const score =
+      completionWeakness * 0.3 +
+      easeWeakness * 0.3 +
+      overdueWeakness * 0.2 +
+      failureWeakness * 0.2;
+
+    // Sort suggestions: overdue first, then lowest ease factor
+    suggestable.sort((a, b) => {
+      const aOverdue = a.prog?.nextReview && new Date(a.prog.nextReview) < now ? 1 : 0;
+      const bOverdue = b.prog?.nextReview && new Date(b.prog.nextReview) < now ? 1 : 0;
+      if (bOverdue !== aOverdue) return bOverdue - aOverdue;
+      return (a.prog?.easeFactor ?? 2.5) - (b.prog?.easeFactor ?? 2.5);
+    });
+
+    return {
+      category: cat,
+      score,
+      attempted: catAttempted,
+      total: catTotal,
+      mastered: catMastered,
+      suggestions: suggestable.slice(0, 2),
+    };
+  }).filter(Boolean);
+
+  categoryScores.sort((a, b) => b.score - a.score);
+  return categoryScores.slice(0, 3);
+}
+
 export async function renderDashboard(container, problems, progress) {
   container.innerHTML = '';
   const page = createElement('div', 'page-dashboard');
@@ -164,6 +269,63 @@ export async function renderDashboard(container, problems, progress) {
     </div>
   `;
   page.appendChild(breakdownSection);
+
+  // Focus Areas (weak categories)
+  const weakAreas = computeWeakAreas(problems, progress, allProgress);
+  if (weakAreas.length > 0) {
+    const focusSection = createElement('div', 'problem-section');
+    focusSection.innerHTML = `<h3 class="section-title">🎯 Focus Areas</h3>`;
+    const grid = createElement('div', 'weak-areas-grid');
+
+    weakAreas.forEach(area => {
+      const color = getCategoryColor(area.category);
+      let levelLabel, levelClass;
+      if (area.score >= 0.6) {
+        levelLabel = 'Needs Work';
+        levelClass = 'weakness-high';
+      } else if (area.score >= 0.35) {
+        levelLabel = 'Getting There';
+        levelClass = 'weakness-mid';
+      } else {
+        levelLabel = 'Almost There';
+        levelClass = 'weakness-low';
+      }
+
+      const card = createElement('div', 'weak-area-card');
+      card.style.borderLeftColor = color;
+
+      let suggestionsHtml = '';
+      if (area.suggestions.length > 0) {
+        const items = area.suggestions.map(s =>
+          `<li><a href="#/problems/${s.problem.id}" class="weak-area-suggestion-link">${escapeHtml(s.problem.title)}</a></li>`
+        ).join('');
+        suggestionsHtml = `<ul class="weak-area-suggestions">${items}</ul>`;
+      }
+
+      card.innerHTML = `
+        <div class="weak-area-header">
+          <span class="weak-area-category"><span class="legend-dot" style="background:${color}"></span>${escapeHtml(area.category)}</span>
+          <span class="weakness-badge ${levelClass}">${levelLabel}</span>
+        </div>
+        <div class="weak-area-stats">${area.attempted} attempted · ${area.mastered} mastered of ${area.total}</div>
+        ${suggestionsHtml}
+        <button class="btn btn-secondary btn-sm weak-area-practice" data-category="${escapeHtml(area.category)}">Practice →</button>
+      `;
+      grid.appendChild(card);
+    });
+
+    focusSection.appendChild(grid);
+    page.appendChild(focusSection);
+
+    // Attach practice button handlers after appending
+    grid.querySelectorAll('.weak-area-practice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.category;
+        window.location.hash = '#/problems';
+        showToast(`Try filtering by "${cat}" to practice your weak area`, 'info', 4000);
+      });
+    });
+  }
 
   // Category progress (enhanced with mastered/reviewing/attempted segments)
   const categorySection = createElement('div', 'problem-section');
