@@ -1,0 +1,2177 @@
+[
+  {
+    "id": 64,
+    "title": "Kth Largest Element in a Stream",
+    "slug": "kth-largest-element-in-a-stream",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+    "patterns": [
+      "Min Heap",
+      "Data Stream"
+    ],
+    "hints": [
+      "Think about which data structure lets you efficiently track the k largest elements.",
+      "A min-heap of size k keeps the kth largest element at the top.",
+      "When the heap exceeds size k, pop the smallest element to maintain only the k largest."
+    ],
+    "approach": "Maintain a min-heap of size k. For each new element, push it onto the heap. If the heap size exceeds k, pop the minimum. The top of the heap is always the kth largest element.",
+    "solution_python": "class KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.heap = nums\n        heapq.heapify(self.heap)\n        while len(self.heap) > k:\n            heapq.heappop(self.heap)\n\n    def add(self, val: int) -> int:\n        heapq.heappush(self.heap, val)\n        if len(self.heap) > self.k:\n            heapq.heappop(self.heap)\n        return self.heap[0]",
+    "solution_js": "var KthLargest = function(k, nums) {\n    this.k = k;\n    this.heap = new MinPriorityQueue();\n    for (const n of nums) this.heap.enqueue(n);\n    while (this.heap.size() > k) this.heap.dequeue();\n};\n\nKthLargest.prototype.add = function(val) {\n    this.heap.enqueue(val);\n    if (this.heap.size() > this.k) this.heap.dequeue();\n    return this.heap.front().element;\n};",
+    "time_complexity": "O(n log k) init, O(log k) add",
+    "space_complexity": "O(k)",
+    "key_insight": "A min-heap of size k naturally keeps the kth largest at the top, since all elements below the kth largest get removed.",
+    "related": [
+      70,
+      67
+    ]
+  },
+  {
+    "id": 65,
+    "title": "Last Stone Weight",
+    "slug": "last-stone-weight",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/last-stone-weight/",
+    "patterns": [
+      "Max Heap",
+      "Simulation"
+    ],
+    "hints": [
+      "You need to repeatedly find the two heaviest stones efficiently.",
+      "A max-heap lets you extract the two largest elements in O(log n) time.",
+      "In Python, negate values to simulate a max-heap with heapq."
+    ],
+    "approach": "Use a max-heap (negate values in Python). Repeatedly pop the two largest stones. If they differ, push the difference back. Continue until one or zero stones remain.",
+    "solution_python": "def lastStoneWeight(self, stones: List[int]) -> int:\n    stones = [-s for s in stones]\n    heapq.heapify(stones)\n    while len(stones) > 1:\n        first = -heapq.heappop(stones)\n        second = -heapq.heappop(stones)\n        if first != second:\n            heapq.heappush(stones, -(first - second))\n    return -stones[0] if stones else 0",
+    "solution_js": "var lastStoneWeight = function(stones) {\n    const heap = new MaxPriorityQueue();\n    for (const s of stones) heap.enqueue(s);\n    while (heap.size() > 1) {\n        const first = heap.dequeue().element;\n        const second = heap.dequeue().element;\n        if (first !== second) heap.enqueue(first - second);\n    }\n    return heap.size() ? heap.front().element : 0;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "key_insight": "A max-heap gives O(log n) access to the largest element, perfect for simulating the stone-smashing process.",
+    "related": [
+      64,
+      67
+    ]
+  },
+  {
+    "id": 66,
+    "title": "K Closest Points to Origin",
+    "slug": "k-closest-points-to-origin",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+    "patterns": [
+      "Max Heap",
+      "Top-K"
+    ],
+    "hints": [
+      "You need the k smallest distances \u2014 think about which heap type helps find top-k elements.",
+      "A max-heap of size k lets you track the k closest points: if a new point is closer than the farthest in the heap, swap them.",
+      "You don't need to take the square root \u2014 comparing squared distances preserves ordering."
+    ],
+    "approach": "Use a max-heap of size k. For each point, compute the squared distance and push it. If the heap exceeds size k, pop the largest. The remaining k elements are the k closest points.",
+    "solution_python": "def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:\n    heap = []\n    for x, y in points:\n        dist = x * x + y * y\n        heapq.heappush(heap, (-dist, x, y))\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return [[x, y] for _, x, y in heap]",
+    "solution_js": "var kClosest = function(points, k) {\n    const heap = new MaxPriorityQueue({ priority: x => x[0] });\n    for (const [x, y] of points) {\n        const dist = x * x + y * y;\n        heap.enqueue([dist, x, y]);\n        if (heap.size() > k) heap.dequeue();\n    }\n    const res = [];\n    while (heap.size()) {\n        const [, x, y] = heap.dequeue().element;\n        res.push([x, y]);\n    }\n    return res;\n};",
+    "time_complexity": "O(n log k)",
+    "space_complexity": "O(k)",
+    "key_insight": "For top-k smallest problems, use a max-heap of size k \u2014 it efficiently discards elements larger than the kth smallest.",
+    "related": [
+      67,
+      64
+    ]
+  },
+  {
+    "id": 67,
+    "title": "Kth Largest Element in an Array",
+    "slug": "kth-largest-element-in-an-array",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+    "patterns": [
+      "Min Heap",
+      "Quickselect"
+    ],
+    "hints": [
+      "A brute force approach sorts the array, but can you do better?",
+      "A min-heap of size k keeps the kth largest at the top.",
+      "Alternatively, Quickselect gives O(n) average time by partitioning around a pivot."
+    ],
+    "approach": "Use a min-heap of size k. Push each element; if size exceeds k, pop the minimum. The heap top is the kth largest. Alternatively, use Quickselect for O(n) average time.",
+    "solution_python": "def findKthLargest(self, nums: List[int], k: int) -> int:\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]",
+    "solution_js": "var findKthLargest = function(nums, k) {\n    const heap = new MinPriorityQueue();\n    for (const n of nums) {\n        heap.enqueue(n);\n        if (heap.size() > k) heap.dequeue();\n    }\n    return heap.front().element;\n};",
+    "time_complexity": "O(n log k)",
+    "space_complexity": "O(k)",
+    "key_insight": "A min-heap of size k naturally maintains the kth largest element at the top \u2014 all smaller elements have been evicted.",
+    "related": [
+      64,
+      66
+    ]
+  },
+  {
+    "id": 68,
+    "title": "Task Scheduler",
+    "slug": "task-scheduler",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/task-scheduler/",
+    "patterns": [
+      "Max Heap",
+      "Greedy",
+      "Queue"
+    ],
+    "hints": [
+      "The most frequent task determines the minimum number of intervals needed.",
+      "Use a max-heap to always schedule the most frequent remaining task.",
+      "Use a cooldown queue to track when tasks become available again."
+    ],
+    "approach": "Count task frequencies. Use a max-heap to greedily pick the most frequent available task each interval. After executing a task, place it in a cooldown queue with its next available time. Process until both heap and queue are empty.",
+    "solution_python": "def leastInterval(self, tasks: List[str], n: int) -> int:\n    count = Counter(tasks)\n    heap = [-c for c in count.values()]\n    heapq.heapify(heap)\n    time = 0\n    queue = deque()\n    while heap or queue:\n        time += 1\n        if heap:\n            cnt = 1 + heapq.heappop(heap)\n            if cnt:\n                queue.append((cnt, time + n))\n        if queue and queue[0][1] == time:\n            heapq.heappush(heap, queue.popleft()[0])\n    return time",
+    "solution_js": "var leastInterval = function(tasks, n) {\n    const freq = new Map();\n    for (const t of tasks) freq.set(t, (freq.get(t) || 0) + 1);\n    const heap = new MaxPriorityQueue();\n    for (const f of freq.values()) heap.enqueue(f);\n    const queue = [];\n    let time = 0;\n    while (heap.size() || queue.length) {\n        time++;\n        if (heap.size()) {\n            const cnt = heap.dequeue().element - 1;\n            if (cnt > 0) queue.push([cnt, time + n]);\n        }\n        if (queue.length && queue[0][1] === time) {\n            heap.enqueue(queue.shift()[0]);\n        }\n    }\n    return time;\n};",
+    "time_complexity": "O(n * m) where m is number of tasks",
+    "space_complexity": "O(1) \u2014 at most 26 unique tasks",
+    "key_insight": "Greedily scheduling the most frequent task minimizes idle time; the cooldown queue ensures tasks respect the gap constraint.",
+    "related": [
+      69,
+      116
+    ]
+  },
+  {
+    "id": 69,
+    "title": "Design Twitter",
+    "slug": "design-twitter",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/design-twitter/",
+    "patterns": [
+      "Heap",
+      "Hash Map",
+      "Design"
+    ],
+    "hints": [
+      "How do you merge multiple sorted lists of tweets into one feed?",
+      "Use a max-heap to merge the most recent tweets from all followed users.",
+      "Maintain a global timestamp to order tweets chronologically."
+    ],
+    "approach": "Track followers with a hash map of sets. Store tweets per user with timestamps. For getNewsFeed, use a max-heap to merge-sort tweets from all followed users (including self), returning the 10 most recent.",
+    "solution_python": "class Twitter:\n    def __init__(self):\n        self.count = 0\n        self.tweetMap = defaultdict(list)\n        self.followMap = defaultdict(set)\n\n    def postTweet(self, userId: int, tweetId: int) -> None:\n        self.tweetMap[userId].append((self.count, tweetId))\n        self.count -= 1\n\n    def getNewsFeed(self, userId: int) -> List[int]:\n        res = []\n        heap = []\n        self.followMap[userId].add(userId)\n        for fId in self.followMap[userId]:\n            if fId in self.tweetMap:\n                idx = len(self.tweetMap[fId]) - 1\n                count, tweetId = self.tweetMap[fId][idx]\n                heap.append((count, tweetId, fId, idx - 1))\n        heapq.heapify(heap)\n        while heap and len(res) < 10:\n            count, tweetId, fId, idx = heapq.heappop(heap)\n            res.append(tweetId)\n            if idx >= 0:\n                count, tweetId = self.tweetMap[fId][idx]\n                heapq.heappush(heap, (count, tweetId, fId, idx - 1))\n        return res\n\n    def follow(self, followerId: int, followeeId: int) -> None:\n        self.followMap[followerId].add(followeeId)\n\n    def unfollow(self, followerId: int, followeeId: int) -> None:\n        self.followMap[followerId].discard(followeeId)",
+    "solution_js": "var Twitter = function() {\n    this.count = 0;\n    this.tweetMap = new Map();\n    this.followMap = new Map();\n};\n\nTwitter.prototype.postTweet = function(userId, tweetId) {\n    if (!this.tweetMap.has(userId)) this.tweetMap.set(userId, []);\n    this.tweetMap.get(userId).push([this.count++, tweetId]);\n};\n\nTwitter.prototype.getNewsFeed = function(userId) {\n    const res = [];\n    const heap = new MaxPriorityQueue({ priority: x => x[0] });\n    const follows = this.followMap.get(userId) || new Set();\n    follows.add(userId);\n    for (const fId of follows) {\n        const tweets = this.tweetMap.get(fId);\n        if (tweets && tweets.length) {\n            const idx = tweets.length - 1;\n            heap.enqueue([tweets[idx][0], tweets[idx][1], fId, idx - 1]);\n        }\n    }\n    while (heap.size() && res.length < 10) {\n        const [, tweetId, fId, idx] = heap.dequeue().element;\n        res.push(tweetId);\n        if (idx >= 0) {\n            const tweets = this.tweetMap.get(fId);\n            heap.enqueue([tweets[idx][0], tweets[idx][1], fId, idx - 1]);\n        }\n    }\n    return res;\n};\n\nTwitter.prototype.follow = function(followerId, followeeId) {\n    if (!this.followMap.has(followerId)) this.followMap.set(followerId, new Set());\n    this.followMap.get(followerId).add(followeeId);\n};\n\nTwitter.prototype.unfollow = function(followerId, followeeId) {\n    const s = this.followMap.get(followerId);\n    if (s) s.delete(followeeId);\n};",
+    "time_complexity": "O(k log n) for getNewsFeed where k=10, n=followers",
+    "space_complexity": "O(N) for all tweets and follow relationships",
+    "key_insight": "Getting the news feed is a k-way merge problem \u2014 use a heap to efficiently merge sorted tweet lists from followed users.",
+    "related": [
+      68,
+      64
+    ]
+  },
+  {
+    "id": 70,
+    "title": "Find Median from Data Stream",
+    "slug": "find-median-from-data-stream",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/find-median-from-data-stream/",
+    "patterns": [
+      "Two Heaps",
+      "Data Stream"
+    ],
+    "hints": [
+      "The median divides a sorted list into two halves \u2014 think about maintaining both halves.",
+      "Use a max-heap for the lower half and a min-heap for the upper half.",
+      "Keep the heaps balanced (sizes differ by at most 1) and the median is at the top of one or both heaps."
+    ],
+    "approach": "Maintain two heaps: a max-heap for the lower half and a min-heap for the upper half. When adding a number, insert into the appropriate heap and rebalance so sizes differ by at most 1. The median is the top of the larger heap, or the average of both tops.",
+    "solution_python": "class MedianFinder:\n    def __init__(self):\n        self.small = []  # max-heap (negated)\n        self.large = []  # min-heap\n\n    def addNum(self, num: int) -> None:\n        if self.large and num > self.large[0]:\n            heapq.heappush(self.large, num)\n        else:\n            heapq.heappush(self.small, -num)\n        if len(self.small) > len(self.large) + 1:\n            heapq.heappush(self.large, -heapq.heappop(self.small))\n        if len(self.large) > len(self.small) + 1:\n            heapq.heappush(self.small, -heapq.heappop(self.large))\n\n    def findMedian(self) -> float:\n        if len(self.small) > len(self.large):\n            return -self.small[0]\n        if len(self.large) > len(self.small):\n            return self.large[0]\n        return (-self.small[0] + self.large[0]) / 2.0",
+    "solution_js": "var MedianFinder = function() {\n    this.small = new MaxPriorityQueue();\n    this.large = new MinPriorityQueue();\n};\n\nMedianFinder.prototype.addNum = function(num) {\n    if (this.large.size() && num > this.large.front().element) {\n        this.large.enqueue(num);\n    } else {\n        this.small.enqueue(num);\n    }\n    if (this.small.size() > this.large.size() + 1) {\n        this.large.enqueue(this.small.dequeue().element);\n    }\n    if (this.large.size() > this.small.size() + 1) {\n        this.small.enqueue(this.large.dequeue().element);\n    }\n};\n\nMedianFinder.prototype.findMedian = function() {\n    if (this.small.size() > this.large.size()) return this.small.front().element;\n    if (this.large.size() > this.small.size()) return this.large.front().element;\n    return (this.small.front().element + this.large.front().element) / 2;\n};",
+    "time_complexity": "O(log n) addNum, O(1) findMedian",
+    "space_complexity": "O(n)",
+    "key_insight": "Two heaps split the data into lower and upper halves, giving O(1) access to the middle element(s) for median calculation.",
+    "related": [
+      64,
+      67
+    ]
+  },
+  {
+    "id": 71,
+    "title": "Subsets",
+    "slug": "subsets",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/subsets/",
+    "patterns": [
+      "Backtracking",
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "Each element can either be included or excluded from a subset.",
+      "Use backtracking: at each index, branch into include/exclude decisions.",
+      "The base case is when you've considered all elements \u2014 add the current subset to results."
+    ],
+    "approach": "Use backtracking. At each index, make two recursive calls: one including the current element and one excluding it. When the index reaches the end of the array, add the current subset to the result.",
+    "solution_python": "def subsets(self, nums: List[int]) -> List[List[int]]:\n    res = []\n    subset = []\n    def backtrack(i):\n        if i >= len(nums):\n            res.append(subset[:])\n            return\n        subset.append(nums[i])\n        backtrack(i + 1)\n        subset.pop()\n        backtrack(i + 1)\n    backtrack(0)\n    return res",
+    "solution_js": "var subsets = function(nums) {\n    const res = [];\n    const subset = [];\n    function backtrack(i) {\n        if (i >= nums.length) {\n            res.push([...subset]);\n            return;\n        }\n        subset.push(nums[i]);\n        backtrack(i + 1);\n        subset.pop();\n        backtrack(i + 1);\n    }\n    backtrack(0);\n    return res;\n};",
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "Each element has a binary choice (include/exclude), creating a decision tree with 2^n leaves \u2014 one for each subset.",
+    "related": [
+      74,
+      72
+    ]
+  },
+  {
+    "id": 72,
+    "title": "Combination Sum",
+    "slug": "combination-sum",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/combination-sum/",
+    "patterns": [
+      "Backtracking",
+      "DFS"
+    ],
+    "hints": [
+      "Each candidate can be used unlimited times \u2014 how does this change your recursion?",
+      "When you include a candidate, don't advance the index \u2014 recurse with the same index to allow reuse.",
+      "When you skip a candidate, advance the index to avoid duplicate combinations."
+    ],
+    "approach": "Backtrack with an index. At each step, either include the current candidate (without advancing index, allowing reuse) or skip it (advance index). Stop when the target reaches 0 (found solution) or goes negative (prune).",
+    "solution_python": "def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:\n    res = []\n    def backtrack(i, cur, total):\n        if total == target:\n            res.append(cur[:])\n            return\n        if i >= len(candidates) or total > target:\n            return\n        cur.append(candidates[i])\n        backtrack(i, cur, total + candidates[i])\n        cur.pop()\n        backtrack(i + 1, cur, total)\n    backtrack(0, [], 0)\n    return res",
+    "solution_js": "var combinationSum = function(candidates, target) {\n    const res = [];\n    function backtrack(i, cur, total) {\n        if (total === target) { res.push([...cur]); return; }\n        if (i >= candidates.length || total > target) return;\n        cur.push(candidates[i]);\n        backtrack(i, cur, total + candidates[i]);\n        cur.pop();\n        backtrack(i + 1, cur, total);\n    }\n    backtrack(0, [], 0);\n    return res;\n};",
+    "time_complexity": "O(2^(t/m)) where t=target, m=min candidate",
+    "space_complexity": "O(t/m) recursion depth",
+    "key_insight": "Allowing reuse means we recurse with the same index when including an element, but advance when excluding to prevent duplicates.",
+    "related": [
+      75,
+      71
+    ]
+  },
+  {
+    "id": 73,
+    "title": "Permutations",
+    "slug": "permutations",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/permutations/",
+    "patterns": [
+      "Backtracking"
+    ],
+    "hints": [
+      "Unlike subsets, permutations use all elements \u2014 order matters.",
+      "At each position, try every element that hasn't been used yet.",
+      "Track used elements with a set or by swapping elements in-place."
+    ],
+    "approach": "Backtrack by building the permutation one element at a time. At each step, try each unused element, add it to the current permutation, recurse, then backtrack. When the permutation length equals the input length, record it.",
+    "solution_python": "def permute(self, nums: List[int]) -> List[List[int]]:\n    res = []\n    def backtrack(perm):\n        if len(perm) == len(nums):\n            res.append(perm[:])\n            return\n        for n in nums:\n            if n not in perm:\n                perm.append(n)\n                backtrack(perm)\n                perm.pop()\n    backtrack([])\n    return res",
+    "solution_js": "var permute = function(nums) {\n    const res = [];\n    function backtrack(perm) {\n        if (perm.length === nums.length) {\n            res.push([...perm]);\n            return;\n        }\n        for (const n of nums) {\n            if (!perm.includes(n)) {\n                perm.push(n);\n                backtrack(perm);\n                perm.pop();\n            }\n        }\n    }\n    backtrack([]);\n    return res;\n};",
+    "time_complexity": "O(n * n!)",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "Permutations require trying every unused element at each position \u2014 the decision tree has n choices, then n-1, then n-2, yielding n! leaves.",
+    "related": [
+      71,
+      74
+    ]
+  },
+  {
+    "id": 74,
+    "title": "Subsets II",
+    "slug": "subsets-ii",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/subsets-ii/",
+    "patterns": [
+      "Backtracking",
+      "Deduplication"
+    ],
+    "hints": [
+      "This is like Subsets, but with duplicates \u2014 how do you avoid duplicate subsets?",
+      "Sort the array first so duplicates are adjacent.",
+      "When skipping an element, skip all consecutive duplicates to avoid generating the same subset."
+    ],
+    "approach": "Sort the input. Use backtracking similar to Subsets, but when excluding an element, skip over all duplicate values to prevent duplicate subsets in the result.",
+    "solution_python": "def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:\n    res = []\n    nums.sort()\n    def backtrack(i, subset):\n        if i >= len(nums):\n            res.append(subset[:])\n            return\n        subset.append(nums[i])\n        backtrack(i + 1, subset)\n        subset.pop()\n        while i + 1 < len(nums) and nums[i] == nums[i + 1]:\n            i += 1\n        backtrack(i + 1, subset)\n    backtrack(0, [])\n    return res",
+    "solution_js": "var subsetsWithDup = function(nums) {\n    nums.sort((a, b) => a - b);\n    const res = [];\n    function backtrack(i, subset) {\n        if (i >= nums.length) {\n            res.push([...subset]);\n            return;\n        }\n        subset.push(nums[i]);\n        backtrack(i + 1, subset);\n        subset.pop();\n        while (i + 1 < nums.length && nums[i] === nums[i + 1]) i++;\n        backtrack(i + 1, subset);\n    }\n    backtrack(0, []);\n    return res;\n};",
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "Sorting + skipping consecutive duplicates on the 'exclude' branch prevents generating duplicate subsets.",
+    "related": [
+      71,
+      75
+    ]
+  },
+  {
+    "id": 75,
+    "title": "Combination Sum II",
+    "slug": "combination-sum-ii",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/combination-sum-ii/",
+    "patterns": [
+      "Backtracking",
+      "Deduplication"
+    ],
+    "hints": [
+      "Like Combination Sum, but each number can only be used once and there are duplicates.",
+      "Sort the array and skip duplicates at the same recursion level.",
+      "After choosing a candidate, move to the next index to ensure each element is used at most once."
+    ],
+    "approach": "Sort the candidates. Backtrack by iterating from the current index. Skip duplicates at the same level (if candidates[i] == candidates[i-1] and i > start, skip). Each candidate is used at most once by advancing the index.",
+    "solution_python": "def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:\n    res = []\n    candidates.sort()\n    def backtrack(i, cur, total):\n        if total == target:\n            res.append(cur[:])\n            return\n        for j in range(i, len(candidates)):\n            if total + candidates[j] > target:\n                break\n            if j > i and candidates[j] == candidates[j - 1]:\n                continue\n            cur.append(candidates[j])\n            backtrack(j + 1, cur, total + candidates[j])\n            cur.pop()\n    backtrack(0, [], 0)\n    return res",
+    "solution_js": "var combinationSum2 = function(candidates, target) {\n    const res = [];\n    candidates.sort((a, b) => a - b);\n    function backtrack(i, cur, total) {\n        if (total === target) { res.push([...cur]); return; }\n        for (let j = i; j < candidates.length; j++) {\n            if (total + candidates[j] > target) break;\n            if (j > i && candidates[j] === candidates[j - 1]) continue;\n            cur.push(candidates[j]);\n            backtrack(j + 1, cur, total + candidates[j]);\n            cur.pop();\n        }\n    }\n    backtrack(0, [], 0);\n    return res;\n};",
+    "time_complexity": "O(2^n)",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "Sort + skip same-level duplicates (j > i && candidates[j] == candidates[j-1]) eliminates duplicate combinations while allowing each element to be used once.",
+    "related": [
+      72,
+      74
+    ]
+  },
+  {
+    "id": 76,
+    "title": "Word Search",
+    "slug": "word-search",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/word-search/",
+    "patterns": [
+      "Backtracking",
+      "DFS",
+      "Matrix"
+    ],
+    "hints": [
+      "Try starting the search from every cell that matches the first letter.",
+      "Use DFS/backtracking to explore all four directions from each cell.",
+      "Mark cells as visited during exploration and unmark them when backtracking."
+    ],
+    "approach": "For each cell matching word[0], start a DFS. At each step, check bounds, character match, and visited status. Mark the cell visited, recurse in all four directions, then unmark. Return true if the entire word is matched.",
+    "solution_python": "def exist(self, board: List[List[str]], word: str) -> bool:\n    rows, cols = len(board), len(board[0])\n    path = set()\n    def dfs(r, c, i):\n        if i == len(word):\n            return True\n        if (r < 0 or c < 0 or r >= rows or c >= cols or\n            board[r][c] != word[i] or (r, c) in path):\n            return False\n        path.add((r, c))\n        res = (dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or\n               dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1))\n        path.remove((r, c))\n        return res\n    for r in range(rows):\n        for c in range(cols):\n            if dfs(r, c, 0):\n                return True\n    return False",
+    "solution_js": "var exist = function(board, word) {\n    const rows = board.length, cols = board[0].length;\n    function dfs(r, c, i) {\n        if (i === word.length) return true;\n        if (r < 0 || c < 0 || r >= rows || c >= cols ||\n            board[r][c] !== word[i]) return false;\n        const temp = board[r][c];\n        board[r][c] = '#';\n        const res = dfs(r+1,c,i+1) || dfs(r-1,c,i+1) ||\n                    dfs(r,c+1,i+1) || dfs(r,c-1,i+1);\n        board[r][c] = temp;\n        return res;\n    }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (dfs(r, c, 0)) return true;\n    return false;\n};",
+    "time_complexity": "O(m * n * 4^L) where L is word length",
+    "space_complexity": "O(L) recursion depth",
+    "key_insight": "Backtracking on a grid requires marking/unmarking visited cells to prevent revisiting during the current path while allowing other paths to use the same cell.",
+    "related": [
+      80,
+      71
+    ]
+  },
+  {
+    "id": 77,
+    "title": "Palindrome Partitioning",
+    "slug": "palindrome-partitioning",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/palindrome-partitioning/",
+    "patterns": [
+      "Backtracking",
+      "Palindrome"
+    ],
+    "hints": [
+      "Try every possible first partition, check if it's a palindrome, then recurse on the rest.",
+      "Use backtracking: at each position, try all substrings starting there that are palindromes.",
+      "The base case is when you've partitioned the entire string."
+    ],
+    "approach": "Backtrack from the start of the string. At each position, try all possible substrings ending at different positions. If the substring is a palindrome, add it to the current partition and recurse on the remaining string.",
+    "solution_python": "def partition(self, s: str) -> List[List[str]]:\n    res = []\n    part = []\n    def backtrack(i):\n        if i >= len(s):\n            res.append(part[:])\n            return\n        for j in range(i, len(s)):\n            if s[i:j+1] == s[i:j+1][::-1]:\n                part.append(s[i:j+1])\n                backtrack(j + 1)\n                part.pop()\n    backtrack(0)\n    return res",
+    "solution_js": "var partition = function(s) {\n    const res = [];\n    function isPalin(str, l, r) {\n        while (l < r) { if (str[l++] !== str[r--]) return false; }\n        return true;\n    }\n    function backtrack(i, part) {\n        if (i >= s.length) { res.push([...part]); return; }\n        for (let j = i; j < s.length; j++) {\n            if (isPalin(s, i, j)) {\n                part.push(s.substring(i, j + 1));\n                backtrack(j + 1, part);\n                part.pop();\n            }\n        }\n    }\n    backtrack(0, []);\n    return res;\n};",
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "At each position, try every possible palindrome substring as the next partition segment \u2014 only valid palindromes lead to recursive calls.",
+    "related": [
+      71,
+      72
+    ]
+  },
+  {
+    "id": 78,
+    "title": "Letter Combinations of a Phone Number",
+    "slug": "letter-combinations-of-a-phone-number",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/",
+    "patterns": [
+      "Backtracking"
+    ],
+    "hints": [
+      "Map each digit to its corresponding letters (like a phone keypad).",
+      "For each digit, try each of its mapped letters and recurse on the next digit.",
+      "Build combinations character by character, one digit at a time."
+    ],
+    "approach": "Create a digit-to-letters mapping. Backtrack through the digits: for each digit, try appending each corresponding letter to the current combination, recurse on the next digit, then backtrack.",
+    "solution_python": "def letterCombinations(self, digits: str) -> List[str]:\n    if not digits:\n        return []\n    phone = {'2':'abc','3':'def','4':'ghi','5':'jkl',\n             '6':'mno','7':'pqrs','8':'tuv','9':'wxyz'}\n    res = []\n    def backtrack(i, cur):\n        if i == len(digits):\n            res.append(cur)\n            return\n        for c in phone[digits[i]]:\n            backtrack(i + 1, cur + c)\n    backtrack(0, '')\n    return res",
+    "solution_js": "var letterCombinations = function(digits) {\n    if (!digits.length) return [];\n    const phone = {'2':'abc','3':'def','4':'ghi','5':'jkl',\n                   '6':'mno','7':'pqrs','8':'tuv','9':'wxyz'};\n    const res = [];\n    function backtrack(i, cur) {\n        if (i === digits.length) { res.push(cur); return; }\n        for (const c of phone[digits[i]]) {\n            backtrack(i + 1, cur + c);\n        }\n    }\n    backtrack(0, '');\n    return res;\n};",
+    "time_complexity": "O(4^n) where n is number of digits",
+    "space_complexity": "O(n) recursion depth",
+    "key_insight": "Each digit maps to 3-4 letters, creating a decision tree where each level corresponds to a digit and each branch to a letter choice.",
+    "related": [
+      73,
+      71
+    ]
+  },
+  {
+    "id": 79,
+    "title": "N-Queens",
+    "slug": "n-queens",
+    "category": "Backtracking",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/n-queens/",
+    "patterns": [
+      "Backtracking",
+      "Constraint Satisfaction"
+    ],
+    "hints": [
+      "Place queens row by row \u2014 for each row, try each column and check if it's safe.",
+      "Track attacked columns, positive diagonals (r+c), and negative diagonals (r-c) with sets.",
+      "If a placement is safe, recurse to the next row; backtrack if no column works."
+    ],
+    "approach": "Place queens row by row. For each row, try each column. Use three sets to track attacked columns, positive diagonals (r+c), and negative diagonals (r-c). If a column is safe, place the queen, update sets, recurse to the next row, then backtrack.",
+    "solution_python": "def solveNQueens(self, n: int) -> List[List[str]]:\n    res = []\n    cols = set()\n    posDiag = set()\n    negDiag = set()\n    board = [['.' ] * n for _ in range(n)]\n    def backtrack(r):\n        if r == n:\n            res.append([''.join(row) for row in board])\n            return\n        for c in range(n):\n            if c in cols or (r + c) in posDiag or (r - c) in negDiag:\n                continue\n            cols.add(c)\n            posDiag.add(r + c)\n            negDiag.add(r - c)\n            board[r][c] = 'Q'\n            backtrack(r + 1)\n            cols.remove(c)\n            posDiag.remove(r + c)\n            negDiag.remove(r - c)\n            board[r][c] = '.'\n    backtrack(0)\n    return res",
+    "solution_js": "var solveNQueens = function(n) {\n    const res = [];\n    const cols = new Set(), posDiag = new Set(), negDiag = new Set();\n    const board = Array.from({length: n}, () => Array(n).fill('.'));\n    function backtrack(r) {\n        if (r === n) {\n            res.push(board.map(row => row.join('')));\n            return;\n        }\n        for (let c = 0; c < n; c++) {\n            if (cols.has(c) || posDiag.has(r+c) || negDiag.has(r-c)) continue;\n            cols.add(c); posDiag.add(r+c); negDiag.add(r-c);\n            board[r][c] = 'Q';\n            backtrack(r + 1);\n            cols.delete(c); posDiag.delete(r+c); negDiag.delete(r-c);\n            board[r][c] = '.';\n        }\n    }\n    backtrack(0);\n    return res;\n};",
+    "time_complexity": "O(n!)",
+    "space_complexity": "O(n^2)",
+    "key_insight": "Three sets (columns, positive diagonals r+c, negative diagonals r-c) provide O(1) conflict checking for queen placement.",
+    "related": [
+      73,
+      76
+    ]
+  },
+  {
+    "id": 80,
+    "title": "Number of Islands",
+    "slug": "number-of-islands",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/number-of-islands/",
+    "patterns": [
+      "BFS",
+      "DFS",
+      "Matrix"
+    ],
+    "hints": [
+      "Each connected group of '1's forms one island.",
+      "When you find a '1', use DFS/BFS to mark all connected '1's as visited.",
+      "Count how many times you initiate a new DFS/BFS \u2014 that's the number of islands."
+    ],
+    "approach": "Iterate through the grid. When a '1' is found, increment the island count and use DFS/BFS to mark all connected '1' cells as visited (change to '0'). Each DFS/BFS call explores one complete island.",
+    "solution_python": "def numIslands(self, grid: List[List[str]]) -> int:\n    if not grid:\n        return 0\n    rows, cols = len(grid), len(grid[0])\n    count = 0\n    def dfs(r, c):\n        if r < 0 or c < 0 or r >= rows or c >= cols or grid[r][c] == '0':\n            return\n        grid[r][c] = '0'\n        dfs(r+1, c)\n        dfs(r-1, c)\n        dfs(r, c+1)\n        dfs(r, c-1)\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == '1':\n                count += 1\n                dfs(r, c)\n    return count",
+    "solution_js": "var numIslands = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    let count = 0;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] === '0') return;\n        grid[r][c] = '0';\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);\n    }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (grid[r][c] === '1') { count++; dfs(r,c); }\n    return count;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n) worst case recursion",
+    "key_insight": "Each DFS/BFS from an unvisited '1' discovers exactly one island \u2014 marking visited cells prevents double counting.",
+    "related": [
+      82,
+      85
+    ]
+  },
+  {
+    "id": 81,
+    "title": "Clone Graph",
+    "slug": "clone-graph",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/clone-graph/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Hash Map"
+    ],
+    "hints": [
+      "You need to create a copy of every node and replicate all edges.",
+      "Use a hash map to track old-node-to-new-node mappings to handle cycles.",
+      "DFS/BFS through the graph; for each neighbor, clone it if not yet cloned, then connect."
+    ],
+    "approach": "Use DFS with a hash map mapping original nodes to their clones. For each node, create a clone, then recursively clone all neighbors. The hash map prevents infinite loops in cyclic graphs.",
+    "solution_python": "def cloneGraph(self, node: 'Node') -> 'Node':\n    if not node:\n        return None\n    oldToNew = {}\n    def dfs(node):\n        if node in oldToNew:\n            return oldToNew[node]\n        copy = Node(node.val)\n        oldToNew[node] = copy\n        for nei in node.neighbors:\n            copy.neighbors.append(dfs(nei))\n        return copy\n    return dfs(node)",
+    "solution_js": "var cloneGraph = function(node) {\n    if (!node) return null;\n    const oldToNew = new Map();\n    function dfs(node) {\n        if (oldToNew.has(node)) return oldToNew.get(node);\n        const copy = new _Node(node.val);\n        oldToNew.set(node, copy);\n        for (const nei of node.neighbors) {\n            copy.neighbors.push(dfs(nei));\n        }\n        return copy;\n    }\n    return dfs(node);\n};",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V)",
+    "key_insight": "A hash map from original to clone node handles cycles \u2014 if a node is already cloned, return the existing clone instead of recursing.",
+    "related": [
+      80,
+      87
+    ]
+  },
+  {
+    "id": 82,
+    "title": "Max Area of Island",
+    "slug": "max-area-of-island",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/max-area-of-island/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Matrix"
+    ],
+    "hints": [
+      "Similar to Number of Islands, but track the size of each island.",
+      "DFS/BFS returns the area of the connected component it explores.",
+      "Keep track of the maximum area seen across all islands."
+    ],
+    "approach": "Iterate through the grid. For each unvisited '1', run DFS to compute the island's area by counting all connected '1' cells. Track and return the maximum area found.",
+    "solution_python": "def maxAreaOfIsland(self, grid: List[List[int]]) -> int:\n    rows, cols = len(grid), len(grid[0])\n    def dfs(r, c):\n        if r < 0 or c < 0 or r >= rows or c >= cols or grid[r][c] == 0:\n            return 0\n        grid[r][c] = 0\n        return 1 + dfs(r+1,c) + dfs(r-1,c) + dfs(r,c+1) + dfs(r,c-1)\n    maxArea = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == 1:\n                maxArea = max(maxArea, dfs(r, c))\n    return maxArea",
+    "solution_js": "var maxAreaOfIsland = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] === 0) return 0;\n        grid[r][c] = 0;\n        return 1 + dfs(r+1,c) + dfs(r-1,c) + dfs(r,c+1) + dfs(r,c-1);\n    }\n    let max = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (grid[r][c] === 1) max = Math.max(max, dfs(r,c));\n    return max;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n) worst case recursion",
+    "key_insight": "DFS naturally computes island area by summing 1 for the current cell plus the recursive results from all four directions.",
+    "related": [
+      80,
+      85
+    ]
+  },
+  {
+    "id": 83,
+    "title": "Pacific Atlantic Water Flow",
+    "slug": "pacific-atlantic-water-flow",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Matrix"
+    ],
+    "hints": [
+      "Instead of checking if each cell can reach both oceans, think in reverse.",
+      "Start DFS/BFS from ocean borders \u2014 find all cells reachable from each ocean.",
+      "Cells reachable from both Pacific and Atlantic borders are the answer."
+    ],
+    "approach": "Run DFS from all Pacific border cells and all Atlantic border cells separately, flowing uphill (to cells with equal or greater height). The intersection of cells reachable from both oceans is the answer.",
+    "solution_python": "def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:\n    rows, cols = len(heights), len(heights[0])\n    pac, atl = set(), set()\n    def dfs(r, c, visit, prevHeight):\n        if (r < 0 or c < 0 or r >= rows or c >= cols or\n            (r, c) in visit or heights[r][c] < prevHeight):\n            return\n        visit.add((r, c))\n        dfs(r+1, c, visit, heights[r][c])\n        dfs(r-1, c, visit, heights[r][c])\n        dfs(r, c+1, visit, heights[r][c])\n        dfs(r, c-1, visit, heights[r][c])\n    for c in range(cols):\n        dfs(0, c, pac, heights[0][c])\n        dfs(rows-1, c, atl, heights[rows-1][c])\n    for r in range(rows):\n        dfs(r, 0, pac, heights[r][0])\n        dfs(r, cols-1, atl, heights[r][cols-1])\n    return list(pac & atl)",
+    "solution_js": "var pacificAtlantic = function(heights) {\n    const rows = heights.length, cols = heights[0].length;\n    const pac = new Set(), atl = new Set();\n    function dfs(r, c, visit, prev) {\n        const key = r + ',' + c;\n        if (r < 0 || c < 0 || r >= rows || c >= cols ||\n            visit.has(key) || heights[r][c] < prev) return;\n        visit.add(key);\n        dfs(r+1,c,visit,heights[r][c]); dfs(r-1,c,visit,heights[r][c]);\n        dfs(r,c+1,visit,heights[r][c]); dfs(r,c-1,visit,heights[r][c]);\n    }\n    for (let c = 0; c < cols; c++) {\n        dfs(0,c,pac,heights[0][c]);\n        dfs(rows-1,c,atl,heights[rows-1][c]);\n    }\n    for (let r = 0; r < rows; r++) {\n        dfs(r,0,pac,heights[r][0]);\n        dfs(r,cols-1,atl,heights[r][cols-1]);\n    }\n    const res = [];\n    for (const key of pac) if (atl.has(key)) res.push(key.split(',').map(Number));\n    return res;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Reverse the problem: instead of flowing water downhill from each cell, flow uphill from ocean borders \u2014 the intersection gives cells that reach both oceans.",
+    "related": [
+      80,
+      84
+    ]
+  },
+  {
+    "id": 84,
+    "title": "Surrounded Regions",
+    "slug": "surrounded-regions",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/surrounded-regions/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Matrix"
+    ],
+    "hints": [
+      "An 'O' is NOT captured if it's connected to the border.",
+      "Start from border 'O's and mark all connected 'O's as safe.",
+      "After marking, any remaining 'O' is surrounded and should be flipped to 'X'."
+    ],
+    "approach": "DFS/BFS from all border 'O' cells, marking them as safe (e.g., 'T'). Then iterate through the board: convert remaining 'O's to 'X' (they're surrounded), and convert 'T's back to 'O' (they're safe).",
+    "solution_python": "def solve(self, board: List[List[str]]) -> None:\n    rows, cols = len(board), len(board[0])\n    def dfs(r, c):\n        if r < 0 or c < 0 or r >= rows or c >= cols or board[r][c] != 'O':\n            return\n        board[r][c] = 'T'\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)\n    for r in range(rows):\n        dfs(r, 0); dfs(r, cols - 1)\n    for c in range(cols):\n        dfs(0, c); dfs(rows - 1, c)\n    for r in range(rows):\n        for c in range(cols):\n            if board[r][c] == 'O': board[r][c] = 'X'\n            elif board[r][c] == 'T': board[r][c] = 'O'",
+    "solution_js": "var solve = function(board) {\n    const rows = board.length, cols = board[0].length;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || board[r][c] !== 'O') return;\n        board[r][c] = 'T';\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);\n    }\n    for (let r = 0; r < rows; r++) { dfs(r,0); dfs(r,cols-1); }\n    for (let c = 0; c < cols; c++) { dfs(0,c); dfs(rows-1,c); }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++) {\n            if (board[r][c] === 'O') board[r][c] = 'X';\n            else if (board[r][c] === 'T') board[r][c] = 'O';\n        }\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n) worst case recursion",
+    "key_insight": "Reverse thinking: instead of finding surrounded regions, find unsurrounded ones (connected to border) and mark them safe first.",
+    "related": [
+      80,
+      83
+    ]
+  },
+  {
+    "id": 85,
+    "title": "Rotting Oranges",
+    "slug": "rotting-oranges",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotting-oranges/",
+    "patterns": [
+      "BFS",
+      "Matrix",
+      "Multi-source BFS"
+    ],
+    "hints": [
+      "All rotten oranges spread simultaneously \u2014 this is multi-source BFS.",
+      "Start BFS from all initially rotten oranges at the same time.",
+      "Each BFS level represents one minute of rotting."
+    ],
+    "approach": "Add all initially rotten oranges to a queue. BFS level by level \u2014 each level represents one minute. For each rotten orange, rot its fresh neighbors. Count minutes until no fresh oranges remain. If any fresh orange is unreachable, return -1.",
+    "solution_python": "def orangesRotting(self, grid: List[List[int]]) -> int:\n    rows, cols = len(grid), len(grid[0])\n    queue = deque()\n    fresh = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == 2:\n                queue.append((r, c))\n            elif grid[r][c] == 1:\n                fresh += 1\n    minutes = 0\n    while queue and fresh > 0:\n        minutes += 1\n        for _ in range(len(queue)):\n            r, c = queue.popleft()\n            for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:\n                    grid[nr][nc] = 2\n                    fresh -= 1\n                    queue.append((nr, nc))\n    return minutes if fresh == 0 else -1",
+    "solution_js": "var orangesRotting = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    const queue = [];\n    let fresh = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++) {\n            if (grid[r][c] === 2) queue.push([r,c]);\n            else if (grid[r][c] === 1) fresh++;\n        }\n    let minutes = 0, qi = 0;\n    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];\n    while (qi < queue.length && fresh > 0) {\n        minutes++;\n        const size = queue.length - qi;\n        for (let i = 0; i < size; i++) {\n            const [r,c] = queue[qi++];\n            for (const [dr,dc] of dirs) {\n                const nr = r+dr, nc = c+dc;\n                if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && grid[nr][nc] === 1) {\n                    grid[nr][nc] = 2;\n                    fresh--;\n                    queue.push([nr,nc]);\n                }\n            }\n        }\n    }\n    return fresh === 0 ? minutes : -1;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Multi-source BFS naturally models simultaneous spreading \u2014 all rotten oranges are starting points, and each BFS level is one time step.",
+    "related": [
+      80,
+      82
+    ]
+  },
+  {
+    "id": 86,
+    "title": "Walls and Gates",
+    "slug": "walls-and-gates",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/walls-and-gates/",
+    "patterns": [
+      "BFS",
+      "Multi-source BFS",
+      "Matrix"
+    ],
+    "hints": [
+      "Instead of BFS from each empty room to find the nearest gate, think in reverse.",
+      "Start BFS from all gates simultaneously (multi-source BFS).",
+      "Each BFS level increments the distance by 1, naturally filling rooms with shortest distances."
+    ],
+    "approach": "Multi-source BFS from all gates. Add all gate cells to the queue. BFS outward \u2014 each room reached for the first time gets the shortest distance. Walls and already-visited rooms are skipped.",
+    "solution_python": "def wallsAndGates(self, rooms: List[List[int]]) -> None:\n    if not rooms:\n        return\n    rows, cols = len(rooms), len(rooms[0])\n    queue = deque()\n    for r in range(rows):\n        for c in range(cols):\n            if rooms[r][c] == 0:\n                queue.append((r, c))\n    while queue:\n        r, c = queue.popleft()\n        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and rooms[nr][nc] == 2147483647:\n                rooms[nr][nc] = rooms[r][c] + 1\n                queue.append((nr, nc))",
+    "solution_js": "var wallsAndGates = function(rooms) {\n    const rows = rooms.length, cols = rooms[0].length;\n    const queue = [];\n    let qi = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (rooms[r][c] === 0) queue.push([r,c]);\n    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];\n    while (qi < queue.length) {\n        const [r,c] = queue[qi++];\n        for (const [dr,dc] of dirs) {\n            const nr = r+dr, nc = c+dc;\n            if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && rooms[nr][nc] === 2147483647) {\n                rooms[nr][nc] = rooms[r][c] + 1;\n                queue.push([nr,nc]);\n            }\n        }\n    }\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Multi-source BFS from all gates simultaneously fills each room with its shortest distance \u2014 no need to BFS from each room individually.",
+    "related": [
+      85,
+      80
+    ]
+  },
+  {
+    "id": 87,
+    "title": "Course Schedule",
+    "slug": "course-schedule",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/course-schedule/",
+    "patterns": [
+      "Topological Sort",
+      "DFS",
+      "Cycle Detection"
+    ],
+    "hints": [
+      "Model courses and prerequisites as a directed graph.",
+      "If the graph has a cycle, it's impossible to finish all courses.",
+      "Use DFS with three states (unvisited, visiting, visited) to detect cycles."
+    ],
+    "approach": "Build an adjacency list from prerequisites. DFS from each course, tracking visiting state to detect cycles. If a cycle is found, return false. Mark courses as visited once all prerequisites are verified.",
+    "solution_python": "def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:\n    preMap = defaultdict(list)\n    for crs, pre in prerequisites:\n        preMap[crs].append(pre)\n    visiting = set()\n    def dfs(crs):\n        if crs in visiting:\n            return False\n        if preMap[crs] == []:\n            return True\n        visiting.add(crs)\n        for pre in preMap[crs]:\n            if not dfs(pre):\n                return False\n        visiting.remove(crs)\n        preMap[crs] = []\n        return True\n    for c in range(numCourses):\n        if not dfs(c):\n            return False\n    return True",
+    "solution_js": "var canFinish = function(numCourses, prerequisites) {\n    const preMap = new Map();\n    for (let i = 0; i < numCourses; i++) preMap.set(i, []);\n    for (const [crs, pre] of prerequisites) preMap.get(crs).push(pre);\n    const visiting = new Set();\n    function dfs(crs) {\n        if (visiting.has(crs)) return false;\n        if (preMap.get(crs).length === 0) return true;\n        visiting.add(crs);\n        for (const pre of preMap.get(crs)) {\n            if (!dfs(pre)) return false;\n        }\n        visiting.delete(crs);\n        preMap.set(crs, []);\n        return true;\n    }\n    for (let c = 0; c < numCourses; c++)\n        if (!dfs(c)) return false;\n    return true;\n};",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V + E)",
+    "key_insight": "Course scheduling is cycle detection in a directed graph \u2014 a cycle means circular dependencies that make completion impossible.",
+    "related": [
+      88,
+      89
+    ]
+  },
+  {
+    "id": 88,
+    "title": "Course Schedule II",
+    "slug": "course-schedule-ii",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/course-schedule-ii/",
+    "patterns": [
+      "Topological Sort",
+      "DFS"
+    ],
+    "hints": [
+      "This extends Course Schedule \u2014 now you need the actual ordering.",
+      "Use topological sort: add a course to the result after all its prerequisites are processed.",
+      "DFS post-order gives a reverse topological ordering."
+    ],
+    "approach": "Build an adjacency list. DFS with cycle detection (three states). After processing all prerequisites of a course, add it to the output. This produces a valid topological order. Return empty if a cycle exists.",
+    "solution_python": "def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:\n    preMap = defaultdict(list)\n    for crs, pre in prerequisites:\n        preMap[crs].append(pre)\n    output = []\n    visit, cycle = set(), set()\n    def dfs(crs):\n        if crs in cycle:\n            return False\n        if crs in visit:\n            return True\n        cycle.add(crs)\n        for pre in preMap[crs]:\n            if not dfs(pre):\n                return False\n        cycle.remove(crs)\n        visit.add(crs)\n        output.append(crs)\n        return True\n    for c in range(numCourses):\n        if not dfs(c):\n            return []\n    return output",
+    "solution_js": "var findOrder = function(numCourses, prerequisites) {\n    const preMap = new Map();\n    for (let i = 0; i < numCourses; i++) preMap.set(i, []);\n    for (const [crs, pre] of prerequisites) preMap.get(crs).push(pre);\n    const output = [], visit = new Set(), cycle = new Set();\n    function dfs(crs) {\n        if (cycle.has(crs)) return false;\n        if (visit.has(crs)) return true;\n        cycle.add(crs);\n        for (const pre of preMap.get(crs))\n            if (!dfs(pre)) return false;\n        cycle.delete(crs);\n        visit.add(crs);\n        output.push(crs);\n        return true;\n    }\n    for (let c = 0; c < numCourses; c++)\n        if (!dfs(c)) return [];\n    return output;\n};",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V + E)",
+    "key_insight": "DFS post-order naturally produces topological order \u2014 a course is added to output only after all its prerequisites are fully processed.",
+    "related": [
+      87,
+      89
+    ]
+  },
+  {
+    "id": 89,
+    "title": "Redundant Connection",
+    "slug": "redundant-connection",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/redundant-connection/",
+    "patterns": [
+      "Union-Find",
+      "Graph"
+    ],
+    "hints": [
+      "A tree with n nodes has exactly n-1 edges \u2014 one extra edge creates a cycle.",
+      "Process edges one by one; the edge that creates a cycle is the redundant one.",
+      "Union-Find efficiently detects if two nodes are already connected."
+    ],
+    "approach": "Use Union-Find. Process each edge: if both nodes already share the same root (are connected), this edge creates a cycle and is the answer. Otherwise, union the two components.",
+    "solution_python": "def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:\n    parent = list(range(len(edges) + 1))\n    rank = [0] * (len(edges) + 1)\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n    def union(x, y):\n        px, py = find(x), find(y)\n        if px == py:\n            return False\n        if rank[px] > rank[py]:\n            parent[py] = px\n        elif rank[px] < rank[py]:\n            parent[px] = py\n        else:\n            parent[py] = px\n            rank[px] += 1\n        return True\n    for u, v in edges:\n        if not union(u, v):\n            return [u, v]",
+    "solution_js": "var findRedundantConnection = function(edges) {\n    const n = edges.length;\n    const parent = Array.from({length: n+1}, (_, i) => i);\n    const rank = new Array(n+1).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu === pv) return [u, v];\n        if (rank[pu] > rank[pv]) parent[pv] = pu;\n        else if (rank[pu] < rank[pv]) parent[pu] = pv;\n        else { parent[pv] = pu; rank[pu]++; }\n    }\n};",
+    "time_complexity": "O(n * \u03b1(n)) \u2248 O(n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Union-Find detects cycles in real-time: if an edge connects two already-connected nodes, it's the redundant edge creating the cycle.",
+    "related": [
+      90,
+      87
+    ]
+  },
+  {
+    "id": 90,
+    "title": "Number of Connected Components in an Undirected Graph",
+    "slug": "number-of-connected-components-in-an-undirected-graph",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/",
+    "patterns": [
+      "Union-Find",
+      "DFS",
+      "BFS"
+    ],
+    "hints": [
+      "Each connected component is a group of nodes reachable from each other.",
+      "Union-Find: start with n components, each union reduces the count by 1.",
+      "Alternatively, count the number of DFS/BFS traversals needed to visit all nodes."
+    ],
+    "approach": "Use Union-Find starting with n components. For each edge, union the two nodes \u2014 if they were in different components, decrement the component count. Return the final count.",
+    "solution_python": "def countComponents(self, n: int, edges: List[List[int]]) -> int:\n    parent = list(range(n))\n    rank = [0] * n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n    components = n\n    for u, v in edges:\n        pu, pv = find(u), find(v)\n        if pu != pv:\n            if rank[pu] > rank[pv]:\n                parent[pv] = pu\n            elif rank[pu] < rank[pv]:\n                parent[pu] = pv\n            else:\n                parent[pv] = pu\n                rank[pu] += 1\n            components -= 1\n    return components",
+    "solution_js": "var countComponents = function(n, edges) {\n    const parent = Array.from({length: n}, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    let components = n;\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu !== pv) {\n            if (rank[pu] > rank[pv]) parent[pv] = pu;\n            else if (rank[pu] < rank[pv]) parent[pu] = pv;\n            else { parent[pv] = pu; rank[pu]++; }\n            components--;\n        }\n    }\n    return components;\n};",
+    "time_complexity": "O(n + e * \u03b1(n))",
+    "space_complexity": "O(n)",
+    "key_insight": "Start with n components; each edge that successfully unions two different components reduces the count by exactly one.",
+    "related": [
+      89,
+      91
+    ]
+  },
+  {
+    "id": 91,
+    "title": "Graph Valid Tree",
+    "slug": "graph-valid-tree",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/graph-valid-tree/",
+    "patterns": [
+      "Union-Find",
+      "DFS"
+    ],
+    "hints": [
+      "A valid tree has exactly n-1 edges and is fully connected (no cycles).",
+      "If edges != n-1, it's immediately not a tree.",
+      "Use Union-Find to check for cycles: if an edge connects already-connected nodes, there's a cycle."
+    ],
+    "approach": "Check if edges == n-1. Then use Union-Find to verify no cycles: process each edge, and if both endpoints already share a root, a cycle exists. If no cycle and edge count is correct, it's a valid tree.",
+    "solution_python": "def validTree(self, n: int, edges: List[List[int]]) -> bool:\n    if len(edges) != n - 1:\n        return False\n    parent = list(range(n))\n    rank = [0] * n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n    for u, v in edges:\n        pu, pv = find(u), find(v)\n        if pu == pv:\n            return False\n        if rank[pu] > rank[pv]:\n            parent[pv] = pu\n        elif rank[pu] < rank[pv]:\n            parent[pu] = pv\n        else:\n            parent[pv] = pu\n            rank[pu] += 1\n    return True",
+    "solution_js": "var validTree = function(n, edges) {\n    if (edges.length !== n - 1) return false;\n    const parent = Array.from({length: n}, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu === pv) return false;\n        if (rank[pu] > rank[pv]) parent[pv] = pu;\n        else if (rank[pu] < rank[pv]) parent[pu] = pv;\n        else { parent[pv] = pu; rank[pu]++; }\n    }\n    return true;\n};",
+    "time_complexity": "O(n * \u03b1(n))",
+    "space_complexity": "O(n)",
+    "key_insight": "A graph is a valid tree iff it has exactly n-1 edges and no cycles \u2014 Union-Find checks both properties efficiently.",
+    "related": [
+      89,
+      90
+    ]
+  },
+  {
+    "id": 92,
+    "title": "Word Ladder",
+    "slug": "word-ladder",
+    "category": "Graphs",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/word-ladder/",
+    "patterns": [
+      "BFS",
+      "Graph"
+    ],
+    "hints": [
+      "Each word is a node; edges connect words that differ by exactly one letter.",
+      "BFS finds the shortest path in an unweighted graph.",
+      "Use wildcard patterns (e.g., h*t for hot) to efficiently find neighbors."
+    ],
+    "approach": "BFS from beginWord. Build an adjacency list using wildcard patterns: for each word, replace each character with '*' to create patterns. Words sharing a pattern are neighbors. BFS level by level to find the shortest transformation sequence.",
+    "solution_python": "def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:\n    if endWord not in wordList:\n        return 0\n    nei = defaultdict(list)\n    wordList.append(beginWord)\n    for word in wordList:\n        for j in range(len(word)):\n            pattern = word[:j] + '*' + word[j+1:]\n            nei[pattern].append(word)\n    visit = set([beginWord])\n    queue = deque([beginWord])\n    res = 1\n    while queue:\n        for _ in range(len(queue)):\n            word = queue.popleft()\n            if word == endWord:\n                return res\n            for j in range(len(word)):\n                pattern = word[:j] + '*' + word[j+1:]\n                for neiWord in nei[pattern]:\n                    if neiWord not in visit:\n                        visit.add(neiWord)\n                        queue.append(neiWord)\n        res += 1\n    return 0",
+    "solution_js": "var ladderLength = function(beginWord, endWord, wordList) {\n    if (!wordList.includes(endWord)) return 0;\n    const nei = new Map();\n    wordList.push(beginWord);\n    for (const word of wordList) {\n        for (let j = 0; j < word.length; j++) {\n            const pat = word.slice(0,j) + '*' + word.slice(j+1);\n            if (!nei.has(pat)) nei.set(pat, []);\n            nei.get(pat).push(word);\n        }\n    }\n    const visit = new Set([beginWord]);\n    const queue = [beginWord];\n    let qi = 0, res = 1;\n    while (qi < queue.length) {\n        const size = queue.length - qi;\n        for (let i = 0; i < size; i++) {\n            const word = queue[qi++];\n            if (word === endWord) return res;\n            for (let j = 0; j < word.length; j++) {\n                const pat = word.slice(0,j) + '*' + word.slice(j+1);\n                for (const nw of (nei.get(pat) || [])) {\n                    if (!visit.has(nw)) { visit.add(nw); queue.push(nw); }\n                }\n            }\n        }\n        res++;\n    }\n    return 0;\n};",
+    "time_complexity": "O(m^2 * n) where m=word length, n=word count",
+    "space_complexity": "O(m^2 * n)",
+    "key_insight": "Wildcard patterns (h*t) create an implicit graph where words differing by one letter share a pattern \u2014 BFS on this graph finds the shortest transformation.",
+    "related": [
+      80,
+      87
+    ]
+  },
+  {
+    "id": 93,
+    "title": "Climbing Stairs",
+    "slug": "climbing-stairs",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/climbing-stairs/",
+    "patterns": [
+      "DP",
+      "Fibonacci"
+    ],
+    "hints": [
+      "The number of ways to reach step n depends on the previous steps.",
+      "You can reach step n from step n-1 (one step) or step n-2 (two steps).",
+      "This is exactly the Fibonacci sequence: dp[n] = dp[n-1] + dp[n-2]."
+    ],
+    "approach": "Bottom-up DP. The number of ways to reach step i is dp[i] = dp[i-1] + dp[i-2]. Base cases: dp[1]=1, dp[2]=2. Only need two variables since each state depends on just the previous two.",
+    "solution_python": "def climbStairs(self, n: int) -> int:\n    if n <= 2:\n        return n\n    prev, curr = 1, 2\n    for i in range(3, n + 1):\n        prev, curr = curr, prev + curr\n    return curr",
+    "solution_js": "var climbStairs = function(n) {\n    if (n <= 2) return n;\n    let prev = 1, curr = 2;\n    for (let i = 3; i <= n; i++) {\n        [prev, curr] = [curr, prev + curr];\n    }\n    return curr;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "This is the Fibonacci sequence in disguise \u2014 each step's count is the sum of the two preceding steps because you can arrive via a 1-step or 2-step jump.",
+    "related": [
+      94,
+      96
+    ]
+  },
+  {
+    "id": 94,
+    "title": "Min Cost Climbing Stairs",
+    "slug": "min-cost-climbing-stairs",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/min-cost-climbing-stairs/",
+    "patterns": [
+      "DP"
+    ],
+    "hints": [
+      "At each step, you choose to come from one step back or two steps back.",
+      "dp[i] = cost[i] + min(dp[i-1], dp[i-2]).",
+      "You can start from step 0 or step 1, so the answer is min of the last two dp values."
+    ],
+    "approach": "Bottom-up DP. For each step i, the minimum cost to reach it is cost[i] + min(dp[i-1], dp[i-2]). The answer is min(dp[n-1], dp[n-2]) since you can reach the top from either of the last two steps.",
+    "solution_python": "def minCostClimbingStairs(self, cost: List[int]) -> int:\n    for i in range(2, len(cost)):\n        cost[i] += min(cost[i-1], cost[i-2])\n    return min(cost[-1], cost[-2])",
+    "solution_js": "var minCostClimbingStairs = function(cost) {\n    for (let i = 2; i < cost.length; i++) {\n        cost[i] += Math.min(cost[i-1], cost[i-2]);\n    }\n    return Math.min(cost[cost.length-1], cost[cost.length-2]);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Each step accumulates the minimum cost to reach it; the answer considers both possible final jumps (from last or second-to-last step).",
+    "related": [
+      93,
+      95
+    ]
+  },
+  {
+    "id": 95,
+    "title": "House Robber",
+    "slug": "house-robber",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/house-robber/",
+    "patterns": [
+      "DP"
+    ],
+    "hints": [
+      "At each house, you either rob it (add its value to the best from two houses back) or skip it.",
+      "dp[i] = max(dp[i-1], dp[i-2] + nums[i]).",
+      "You only need two variables to track the previous two optimal values."
+    ],
+    "approach": "Bottom-up DP with two variables. For each house, compute max(skip this house = prev max, rob this house = two-back max + current value). Update the two tracking variables.",
+    "solution_python": "def rob(self, nums: List[int]) -> int:\n    rob1, rob2 = 0, 0\n    for n in nums:\n        rob1, rob2 = rob2, max(rob2, rob1 + n)\n    return rob2",
+    "solution_js": "var rob = function(nums) {\n    let rob1 = 0, rob2 = 0;\n    for (const n of nums) {\n        [rob1, rob2] = [rob2, Math.max(rob2, rob1 + n)];\n    }\n    return rob2;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "The optimal robbery at each house is the better of skipping it (keep previous max) or robbing it (current value + max from two houses back, avoiding adjacency).",
+    "related": [
+      96,
+      94
+    ]
+  },
+  {
+    "id": 96,
+    "title": "House Robber II",
+    "slug": "house-robber-ii",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/house-robber-ii/",
+    "patterns": [
+      "DP"
+    ],
+    "hints": [
+      "Houses are arranged in a circle \u2014 the first and last are adjacent.",
+      "You can't rob both the first and last house.",
+      "Run House Robber twice: once excluding the last house, once excluding the first."
+    ],
+    "approach": "The circular constraint means you can't rob both house 0 and house n-1. Run the linear House Robber on nums[:-1] and nums[1:], return the max of both results.",
+    "solution_python": "def rob(self, nums: List[int]) -> int:\n    if len(nums) == 1:\n        return nums[0]\n    def helper(arr):\n        rob1, rob2 = 0, 0\n        for n in arr:\n            rob1, rob2 = rob2, max(rob2, rob1 + n)\n        return rob2\n    return max(helper(nums[:-1]), helper(nums[1:]))",
+    "solution_js": "var rob = function(nums) {\n    if (nums.length === 1) return nums[0];\n    function helper(arr) {\n        let rob1 = 0, rob2 = 0;\n        for (const n of arr) [rob1, rob2] = [rob2, Math.max(rob2, rob1 + n)];\n        return rob2;\n    }\n    return Math.max(helper(nums.slice(0, -1)), helper(nums.slice(1)));\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Break the circular dependency by running the linear solution twice \u2014 once excluding first house, once excluding last \u2014 and taking the maximum.",
+    "related": [
+      95,
+      93
+    ]
+  },
+  {
+    "id": 97,
+    "title": "Longest Palindromic Substring",
+    "slug": "longest-palindromic-substring",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "patterns": [
+      "Expand Around Center",
+      "DP"
+    ],
+    "hints": [
+      "A palindrome mirrors around its center.",
+      "Try expanding outward from each possible center (both odd and even length).",
+      "There are 2n-1 possible centers (n single chars + n-1 gaps between chars)."
+    ],
+    "approach": "Expand around center. For each index, try both odd-length (single center) and even-length (two-char center) palindromes. Expand outward while characters match. Track the longest found.",
+    "solution_python": "def longestPalindrome(self, s: str) -> str:\n    res = ''\n    for i in range(len(s)):\n        for l, r in [(i, i), (i, i + 1)]:\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                if r - l + 1 > len(res):\n                    res = s[l:r+1]\n                l -= 1\n                r += 1\n    return res",
+    "solution_js": "var longestPalindrome = function(s) {\n    let res = '';\n    for (let i = 0; i < s.length; i++) {\n        for (const [li, ri] of [[i,i],[i,i+1]]) {\n            let l = li, r = ri;\n            while (l >= 0 && r < s.length && s[l] === s[r]) {\n                if (r - l + 1 > res.length) res = s.slice(l, r+1);\n                l--; r++;\n            }\n        }\n    }\n    return res;\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "key_insight": "Every palindrome has a center \u2014 expanding outward from each of the 2n-1 possible centers finds all palindromic substrings in O(n^2) time.",
+    "related": [
+      98,
+      77
+    ]
+  },
+  {
+    "id": 98,
+    "title": "Palindromic Substrings",
+    "slug": "palindromic-substrings",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/palindromic-substrings/",
+    "patterns": [
+      "Expand Around Center",
+      "DP"
+    ],
+    "hints": [
+      "Similar to longest palindromic substring, but count all palindromes.",
+      "Expand around each center and count each valid expansion as a palindrome.",
+      "Remember to check both odd and even length palindromes."
+    ],
+    "approach": "Expand around center for each position. For both odd and even centers, expand while characters match and increment the count for each valid palindrome found.",
+    "solution_python": "def countSubstrings(self, s: str) -> int:\n    count = 0\n    for i in range(len(s)):\n        for l, r in [(i, i), (i, i + 1)]:\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                count += 1\n                l -= 1\n                r += 1\n    return count",
+    "solution_js": "var countSubstrings = function(s) {\n    let count = 0;\n    for (let i = 0; i < s.length; i++) {\n        for (const [li, ri] of [[i,i],[i,i+1]]) {\n            let l = li, r = ri;\n            while (l >= 0 && r < s.length && s[l] === s[r]) {\n                count++; l--; r++;\n            }\n        }\n    }\n    return count;\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "key_insight": "Each successful expansion from a center produces one more palindromic substring \u2014 count every expansion step rather than just tracking the longest.",
+    "related": [
+      97,
+      77
+    ]
+  },
+  {
+    "id": 99,
+    "title": "Decode Ways",
+    "slug": "decode-ways",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/decode-ways/",
+    "patterns": [
+      "DP"
+    ],
+    "hints": [
+      "At each position, you can decode one digit or two digits (if valid).",
+      "dp[i] = dp[i-1] (if single digit valid) + dp[i-2] (if two digits valid).",
+      "'0' can only be decoded as part of '10' or '20' \u2014 it can't stand alone."
+    ],
+    "approach": "Bottom-up DP. At each position, if the current digit is valid (1-9), add dp[i-1]. If the two-digit number ending here is valid (10-26), add dp[i-2]. Handle '0' carefully \u2014 it can only pair with '1' or '2'.",
+    "solution_python": "def numDecodings(self, s: str) -> int:\n    dp = {len(s): 1}\n    for i in range(len(s) - 1, -1, -1):\n        if s[i] == '0':\n            dp[i] = 0\n        else:\n            dp[i] = dp[i + 1]\n            if i + 1 < len(s) and (s[i] == '1' or (s[i] == '2' and s[i+1] in '0123456')):\n                dp[i] += dp[i + 2]\n    return dp[0]",
+    "solution_js": "var numDecodings = function(s) {\n    const dp = new Array(s.length + 1).fill(0);\n    dp[s.length] = 1;\n    for (let i = s.length - 1; i >= 0; i--) {\n        if (s[i] === '0') { dp[i] = 0; continue; }\n        dp[i] = dp[i + 1];\n        if (i + 1 < s.length && (s[i] === '1' || (s[i] === '2' && s[i+1] <= '6'))) {\n            dp[i] += dp[i + 2];\n        }\n    }\n    return dp[0];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Each position branches into 1-digit or 2-digit decodings (like Fibonacci), but '0' kills the single-digit branch and two-digit values must be 10-26.",
+    "related": [
+      93,
+      100
+    ]
+  },
+  {
+    "id": 100,
+    "title": "Coin Change",
+    "slug": "coin-change",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/coin-change/",
+    "patterns": [
+      "DP",
+      "Bottom-Up"
+    ],
+    "hints": [
+      "For each amount, try every coin denomination.",
+      "dp[amount] = min(dp[amount - coin] + 1) for each coin.",
+      "Initialize dp[0]=0 and all others to infinity (amount+1 works as sentinel)."
+    ],
+    "approach": "Bottom-up DP. For each amount from 1 to target, try each coin: dp[i] = min(dp[i], dp[i-coin] + 1). Initialize dp[0]=0. If dp[amount] exceeds amount, return -1 (impossible).",
+    "solution_python": "def coinChange(self, coins: List[int], amount: int) -> int:\n    dp = [amount + 1] * (amount + 1)\n    dp[0] = 0\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return dp[amount] if dp[amount] <= amount else -1",
+    "solution_js": "var coinChange = function(coins, amount) {\n    const dp = new Array(amount + 1).fill(amount + 1);\n    dp[0] = 0;\n    for (let a = 1; a <= amount; a++) {\n        for (const c of coins) {\n            if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);\n        }\n    }\n    return dp[amount] > amount ? -1 : dp[amount];\n};",
+    "time_complexity": "O(amount * coins)",
+    "space_complexity": "O(amount)",
+    "key_insight": "Each amount builds on smaller subproblems \u2014 using coin c means 1 + the optimal solution for (amount - c).",
+    "related": [
+      101,
+      93
+    ]
+  },
+  {
+    "id": 101,
+    "title": "Maximum Product Subarray",
+    "slug": "maximum-product-subarray",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-product-subarray/",
+    "patterns": [
+      "DP"
+    ],
+    "hints": [
+      "Unlike maximum sum, a negative number can flip min to max (and vice versa).",
+      "Track both the current maximum AND minimum product at each position.",
+      "When encountering a negative number, swap max and min before multiplying."
+    ],
+    "approach": "Track curMax and curMin at each position. For each number, compute new max and min considering: the number itself, number*curMax, number*curMin. Update the global maximum.",
+    "solution_python": "def maxProduct(self, nums: List[int]) -> int:\n    res = max(nums)\n    curMin, curMax = 1, 1\n    for n in nums:\n        vals = (n, n * curMax, n * curMin)\n        curMax, curMin = max(vals), min(vals)\n        res = max(res, curMax)\n    return res",
+    "solution_js": "var maxProduct = function(nums) {\n    let res = Math.max(...nums);\n    let curMin = 1, curMax = 1;\n    for (const n of nums) {\n        const vals = [n, n * curMax, n * curMin];\n        curMax = Math.max(...vals);\n        curMin = Math.min(...vals);\n        res = Math.max(res, curMax);\n    }\n    return res;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Negative numbers can flip min to max \u2014 tracking both the running maximum and minimum product handles sign changes correctly.",
+    "related": [
+      95,
+      102
+    ]
+  },
+  {
+    "id": 102,
+    "title": "Word Break",
+    "slug": "word-break",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/word-break/",
+    "patterns": [
+      "DP",
+      "Trie"
+    ],
+    "hints": [
+      "dp[i] represents whether s[0:i] can be segmented into dictionary words.",
+      "For each position i, check all possible last words ending at i.",
+      "dp[i] = true if there exists j where dp[j] is true and s[j:i] is in the dictionary."
+    ],
+    "approach": "Bottom-up DP. dp[i] is true if s[0:i] can be segmented. For each position i, check if any word in the dictionary matches s[j:i] where dp[j] is true. dp[0] = true (empty string).",
+    "solution_python": "def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n    dp = [False] * (len(s) + 1)\n    dp[len(s)] = True\n    for i in range(len(s) - 1, -1, -1):\n        for w in wordDict:\n            if i + len(w) <= len(s) and s[i:i+len(w)] == w:\n                dp[i] = dp[i + len(w)]\n            if dp[i]:\n                break\n    return dp[0]",
+    "solution_js": "var wordBreak = function(s, wordDict) {\n    const dp = new Array(s.length + 1).fill(false);\n    dp[s.length] = true;\n    for (let i = s.length - 1; i >= 0; i--) {\n        for (const w of wordDict) {\n            if (i + w.length <= s.length && s.slice(i, i + w.length) === w) {\n                dp[i] = dp[i + w.length];\n            }\n            if (dp[i]) break;\n        }\n    }\n    return dp[0];\n};",
+    "time_complexity": "O(n * m * k) where m=dict size, k=avg word length",
+    "space_complexity": "O(n)",
+    "key_insight": "Each position is segmentable if it matches a dictionary word AND the remaining suffix is also segmentable \u2014 classic DP with string matching.",
+    "related": [
+      99,
+      100
+    ]
+  },
+  {
+    "id": 103,
+    "title": "Longest Increasing Subsequence",
+    "slug": "longest-increasing-subsequence",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+    "patterns": [
+      "DP",
+      "Binary Search"
+    ],
+    "hints": [
+      "dp[i] = length of the longest increasing subsequence ending at index i.",
+      "For each i, check all j < i: if nums[j] < nums[i], dp[i] = max(dp[i], dp[j]+1).",
+      "For O(n log n), maintain a tails array and use binary search."
+    ],
+    "approach": "DP approach: dp[i] = max(dp[j] + 1) for all j < i where nums[j] < nums[i]. Each element starts with dp[i]=1. Return the maximum dp value. O(n^2) time.",
+    "solution_python": "def lengthOfLIS(self, nums: List[int]) -> int:\n    dp = [1] * len(nums)\n    for i in range(1, len(nums)):\n        for j in range(i):\n            if nums[j] < nums[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)",
+    "solution_js": "var lengthOfLIS = function(nums) {\n    const dp = new Array(nums.length).fill(1);\n    for (let i = 1; i < nums.length; i++) {\n        for (let j = 0; j < i; j++) {\n            if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1);\n        }\n    }\n    return Math.max(...dp);\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "key_insight": "Each element extends the best subsequence ending at any smaller previous element \u2014 dp[i] considers all valid predecessors.",
+    "related": [
+      104,
+      100
+    ]
+  },
+  {
+    "id": 104,
+    "title": "Partition Equal Subset Sum",
+    "slug": "partition-equal-subset-sum",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/partition-equal-subset-sum/",
+    "patterns": [
+      "DP",
+      "0/1 Knapsack"
+    ],
+    "hints": [
+      "If the total sum is odd, partitioning into equal halves is impossible.",
+      "The problem reduces to: can we find a subset that sums to total/2?",
+      "Use a DP set tracking all achievable sums; for each number, add it to existing sums."
+    ],
+    "approach": "If total sum is odd, return false. Otherwise, find if a subset sums to total/2. Use a set of achievable sums. For each number, create new sums by adding it to each existing sum in the set.",
+    "solution_python": "def canPartition(self, nums: List[int]) -> bool:\n    total = sum(nums)\n    if total % 2:\n        return False\n    target = total // 2\n    dp = set([0])\n    for n in nums:\n        dp = dp | {s + n for s in dp}\n        if target in dp:\n            return True\n    return False",
+    "solution_js": "var canPartition = function(nums) {\n    const total = nums.reduce((a, b) => a + b, 0);\n    if (total % 2) return false;\n    const target = total / 2;\n    let dp = new Set([0]);\n    for (const n of nums) {\n        const next = new Set(dp);\n        for (const s of dp) next.add(s + n);\n        dp = next;\n        if (dp.has(target)) return true;\n    }\n    return false;\n};",
+    "time_complexity": "O(n * sum)",
+    "space_complexity": "O(sum)",
+    "key_insight": "Equal partition = finding a subset summing to total/2. This is the 0/1 knapsack problem, solvable with a DP set of achievable sums.",
+    "related": [
+      100,
+      95
+    ]
+  },
+  {
+    "id": 105,
+    "title": "Unique Paths",
+    "slug": "unique-paths",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/unique-paths/",
+    "patterns": [
+      "DP",
+      "Grid"
+    ],
+    "hints": [
+      "You can only move right or down \u2014 each cell is reachable from the cell above or to the left.",
+      "dp[r][c] = dp[r-1][c] + dp[r][c-1].",
+      "The first row and first column all have exactly 1 path (straight line)."
+    ],
+    "approach": "Fill a 2D DP grid where dp[r][c] = number of paths to reach (r,c). First row and column are all 1s. Each other cell sums paths from above and left.",
+    "solution_python": "def uniquePaths(self, m: int, n: int) -> int:\n    row = [1] * n\n    for i in range(1, m):\n        for j in range(1, n):\n            row[j] += row[j - 1]\n    return row[-1]",
+    "solution_js": "var uniquePaths = function(m, n) {\n    const row = new Array(n).fill(1);\n    for (let i = 1; i < m; i++)\n        for (let j = 1; j < n; j++)\n            row[j] += row[j - 1];\n    return row[n - 1];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Only right and down moves means each cell's path count is the sum from above and left \u2014 optimizable to a single row of DP.",
+    "related": [
+      106,
+      93
+    ]
+  },
+  {
+    "id": 106,
+    "title": "Longest Common Subsequence",
+    "slug": "longest-common-subsequence",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/longest-common-subsequence/",
+    "patterns": [
+      "DP",
+      "String"
+    ],
+    "hints": [
+      "Compare characters at each position in both strings.",
+      "If characters match, LCS extends by 1 from the diagonal (dp[i-1][j-1]+1).",
+      "If they don't match, take the max of skipping one character from either string."
+    ],
+    "approach": "2D DP where dp[i][j] = LCS length of text1[0:i] and text2[0:j]. If characters match, dp[i][j] = dp[i-1][j-1]+1. Otherwise, dp[i][j] = max(dp[i-1][j], dp[i][j-1]).",
+    "solution_python": "def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n    dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)]\n    for i in range(len(text1) - 1, -1, -1):\n        for j in range(len(text2) - 1, -1, -1):\n            if text1[i] == text2[j]:\n                dp[i][j] = 1 + dp[i+1][j+1]\n            else:\n                dp[i][j] = max(dp[i+1][j], dp[i][j+1])\n    return dp[0][0]",
+    "solution_js": "var longestCommonSubsequence = function(text1, text2) {\n    const m = text1.length, n = text2.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));\n    for (let i = m-1; i >= 0; i--)\n        for (let j = n-1; j >= 0; j--)\n            dp[i][j] = text1[i] === text2[j]\n                ? 1 + dp[i+1][j+1]\n                : Math.max(dp[i+1][j], dp[i][j+1]);\n    return dp[0][0];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Character match extends the diagonal LCS by 1; mismatch takes the best of either skip \u2014 this naturally builds the optimal subsequence length.",
+    "related": [
+      103,
+      107
+    ]
+  },
+  {
+    "id": 107,
+    "title": "Best Time to Buy and Sell Stock with Cooldown",
+    "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/",
+    "patterns": [
+      "DP",
+      "State Machine"
+    ],
+    "hints": [
+      "At each day, you're in one of two states: holding a stock or not holding.",
+      "After selling, you must wait one day (cooldown) before buying again.",
+      "Model as a state machine with states: buy, sell, cooldown."
+    ],
+    "approach": "Use DP with states. At each day: if buying, profit = max(keep holding, buy today from cooldown state). If selling, profit = max(stay idle, sell today). Track cooldown by using the profit from 2 days ago for buying.",
+    "solution_python": "def maxProfit(self, prices: List[int]) -> int:\n    dp = {}\n    def dfs(i, buying):\n        if i >= len(prices):\n            return 0\n        if (i, buying) in dp:\n            return dp[(i, buying)]\n        cooldown = dfs(i + 1, buying)\n        if buying:\n            buy = dfs(i + 1, False) - prices[i]\n            dp[(i, buying)] = max(buy, cooldown)\n        else:\n            sell = dfs(i + 2, True) + prices[i]\n            dp[(i, buying)] = max(sell, cooldown)\n        return dp[(i, buying)]\n    return dfs(0, True)",
+    "solution_js": "var maxProfit = function(prices) {\n    const dp = new Map();\n    function dfs(i, buying) {\n        if (i >= prices.length) return 0;\n        const key = i + ',' + buying;\n        if (dp.has(key)) return dp.get(key);\n        const cooldown = dfs(i + 1, buying);\n        let res;\n        if (buying) {\n            res = Math.max(dfs(i + 1, false) - prices[i], cooldown);\n        } else {\n            res = Math.max(dfs(i + 2, true) + prices[i], cooldown);\n        }\n        dp.set(key, res);\n        return res;\n    }\n    return dfs(0, true);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "key_insight": "The cooldown constraint means after selling at day i, the next buy can't happen until day i+2 \u2014 model this with a state machine DP.",
+    "related": [
+      95,
+      108
+    ]
+  },
+  {
+    "id": 108,
+    "title": "Coin Change II",
+    "slug": "coin-change-ii",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/coin-change-ii/",
+    "patterns": [
+      "DP",
+      "Unbounded Knapsack"
+    ],
+    "hints": [
+      "Count the number of combinations (not permutations) that sum to the amount.",
+      "Process coins one at a time to avoid counting different orderings of the same coins.",
+      "dp[a] += dp[a - coin] for each coin, processing coins in the outer loop."
+    ],
+    "approach": "Unbounded knapsack DP. Process each coin type in the outer loop (to avoid duplicate orderings). For each amount, dp[a] += dp[a - coin]. dp[0] = 1 (one way to make amount 0).",
+    "solution_python": "def change(self, amount: int, coins: List[int]) -> int:\n    dp = [0] * (amount + 1)\n    dp[0] = 1\n    for c in coins:\n        for a in range(c, amount + 1):\n            dp[a] += dp[a - c]\n    return dp[amount]",
+    "solution_js": "var change = function(amount, coins) {\n    const dp = new Array(amount + 1).fill(0);\n    dp[0] = 1;\n    for (const c of coins) {\n        for (let a = c; a <= amount; a++) {\n            dp[a] += dp[a - c];\n        }\n    }\n    return dp[amount];\n};",
+    "time_complexity": "O(amount * coins)",
+    "space_complexity": "O(amount)",
+    "key_insight": "Processing coins in the outer loop ensures each combination is counted once (not permutations) \u2014 coin ordering is fixed.",
+    "related": [
+      100,
+      104
+    ]
+  },
+  {
+    "id": 109,
+    "title": "Target Sum",
+    "slug": "target-sum",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/target-sum/",
+    "patterns": [
+      "DP",
+      "0/1 Knapsack"
+    ],
+    "hints": [
+      "Each number is either added or subtracted \u2014 think of it as partitioning into two groups.",
+      "Use DP where the state is (index, current sum).",
+      "Alternatively, this reduces to a subset sum problem: find subsets summing to (total+target)/2."
+    ],
+    "approach": "Use memoized DFS with state (index, current_sum). At each index, branch into adding or subtracting the current number. Count paths that reach the target at the end.",
+    "solution_python": "def findTargetSumWays(self, nums: List[int], target: int) -> int:\n    dp = defaultdict(int)\n    dp[0] = 1\n    for n in nums:\n        next_dp = defaultdict(int)\n        for s, count in dp.items():\n            next_dp[s + n] += count\n            next_dp[s - n] += count\n        dp = next_dp\n    return dp[target]",
+    "solution_js": "var findTargetSumWays = function(nums, target) {\n    let dp = new Map();\n    dp.set(0, 1);\n    for (const n of nums) {\n        const next = new Map();\n        for (const [s, count] of dp) {\n            next.set(s + n, (next.get(s + n) || 0) + count);\n            next.set(s - n, (next.get(s - n) || 0) + count);\n        }\n        dp = next;\n    }\n    return dp.get(target) || 0;\n};",
+    "time_complexity": "O(n * sum)",
+    "space_complexity": "O(sum)",
+    "key_insight": "Each number creates a binary branch (+/-), but many paths reach the same sum \u2014 DP collapses identical states to avoid exponential computation.",
+    "related": [
+      104,
+      100
+    ]
+  },
+  {
+    "id": 110,
+    "title": "Interleaving String",
+    "slug": "interleaving-string",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/interleaving-string/",
+    "patterns": [
+      "DP",
+      "String"
+    ],
+    "hints": [
+      "At each position in s3, the character must come from either s1 or s2 (in order).",
+      "Use 2D DP where dp[i][j] = can s1[0:i] and s2[0:j] interleave to form s3[0:i+j]?",
+      "Check if the current s3 character matches the next unused character from s1 or s2."
+    ],
+    "approach": "2D DP where dp[i][j] indicates whether s1[0:i] and s2[0:j] can form s3[0:i+j]. Transition: if s1[i-1]==s3[i+j-1], check dp[i-1][j]; if s2[j-1]==s3[i+j-1], check dp[i][j-1].",
+    "solution_python": "def isInterleave(self, s1: str, s2: str, s3: str) -> bool:\n    if len(s1) + len(s2) != len(s3):\n        return False\n    dp = [[False] * (len(s2) + 1) for _ in range(len(s1) + 1)]\n    dp[len(s1)][len(s2)] = True\n    for i in range(len(s1), -1, -1):\n        for j in range(len(s2), -1, -1):\n            if i < len(s1) and s1[i] == s3[i+j] and dp[i+1][j]:\n                dp[i][j] = True\n            if j < len(s2) and s2[j] == s3[i+j] and dp[i][j+1]:\n                dp[i][j] = True\n    return dp[0][0]",
+    "solution_js": "var isInterleave = function(s1, s2, s3) {\n    if (s1.length + s2.length !== s3.length) return false;\n    const dp = Array.from({length: s1.length+1}, () => new Array(s2.length+1).fill(false));\n    dp[s1.length][s2.length] = true;\n    for (let i = s1.length; i >= 0; i--)\n        for (let j = s2.length; j >= 0; j--) {\n            if (i < s1.length && s1[i] === s3[i+j] && dp[i+1][j]) dp[i][j] = true;\n            if (j < s2.length && s2[j] === s3[i+j] && dp[i][j+1]) dp[i][j] = true;\n        }\n    return dp[0][0];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Two pointers (i into s1, j into s2) define the state \u2014 at position i+j in s3, we can take from s1[i] or s2[j] if they match.",
+    "related": [
+      106,
+      112
+    ]
+  },
+  {
+    "id": 111,
+    "title": "Longest Increasing Path in a Matrix",
+    "slug": "longest-increasing-path-in-a-matrix",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/longest-increasing-path-in-a-matrix/",
+    "patterns": [
+      "DFS",
+      "Memoization",
+      "Matrix"
+    ],
+    "hints": [
+      "From each cell, DFS to all four neighbors with strictly greater values.",
+      "The increasing constraint means there are no cycles \u2014 perfect for memoization.",
+      "dp[r][c] = 1 + max(dp of all valid increasing neighbors)."
+    ],
+    "approach": "DFS with memoization from every cell. For each cell, explore all four neighbors with strictly greater values. Cache results since the strictly increasing constraint guarantees no cycles.",
+    "solution_python": "def longestIncreasingPath(self, matrix: List[List[int]]) -> int:\n    rows, cols = len(matrix), len(matrix[0])\n    dp = {}\n    def dfs(r, c, prevVal):\n        if r < 0 or c < 0 or r >= rows or c >= cols or matrix[r][c] <= prevVal:\n            return 0\n        if (r, c) in dp:\n            return dp[(r, c)]\n        res = 1\n        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n            res = max(res, 1 + dfs(r+dr, c+dc, matrix[r][c]))\n        dp[(r, c)] = res\n        return res\n    result = 0\n    for r in range(rows):\n        for c in range(cols):\n            result = max(result, dfs(r, c, float('-inf')))\n    return result",
+    "solution_js": "var longestIncreasingPath = function(matrix) {\n    const rows = matrix.length, cols = matrix[0].length;\n    const dp = Array.from({length: rows}, () => new Array(cols).fill(0));\n    function dfs(r, c, prev) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || matrix[r][c] <= prev) return 0;\n        if (dp[r][c]) return dp[r][c];\n        let res = 1;\n        for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]])\n            res = Math.max(res, 1 + dfs(r+dr, c+dc, matrix[r][c]));\n        dp[r][c] = res;\n        return res;\n    }\n    let result = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            result = Math.max(result, dfs(r, c, -Infinity));\n    return result;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Strictly increasing values guarantee a DAG (no cycles), making memoization safe \u2014 each cell's result is computed exactly once.",
+    "related": [
+      82,
+      106
+    ]
+  },
+  {
+    "id": 112,
+    "title": "Distinct Subsequences",
+    "slug": "distinct-subsequences",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/distinct-subsequences/",
+    "patterns": [
+      "DP",
+      "String"
+    ],
+    "hints": [
+      "dp[i][j] = number of ways to form t[0:j] from s[0:i].",
+      "If s[i] == t[j], we can either use this match or skip s[i].",
+      "If s[i] != t[j], we must skip s[i]: dp[i][j] = dp[i-1][j]."
+    ],
+    "approach": "2D DP where dp[i][j] = number of distinct subsequences of s[0:i] that equal t[0:j]. If s[i]==t[j], dp[i][j] = dp[i-1][j-1] + dp[i-1][j]. Otherwise, dp[i][j] = dp[i-1][j].",
+    "solution_python": "def numDistinct(self, s: str, t: str) -> int:\n    dp = [[0] * (len(t) + 1) for _ in range(len(s) + 1)]\n    for i in range(len(s) + 1):\n        dp[i][0] = 1\n    for i in range(1, len(s) + 1):\n        for j in range(1, len(t) + 1):\n            dp[i][j] = dp[i-1][j]\n            if s[i-1] == t[j-1]:\n                dp[i][j] += dp[i-1][j-1]\n    return dp[len(s)][len(t)]",
+    "solution_js": "var numDistinct = function(s, t) {\n    const dp = Array.from({length: s.length+1}, () => new Array(t.length+1).fill(0));\n    for (let i = 0; i <= s.length; i++) dp[i][0] = 1;\n    for (let i = 1; i <= s.length; i++)\n        for (let j = 1; j <= t.length; j++) {\n            dp[i][j] = dp[i-1][j];\n            if (s[i-1] === t[j-1]) dp[i][j] += dp[i-1][j-1];\n        }\n    return dp[s.length][t.length];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "When characters match, you have two choices (use the match + skip it), combining both counts. When they don't match, you must skip the s character.",
+    "related": [
+      106,
+      110
+    ]
+  },
+  {
+    "id": 113,
+    "title": "Edit Distance",
+    "slug": "edit-distance",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/edit-distance/",
+    "patterns": [
+      "DP",
+      "String"
+    ],
+    "hints": [
+      "dp[i][j] = min operations to convert word1[0:i] to word2[0:j].",
+      "If characters match, no operation needed: dp[i][j] = dp[i-1][j-1].",
+      "If they differ, try insert (dp[i][j-1]+1), delete (dp[i-1][j]+1), or replace (dp[i-1][j-1]+1)."
+    ],
+    "approach": "2D DP where dp[i][j] = min edits to convert word1[0:i] to word2[0:j]. If chars match, dp[i][j] = dp[i-1][j-1]. Otherwise, 1 + min(insert, delete, replace) from adjacent states.",
+    "solution_python": "def minDistance(self, word1: str, word2: str) -> int:\n    m, n = len(word1), len(word2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if word1[i-1] == word2[j-1]:\n                dp[i][j] = dp[i-1][j-1]\n            else:\n                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\n    return dp[m][n]",
+    "solution_js": "var minDistance = function(word1, word2) {\n    const m = word1.length, n = word2.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));\n    for (let i = 0; i <= m; i++) dp[i][0] = i;\n    for (let j = 0; j <= n; j++) dp[0][j] = j;\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++) {\n            if (word1[i-1] === word2[j-1]) dp[i][j] = dp[i-1][j-1];\n            else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);\n        }\n    return dp[m][n];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "Three operations map to three adjacent DP cells: insert=right, delete=down, replace=diagonal \u2014 take the minimum plus one operation cost.",
+    "related": [
+      106,
+      112
+    ]
+  },
+  {
+    "id": 114,
+    "title": "Burst Balloons",
+    "slug": "burst-balloons",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/burst-balloons/",
+    "patterns": [
+      "DP",
+      "Interval DP"
+    ],
+    "hints": [
+      "Think about which balloon to burst LAST in a range, not first.",
+      "If balloon k is burst last in range [i,j], its value is nums[i-1]*nums[k]*nums[j+1].",
+      "dp[i][j] = max coins from bursting all balloons between i and j."
+    ],
+    "approach": "Interval DP. For range [l,r], try each balloon i as the LAST to burst. Its coins = nums[l-1]*nums[i]*nums[r+1] (boundaries remain). dp[l][r] = max over all i of (dp[l][i-1] + coins + dp[i+1][r]).",
+    "solution_python": "def maxCoins(self, nums: List[int]) -> int:\n    nums = [1] + nums + [1]\n    n = len(nums)\n    dp = [[0] * n for _ in range(n)]\n    for length in range(1, n - 1):\n        for l in range(1, n - length):\n            r = l + length - 1\n            for i in range(l, r + 1):\n                coins = nums[l-1] * nums[i] * nums[r+1]\n                coins += dp[l][i-1] + dp[i+1][r]\n                dp[l][r] = max(dp[l][r], coins)\n    return dp[1][n-2]",
+    "solution_js": "var maxCoins = function(nums) {\n    nums = [1, ...nums, 1];\n    const n = nums.length;\n    const dp = Array.from({length: n}, () => new Array(n).fill(0));\n    for (let len = 1; len <= n - 2; len++)\n        for (let l = 1; l <= n - 1 - len; l++) {\n            const r = l + len - 1;\n            for (let i = l; i <= r; i++) {\n                const coins = nums[l-1] * nums[i] * nums[r+1] + dp[l][i-1] + dp[i+1][r];\n                dp[l][r] = Math.max(dp[l][r], coins);\n            }\n        }\n    return dp[1][n-2];\n};",
+    "time_complexity": "O(n^3)",
+    "space_complexity": "O(n^2)",
+    "key_insight": "Thinking about which balloon to burst LAST (not first) in a range makes the subproblems independent \u2014 the boundaries are fixed.",
+    "related": [
+      113,
+      115
+    ]
+  },
+  {
+    "id": 115,
+    "title": "Regular Expression Matching",
+    "slug": "regular-expression-matching",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/regular-expression-matching/",
+    "patterns": [
+      "DP",
+      "String"
+    ],
+    "hints": [
+      "'.' matches any single character. '*' means zero or more of the preceding element.",
+      "dp[i][j] = does s[0:i] match p[0:j]?",
+      "For '*', consider two cases: use it zero times (skip pattern pair) or use it once more (if current char matches)."
+    ],
+    "approach": "2D DP where dp[i][j] = whether s[0:i] matches p[0:j]. For '*': either skip the pattern pair (zero matches: dp[i][j-2]) or match one more character if current matches. For '.': matches any character.",
+    "solution_python": "def isMatch(self, s: str, p: str) -> bool:\n    dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]\n    dp[0][0] = True\n    for j in range(1, len(p) + 1):\n        if p[j-1] == '*':\n            dp[0][j] = dp[0][j-2]\n    for i in range(1, len(s) + 1):\n        for j in range(1, len(p) + 1):\n            if p[j-1] == '*':\n                dp[i][j] = dp[i][j-2]\n                if p[j-2] == '.' or p[j-2] == s[i-1]:\n                    dp[i][j] = dp[i][j] or dp[i-1][j]\n            elif p[j-1] == '.' or p[j-1] == s[i-1]:\n                dp[i][j] = dp[i-1][j-1]\n    return dp[len(s)][len(p)]",
+    "solution_js": "var isMatch = function(s, p) {\n    const m = s.length, n = p.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(false));\n    dp[0][0] = true;\n    for (let j = 1; j <= n; j++)\n        if (p[j-1] === '*') dp[0][j] = dp[0][j-2];\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++) {\n            if (p[j-1] === '*') {\n                dp[i][j] = dp[i][j-2];\n                if (p[j-2] === '.' || p[j-2] === s[i-1])\n                    dp[i][j] = dp[i][j] || dp[i-1][j];\n            } else if (p[j-1] === '.' || p[j-1] === s[i-1]) {\n                dp[i][j] = dp[i-1][j-1];\n            }\n        }\n    return dp[m][n];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "key_insight": "The '*' operator has two DP transitions: skip the pattern pair entirely (zero matches) or consume one more character from s (if it matches the preceding pattern element).",
+    "related": [
+      102,
+      113
+    ]
+  },
+  {
+    "id": 116,
+    "title": "Maximum Subarray",
+    "slug": "maximum-subarray",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-subarray/",
+    "patterns": [
+      "Greedy",
+      "Kadane's Algorithm"
+    ],
+    "hints": [
+      "At each position, decide: extend the current subarray or start a new one?",
+      "If the running sum becomes negative, it's better to start fresh.",
+      "Track the current sum and the maximum sum seen so far."
+    ],
+    "approach": "Kadane's algorithm. Iterate through the array, maintaining a running sum. If the running sum goes negative, reset to 0. Track the maximum subarray sum encountered.",
+    "solution_python": "def maxSubArray(self, nums: List[int]) -> int:\n    maxSub = nums[0]\n    curSum = 0\n    for n in nums:\n        if curSum < 0:\n            curSum = 0\n        curSum += n\n        maxSub = max(maxSub, curSum)\n    return maxSub",
+    "solution_js": "var maxSubArray = function(nums) {\n    let maxSub = nums[0], curSum = 0;\n    for (const n of nums) {\n        if (curSum < 0) curSum = 0;\n        curSum += n;\n        maxSub = Math.max(maxSub, curSum);\n    }\n    return maxSub;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "A negative running sum only hurts future subarrays \u2014 reset to zero and start fresh, since any extension would be worse than starting over.",
+    "related": [
+      101,
+      117
+    ]
+  },
+  {
+    "id": 117,
+    "title": "Jump Game",
+    "slug": "jump-game",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/jump-game/",
+    "patterns": [
+      "Greedy"
+    ],
+    "hints": [
+      "Track the farthest index you can reach as you iterate.",
+      "If you ever reach an index beyond your current farthest, you're stuck.",
+      "If the farthest reach includes the last index, return true."
+    ],
+    "approach": "Greedy: track the farthest reachable index. Iterate through the array \u2014 at each position, update the farthest reach. If the current index exceeds the farthest, return false. If farthest >= last index, return true.",
+    "solution_python": "def canJump(self, nums: List[int]) -> bool:\n    goal = len(nums) - 1\n    for i in range(len(nums) - 2, -1, -1):\n        if i + nums[i] >= goal:\n            goal = i\n    return goal == 0",
+    "solution_js": "var canJump = function(nums) {\n    let goal = nums.length - 1;\n    for (let i = nums.length - 2; i >= 0; i--) {\n        if (i + nums[i] >= goal) goal = i;\n    }\n    return goal === 0;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Work backwards: if a position can reach the current goal, it becomes the new goal. If the goal reaches index 0, the end is reachable.",
+    "related": [
+      118,
+      116
+    ]
+  },
+  {
+    "id": 118,
+    "title": "Jump Game II",
+    "slug": "jump-game-ii",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/jump-game-ii/",
+    "patterns": [
+      "Greedy",
+      "BFS"
+    ],
+    "hints": [
+      "Think of this as BFS where each 'level' is one jump.",
+      "Track the current jump's farthest reach and the overall farthest.",
+      "When you reach the end of the current level, increment jumps and start the next level."
+    ],
+    "approach": "BFS-like greedy. Track the end of the current jump range and the farthest reachable. When you reach the current range end, take a jump (increment count) and extend to the farthest reachable.",
+    "solution_python": "def jump(self, nums: List[int]) -> int:\n    jumps = 0\n    l = r = 0\n    while r < len(nums) - 1:\n        farthest = 0\n        for i in range(l, r + 1):\n            farthest = max(farthest, i + nums[i])\n        l = r + 1\n        r = farthest\n        jumps += 1\n    return jumps",
+    "solution_js": "var jump = function(nums) {\n    let jumps = 0, l = 0, r = 0;\n    while (r < nums.length - 1) {\n        let farthest = 0;\n        for (let i = l; i <= r; i++)\n            farthest = Math.max(farthest, i + nums[i]);\n        l = r + 1;\n        r = farthest;\n        jumps++;\n    }\n    return jumps;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Each jump explores a 'level' of reachable indices (like BFS) \u2014 the minimum jumps equals the number of BFS levels to reach the end.",
+    "related": [
+      117,
+      116
+    ]
+  },
+  {
+    "id": 119,
+    "title": "Gas Station",
+    "slug": "gas-station",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/gas-station/",
+    "patterns": [
+      "Greedy"
+    ],
+    "hints": [
+      "If total gas >= total cost, a solution must exist.",
+      "If you run out of gas at station j starting from i, no station between i and j works either.",
+      "Reset the starting point to j+1 whenever the tank goes negative."
+    ],
+    "approach": "If total gas < total cost, return -1. Otherwise, greedily find the start: iterate, tracking the tank. If tank goes negative, reset start to the next station and reset tank. The final start position is the answer.",
+    "solution_python": "def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:\n    if sum(gas) < sum(cost):\n        return -1\n    tank = 0\n    start = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            tank = 0\n            start = i + 1\n    return start",
+    "solution_js": "var canCompleteCircuit = function(gas, cost) {\n    let totalGas = 0, totalCost = 0;\n    for (let i = 0; i < gas.length; i++) { totalGas += gas[i]; totalCost += cost[i]; }\n    if (totalGas < totalCost) return -1;\n    let tank = 0, start = 0;\n    for (let i = 0; i < gas.length; i++) {\n        tank += gas[i] - cost[i];\n        if (tank < 0) { tank = 0; start = i + 1; }\n    }\n    return start;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "If you fail at station j from start i, all stations between i and j also fail \u2014 so jump the start to j+1, combining multiple failure proofs in one pass.",
+    "related": [
+      117,
+      120
+    ]
+  },
+  {
+    "id": 120,
+    "title": "Hand of Straights",
+    "slug": "hand-of-straights",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/hand-of-straights/",
+    "patterns": [
+      "Greedy",
+      "Hash Map",
+      "Sorting"
+    ],
+    "hints": [
+      "Each group must be W consecutive cards \u2014 start each group from the smallest available card.",
+      "Sort the cards and greedily form groups starting from the smallest unused card.",
+      "Use a frequency map to track remaining cards."
+    ],
+    "approach": "Sort the cards. For each smallest available card, try to form a group of W consecutive cards by decrementing their counts. If any card in the sequence is unavailable, return false.",
+    "solution_python": "def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:\n    if len(hand) % groupSize:\n        return False\n    count = Counter(hand)\n    for card in sorted(count):\n        while count[card] > 0:\n            for i in range(card, card + groupSize):\n                if count[i] <= 0:\n                    return False\n                count[i] -= 1\n    return True",
+    "solution_js": "var isNStraightHand = function(hand, groupSize) {\n    if (hand.length % groupSize) return false;\n    const count = new Map();\n    for (const c of hand) count.set(c, (count.get(c) || 0) + 1);\n    const sorted = [...count.keys()].sort((a, b) => a - b);\n    for (const card of sorted) {\n        while (count.get(card) > 0) {\n            for (let i = card; i < card + groupSize; i++) {\n                if ((count.get(i) || 0) <= 0) return false;\n                count.set(i, count.get(i) - 1);\n            }\n        }\n    }\n    return true;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Greedily start each group from the smallest available card \u2014 this forces a unique grouping and quickly reveals if valid groups are impossible.",
+    "related": [
+      124,
+      119
+    ]
+  },
+  {
+    "id": 121,
+    "title": "Merge Triplets to Form Target Triplet",
+    "slug": "merge-triplets-to-form-target-triplet",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/merge-triplets-to-form-target-triplet/",
+    "patterns": [
+      "Greedy"
+    ],
+    "hints": [
+      "A triplet is usable only if none of its values exceed the corresponding target values.",
+      "Filter out triplets where any value exceeds the target.",
+      "From remaining triplets, check if each target value appears in at least one triplet."
+    ],
+    "approach": "Filter triplets: discard any where a[i] > target[i] for any position (merging would exceed target). From remaining valid triplets, check if the max in each position can reach each target value.",
+    "solution_python": "def mergeTriplets(self, triplets: List[List[int]], target: List[int]) -> bool:\n    good = set()\n    for t in triplets:\n        if t[0] > target[0] or t[1] > target[1] or t[2] > target[2]:\n            continue\n        for i in range(3):\n            if t[i] == target[i]:\n                good.add(i)\n    return len(good) == 3",
+    "solution_js": "var mergeTriplets = function(triplets, target) {\n    const good = new Set();\n    for (const t of triplets) {\n        if (t[0] > target[0] || t[1] > target[1] || t[2] > target[2]) continue;\n        for (let i = 0; i < 3; i++)\n            if (t[i] === target[i]) good.add(i);\n    }\n    return good.size === 3;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Triplets with any value exceeding the target are unusable (merge only takes max). Among valid triplets, we just need each target position covered by at least one.",
+    "related": [
+      119,
+      122
+    ]
+  },
+  {
+    "id": 122,
+    "title": "Partition Labels",
+    "slug": "partition-labels",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/partition-labels/",
+    "patterns": [
+      "Greedy",
+      "Two Pointers"
+    ],
+    "hints": [
+      "Each character must appear in exactly one partition.",
+      "For each character, find its last occurrence \u2014 the partition must extend at least that far.",
+      "Expand the partition end as you encounter characters with later last occurrences."
+    ],
+    "approach": "Record the last occurrence of each character. Iterate through the string, expanding the current partition's end to include the last occurrence of each character. When the current index equals the partition end, close the partition.",
+    "solution_python": "def partitionLabels(self, s: str) -> List[int]:\n    last = {c: i for i, c in enumerate(s)}\n    res = []\n    start = end = 0\n    for i, c in enumerate(s):\n        end = max(end, last[c])\n        if i == end:\n            res.append(end - start + 1)\n            start = end + 1\n    return res",
+    "solution_js": "var partitionLabels = function(s) {\n    const last = {};\n    for (let i = 0; i < s.length; i++) last[s[i]] = i;\n    const res = [];\n    let start = 0, end = 0;\n    for (let i = 0; i < s.length; i++) {\n        end = Math.max(end, last[s[i]]);\n        if (i === end) { res.push(end - start + 1); start = end + 1; }\n    }\n    return res;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1) \u2014 at most 26 letters",
+    "key_insight": "A partition must contain all occurrences of each character in it \u2014 tracking last occurrences and expanding greedily finds minimum partitions.",
+    "related": [
+      124,
+      119
+    ]
+  },
+  {
+    "id": 123,
+    "title": "Valid Parenthesis String",
+    "slug": "valid-parenthesis-string",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/valid-parenthesis-string/",
+    "patterns": [
+      "Greedy",
+      "Stack"
+    ],
+    "hints": [
+      "'*' can be '(', ')' or empty \u2014 track a range of possible open counts.",
+      "Maintain leftMin (min possible open parens) and leftMax (max possible open parens).",
+      "If leftMax goes negative, too many ')'. If leftMin goes negative, clamp to 0."
+    ],
+    "approach": "Track the range of possible open parenthesis counts [leftMin, leftMax]. '(' increments both, ')' decrements both, '*' decrements leftMin and increments leftMax. Clamp leftMin to 0. Valid if leftMin reaches 0.",
+    "solution_python": "def checkValidString(self, s: str) -> bool:\n    leftMin = leftMax = 0\n    for c in s:\n        if c == '(':\n            leftMin += 1\n            leftMax += 1\n        elif c == ')':\n            leftMin -= 1\n            leftMax -= 1\n        else:\n            leftMin -= 1\n            leftMax += 1\n        if leftMax < 0:\n            return False\n        if leftMin < 0:\n            leftMin = 0\n    return leftMin == 0",
+    "solution_js": "var checkValidString = function(s) {\n    let leftMin = 0, leftMax = 0;\n    for (const c of s) {\n        if (c === '(') { leftMin++; leftMax++; }\n        else if (c === ')') { leftMin--; leftMax--; }\n        else { leftMin--; leftMax++; }\n        if (leftMax < 0) return false;\n        if (leftMin < 0) leftMin = 0;\n    }\n    return leftMin === 0;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Instead of trying all '*' possibilities, track the range [min, max] of possible open counts \u2014 if 0 is within range at the end, some valid assignment exists.",
+    "related": [
+      116,
+      119
+    ]
+  },
+  {
+    "id": 124,
+    "title": "Insert Interval",
+    "slug": "insert-interval",
+    "category": "Intervals",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/insert-interval/",
+    "patterns": [
+      "Intervals",
+      "Merge"
+    ],
+    "hints": [
+      "Split intervals into three groups: before, overlapping with, and after the new interval.",
+      "Non-overlapping intervals before/after are added directly.",
+      "Merge overlapping intervals by taking min of starts and max of ends."
+    ],
+    "approach": "Iterate through intervals. Add all intervals that end before newInterval starts. Merge all overlapping intervals with newInterval (update start/end). Add all remaining intervals after the merged interval.",
+    "solution_python": "def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:\n    res = []\n    for i in range(len(intervals)):\n        if newInterval[1] < intervals[i][0]:\n            res.append(newInterval)\n            return res + intervals[i:]\n        elif newInterval[0] > intervals[i][1]:\n            res.append(intervals[i])\n        else:\n            newInterval = [min(newInterval[0], intervals[i][0]),\n                          max(newInterval[1], intervals[i][1])]\n    res.append(newInterval)\n    return res",
+    "solution_js": "var insert = function(intervals, newInterval) {\n    const res = [];\n    for (let i = 0; i < intervals.length; i++) {\n        if (newInterval[1] < intervals[i][0]) {\n            res.push(newInterval);\n            return res.concat(intervals.slice(i));\n        } else if (newInterval[0] > intervals[i][1]) {\n            res.push(intervals[i]);\n        } else {\n            newInterval = [Math.min(newInterval[0], intervals[i][0]),\n                          Math.max(newInterval[1], intervals[i][1])];\n        }\n    }\n    res.push(newInterval);\n    return res;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Three cases per interval: entirely before (add as-is), overlapping (merge), entirely after (add remaining). The merged interval grows to encompass all overlaps.",
+    "related": [
+      125,
+      126
+    ]
+  },
+  {
+    "id": 125,
+    "title": "Merge Intervals",
+    "slug": "merge-intervals",
+    "category": "Intervals",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/merge-intervals/",
+    "patterns": [
+      "Intervals",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort intervals by start time so overlapping intervals are adjacent.",
+      "If the current interval overlaps with the last merged interval, extend the end.",
+      "Two intervals overlap if the current start <= the previous end."
+    ],
+    "approach": "Sort intervals by start time. Initialize result with the first interval. For each subsequent interval, if it overlaps with the last result interval (start <= last end), merge by extending end. Otherwise, add as new interval.",
+    "solution_python": "def merge(self, intervals: List[List[int]]) -> List[List[int]]:\n    intervals.sort()\n    res = [intervals[0]]\n    for start, end in intervals[1:]:\n        if start <= res[-1][1]:\n            res[-1][1] = max(res[-1][1], end)\n        else:\n            res.append([start, end])\n    return res",
+    "solution_js": "var merge = function(intervals) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const res = [intervals[0]];\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] <= res[res.length-1][1]) {\n            res[res.length-1][1] = Math.max(res[res.length-1][1], intervals[i][1]);\n        } else {\n            res.push(intervals[i]);\n        }\n    }\n    return res;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Sorting by start time ensures overlapping intervals are consecutive \u2014 a single pass then merges them by extending end times.",
+    "related": [
+      124,
+      126
+    ]
+  },
+  {
+    "id": 126,
+    "title": "Non-overlapping Intervals",
+    "slug": "non-overlapping-intervals",
+    "category": "Intervals",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/non-overlapping-intervals/",
+    "patterns": [
+      "Intervals",
+      "Greedy",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort by end time \u2014 greedily keep intervals that end earliest.",
+      "When two intervals overlap, remove the one with the later end time.",
+      "Counting removals = total intervals minus the maximum non-overlapping set."
+    ],
+    "approach": "Sort by end time. Greedily keep the interval with the earliest end time when overlaps occur. Count the number of intervals that need to be removed.",
+    "solution_python": "def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n    intervals.sort(key=lambda x: x[1])\n    count = 0\n    prevEnd = float('-inf')\n    for start, end in intervals:\n        if start >= prevEnd:\n            prevEnd = end\n        else:\n            count += 1\n    return count",
+    "solution_js": "var eraseOverlapIntervals = function(intervals) {\n    intervals.sort((a, b) => a[1] - b[1]);\n    let count = 0, prevEnd = -Infinity;\n    for (const [start, end] of intervals) {\n        if (start >= prevEnd) prevEnd = end;\n        else count++;\n    }\n    return count;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Sort by end time and greedily keep earliest-ending intervals \u2014 this maximizes non-overlapping intervals, minimizing removals.",
+    "related": [
+      125,
+      127
+    ]
+  },
+  {
+    "id": 127,
+    "title": "Meeting Rooms",
+    "slug": "meeting-rooms",
+    "category": "Intervals",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/meeting-rooms/",
+    "patterns": [
+      "Intervals",
+      "Sorting"
+    ],
+    "hints": [
+      "A person can attend all meetings only if no two meetings overlap.",
+      "Sort by start time and check if any meeting starts before the previous one ends.",
+      "If intervals[i].start < intervals[i-1].end, there's a conflict."
+    ],
+    "approach": "Sort intervals by start time. Check each consecutive pair: if the current meeting starts before the previous one ends, return false (overlap detected). If no overlaps found, return true.",
+    "solution_python": "def canAttendMeetings(self, intervals: List[List[int]]) -> bool:\n    intervals.sort()\n    for i in range(1, len(intervals)):\n        if intervals[i][0] < intervals[i-1][1]:\n            return False\n    return True",
+    "solution_js": "var canAttendMeetings = function(intervals) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] < intervals[i-1][1]) return false;\n    }\n    return true;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Sorting by start time makes overlap detection trivial \u2014 just check if each meeting starts before the previous one ends.",
+    "related": [
+      128,
+      125
+    ]
+  },
+  {
+    "id": 128,
+    "title": "Meeting Rooms II",
+    "slug": "meeting-rooms-ii",
+    "category": "Intervals",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/meeting-rooms-ii/",
+    "patterns": [
+      "Intervals",
+      "Heap",
+      "Sweep Line"
+    ],
+    "hints": [
+      "The minimum rooms needed = the maximum number of overlapping meetings at any point.",
+      "Use a sweep line: +1 at each start time, -1 at each end time.",
+      "The maximum running count of active meetings is the answer."
+    ],
+    "approach": "Separate start and end times. Sort both arrays. Use two pointers: when a start < current end, a new room is needed (increment count). When end <= start, a room is freed. Track the maximum count.",
+    "solution_python": "def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n    starts = sorted(i[0] for i in intervals)\n    ends = sorted(i[1] for i in intervals)\n    res = count = 0\n    s = e = 0\n    while s < len(starts):\n        if starts[s] < ends[e]:\n            count += 1\n            s += 1\n        else:\n            count -= 1\n            e += 1\n        res = max(res, count)\n    return res",
+    "solution_js": "var minMeetingRooms = function(intervals) {\n    const starts = intervals.map(i => i[0]).sort((a,b) => a-b);\n    const ends = intervals.map(i => i[1]).sort((a,b) => a-b);\n    let res = 0, count = 0, s = 0, e = 0;\n    while (s < starts.length) {\n        if (starts[s] < ends[e]) { count++; s++; }\n        else { count--; e++; }\n        res = Math.max(res, count);\n    }\n    return res;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "key_insight": "Separating and sorting start/end times creates a sweep line \u2014 tracking concurrent meetings with two pointers finds the peak overlap.",
+    "related": [
+      127,
+      125
+    ]
+  },
+  {
+    "id": 129,
+    "title": "Minimum Interval to Include Each Query",
+    "slug": "minimum-interval-to-include-each-query",
+    "category": "Intervals",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/minimum-interval-to-include-each-query/",
+    "patterns": [
+      "Intervals",
+      "Heap",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort both intervals and queries. Process queries in order of increasing value.",
+      "Use a min-heap keyed by interval size to track candidate intervals.",
+      "For each query, add all intervals that start <= query, then remove expired ones (end < query)."
+    ],
+    "approach": "Sort intervals by start and queries by value. For each query (in order), push all intervals starting <= query onto a min-heap (keyed by size). Pop intervals that end before the query. The heap top is the smallest valid interval.",
+    "solution_python": "def minInterval(self, intervals: List[List[int]], queries: List[int]) -> List[int]:\n    intervals.sort()\n    sortedQ = sorted(enumerate(queries), key=lambda x: x[1])\n    res = [-1] * len(queries)\n    heap = []\n    j = 0\n    for idx, q in sortedQ:\n        while j < len(intervals) and intervals[j][0] <= q:\n            l, r = intervals[j]\n            heapq.heappush(heap, (r - l + 1, r))\n            j += 1\n        while heap and heap[0][1] < q:\n            heapq.heappop(heap)\n        if heap:\n            res[idx] = heap[0][0]\n    return res",
+    "solution_js": "var minInterval = function(intervals, queries) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const sortedQ = queries.map((q, i) => [q, i]).sort((a, b) => a[0] - b[0]);\n    const res = new Array(queries.length).fill(-1);\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    let j = 0;\n    for (const [q, idx] of sortedQ) {\n        while (j < intervals.length && intervals[j][0] <= q) {\n            const [l, r] = intervals[j];\n            heap.enqueue([r - l + 1, r]);\n            j++;\n        }\n        while (heap.size() && heap.front().element[1] < q) heap.dequeue();\n        if (heap.size()) res[idx] = heap.front().element[0];\n    }\n    return res;\n};",
+    "time_complexity": "O((n + q) log n)",
+    "space_complexity": "O(n + q)",
+    "key_insight": "Processing sorted queries with a min-heap of interval sizes \u2014 lazily adding and removing intervals \u2014 efficiently finds the smallest containing interval for each query.",
+    "related": [
+      128,
+      125
+    ]
+  },
+  {
+    "id": 130,
+    "title": "Rotate Image",
+    "slug": "rotate-image",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotate-image/",
+    "patterns": [
+      "Matrix",
+      "Math"
+    ],
+    "hints": [
+      "Rotating 90\u00b0 clockwise = transpose + reverse each row.",
+      "Transpose swaps matrix[i][j] with matrix[j][i].",
+      "After transposing, reversing each row completes the rotation."
+    ],
+    "approach": "In-place rotation: first transpose the matrix (swap across the main diagonal), then reverse each row. This achieves a 90\u00b0 clockwise rotation.",
+    "solution_python": "def rotate(self, matrix: List[List[int]]) -> None:\n    n = len(matrix)\n    for i in range(n):\n        for j in range(i + 1, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n    for row in matrix:\n        row.reverse()",
+    "solution_js": "var rotate = function(matrix) {\n    const n = matrix.length;\n    for (let i = 0; i < n; i++)\n        for (let j = i + 1; j < n; j++)\n            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];\n    for (const row of matrix) row.reverse();\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "key_insight": "90\u00b0 clockwise rotation = transpose + reverse rows. This decomposition makes in-place rotation simple with just swaps.",
+    "related": [
+      131,
+      105
+    ]
+  },
+  {
+    "id": 131,
+    "title": "Spiral Matrix",
+    "slug": "spiral-matrix",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/spiral-matrix/",
+    "patterns": [
+      "Matrix",
+      "Simulation"
+    ],
+    "hints": [
+      "Traverse the matrix in layers: top row \u2192 right column \u2192 bottom row \u2192 left column.",
+      "Maintain four boundaries: top, bottom, left, right.",
+      "Shrink boundaries after each direction and stop when they cross."
+    ],
+    "approach": "Use four boundaries (top, bottom, left, right). Traverse right along top row, down right column, left along bottom row, up left column. Shrink boundaries after each direction. Stop when boundaries cross.",
+    "solution_python": "def spiralOrder(self, matrix: List[List[int]]) -> List[int]:\n    res = []\n    top, bottom = 0, len(matrix) - 1\n    left, right = 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for c in range(left, right + 1):\n            res.append(matrix[top][c])\n        top += 1\n        for r in range(top, bottom + 1):\n            res.append(matrix[r][right])\n        right -= 1\n        if top <= bottom:\n            for c in range(right, left - 1, -1):\n                res.append(matrix[bottom][c])\n            bottom -= 1\n        if left <= right:\n            for r in range(bottom, top - 1, -1):\n                res.append(matrix[r][left])\n            left += 1\n    return res",
+    "solution_js": "var spiralOrder = function(matrix) {\n    const res = [];\n    let top = 0, bottom = matrix.length - 1;\n    let left = 0, right = matrix[0].length - 1;\n    while (top <= bottom && left <= right) {\n        for (let c = left; c <= right; c++) res.push(matrix[top][c]);\n        top++;\n        for (let r = top; r <= bottom; r++) res.push(matrix[r][right]);\n        right--;\n        if (top <= bottom) {\n            for (let c = right; c >= left; c--) res.push(matrix[bottom][c]);\n            bottom--;\n        }\n        if (left <= right) {\n            for (let r = bottom; r >= top; r--) res.push(matrix[r][left]);\n            left++;\n        }\n    }\n    return res;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(1) excluding output",
+    "key_insight": "Four shrinking boundaries (top/bottom/left/right) define the unvisited rectangle \u2014 traverse each edge in order and shrink inward.",
+    "related": [
+      130,
+      105
+    ]
+  },
+  {
+    "id": 132,
+    "title": "Set Matrix Zeroes",
+    "slug": "set-matrix-zeroes",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/set-matrix-zeroes/",
+    "patterns": [
+      "Matrix",
+      "In-place"
+    ],
+    "hints": [
+      "Use the first row and first column as markers for which rows/columns should be zeroed.",
+      "First pass: mark the first cell of each row/column that contains a zero.",
+      "Second pass: zero out cells based on markers, then handle the first row/column separately."
+    ],
+    "approach": "Use the first row and column as flags. Track if the first row/column themselves need zeroing. First pass marks zeros in first row/column. Second pass zeros cells based on markers. Finally handle first row/column.",
+    "solution_python": "def setZeroes(self, matrix: List[List[int]]) -> None:\n    rows, cols = len(matrix), len(matrix[0])\n    rowZero = False\n    for r in range(rows):\n        for c in range(cols):\n            if matrix[r][c] == 0:\n                matrix[0][c] = 0\n                if r > 0:\n                    matrix[r][0] = 0\n                else:\n                    rowZero = True\n    for r in range(1, rows):\n        for c in range(1, cols):\n            if matrix[0][c] == 0 or matrix[r][0] == 0:\n                matrix[r][c] = 0\n    if matrix[0][0] == 0:\n        for r in range(rows):\n            matrix[r][0] = 0\n    if rowZero:\n        for c in range(cols):\n            matrix[0][c] = 0",
+    "solution_js": "var setZeroes = function(matrix) {\n    const rows = matrix.length, cols = matrix[0].length;\n    let rowZero = false;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (matrix[r][c] === 0) {\n                matrix[0][c] = 0;\n                if (r > 0) matrix[r][0] = 0;\n                else rowZero = true;\n            }\n    for (let r = 1; r < rows; r++)\n        for (let c = 1; c < cols; c++)\n            if (matrix[0][c] === 0 || matrix[r][0] === 0) matrix[r][c] = 0;\n    if (matrix[0][0] === 0)\n        for (let r = 0; r < rows; r++) matrix[r][0] = 0;\n    if (rowZero)\n        for (let c = 0; c < cols; c++) matrix[0][c] = 0;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Reuse the first row and column as markers to achieve O(1) space \u2014 just need an extra flag for the first row since it overlaps with column markers.",
+    "related": [
+      130,
+      131
+    ]
+  },
+  {
+    "id": 133,
+    "title": "Happy Number",
+    "slug": "happy-number",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/happy-number/",
+    "patterns": [
+      "Math",
+      "Hash Set",
+      "Fast/Slow Pointers"
+    ],
+    "hints": [
+      "Repeatedly replace the number by the sum of squares of its digits.",
+      "If you reach 1, it's happy. If you see a repeated number, it's a cycle (not happy).",
+      "Use a set to detect cycles, or use Floyd's cycle detection (fast/slow pointers)."
+    ],
+    "approach": "Compute sum of squared digits repeatedly. Use a set to track seen numbers. If we reach 1, return true. If we see a repeated number (cycle), return false.",
+    "solution_python": "def isHappy(self, n: int) -> bool:\n    seen = set()\n    while n != 1:\n        if n in seen:\n            return False\n        seen.add(n)\n        n = sum(int(d) ** 2 for d in str(n))\n    return True",
+    "solution_js": "var isHappy = function(n) {\n    const seen = new Set();\n    while (n !== 1) {\n        if (seen.has(n)) return false;\n        seen.add(n);\n        n = String(n).split('').reduce((sum, d) => sum + d * d, 0);\n    }\n    return true;\n};",
+    "time_complexity": "O(log n) per step, bounded iterations",
+    "space_complexity": "O(log n)",
+    "key_insight": "The digit-square-sum sequence either reaches 1 or enters a cycle \u2014 detecting the cycle (via set or Floyd's algorithm) determines happiness.",
+    "related": [
+      134,
+      135
+    ]
+  },
+  {
+    "id": 134,
+    "title": "Plus One",
+    "slug": "plus-one",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/plus-one/",
+    "patterns": [
+      "Math",
+      "Array"
+    ],
+    "hints": [
+      "Start from the last digit and add 1.",
+      "If the digit becomes 10, set it to 0 and carry 1 to the next digit.",
+      "If the carry propagates past the first digit (e.g., 999 + 1), prepend a 1."
+    ],
+    "approach": "Iterate from the last digit. If digit < 9, increment and return. If digit is 9, set to 0 and continue (carry). If all digits were 9, prepend 1 (e.g., 999 \u2192 1000).",
+    "solution_python": "def plusOne(self, digits: List[int]) -> List[int]:\n    for i in range(len(digits) - 1, -1, -1):\n        if digits[i] < 9:\n            digits[i] += 1\n            return digits\n        digits[i] = 0\n    return [1] + digits",
+    "solution_js": "var plusOne = function(digits) {\n    for (let i = digits.length - 1; i >= 0; i--) {\n        if (digits[i] < 9) { digits[i]++; return digits; }\n        digits[i] = 0;\n    }\n    return [1, ...digits];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "key_insight": "Only 9s cause carries \u2014 stop as soon as a non-9 digit is found. The only case needing an extra digit is all 9s (like 999 \u2192 1000).",
+    "related": [
+      133,
+      135
+    ]
+  },
+  {
+    "id": 135,
+    "title": "Pow(x, n)",
+    "slug": "powx-n",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/powx-n/",
+    "patterns": [
+      "Math",
+      "Recursion",
+      "Binary Exponentiation"
+    ],
+    "hints": [
+      "Naive multiplication is O(n). Can you do better using repeated squaring?",
+      "x^n = (x^(n/2))^2 for even n, and x * (x^(n/2))^2 for odd n.",
+      "Handle negative exponents by computing 1/x^|n|."
+    ],
+    "approach": "Binary exponentiation (fast power). If n is even, x^n = (x^(n/2))^2. If n is odd, x^n = x * x^(n-1). Handle negative n by inverting x and negating n.",
+    "solution_python": "def myPow(self, x: float, n: int) -> float:\n    def helper(x, n):\n        if x == 0:\n            return 0\n        if n == 0:\n            return 1\n        res = helper(x * x, n // 2)\n        return x * res if n % 2 else res\n    res = helper(x, abs(n))\n    return res if n >= 0 else 1 / res",
+    "solution_js": "var myPow = function(x, n) {\n    function helper(x, n) {\n        if (x === 0) return 0;\n        if (n === 0) return 1;\n        let res = helper(x * x, Math.floor(n / 2));\n        return n % 2 ? x * res : res;\n    }\n    const res = helper(x, Math.abs(n));\n    return n >= 0 ? res : 1 / res;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(log n) recursion",
+    "key_insight": "Binary exponentiation squares the base and halves the exponent each step \u2014 reducing O(n) multiplications to O(log n).",
+    "related": [
+      136,
+      133
+    ]
+  },
+  {
+    "id": 136,
+    "title": "Multiply Strings",
+    "slug": "multiply-strings",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/multiply-strings/",
+    "patterns": [
+      "Math",
+      "String"
+    ],
+    "hints": [
+      "Simulate grade-school multiplication digit by digit.",
+      "The product of digit at position i and j contributes to position i+j and i+j+1 in the result.",
+      "Accumulate products at each position and handle carries at the end."
+    ],
+    "approach": "Simulate manual multiplication. Create a result array of size m+n. For each pair of digits (i, j), add their product to result[i+j+1] and carry to result[i+j]. Convert the result array to a string, trimming leading zeros.",
+    "solution_python": "def multiply(self, num1: str, num2: str) -> str:\n    if num1 == '0' or num2 == '0':\n        return '0'\n    m, n = len(num1), len(num2)\n    res = [0] * (m + n)\n    for i in range(m - 1, -1, -1):\n        for j in range(n - 1, -1, -1):\n            mul = int(num1[i]) * int(num2[j])\n            p1, p2 = i + j, i + j + 1\n            total = mul + res[p2]\n            res[p2] = total % 10\n            res[p1] += total // 10\n    result = ''.join(map(str, res))\n    return result.lstrip('0') or '0'",
+    "solution_js": "var multiply = function(num1, num2) {\n    if (num1 === '0' || num2 === '0') return '0';\n    const m = num1.length, n = num2.length;\n    const res = new Array(m + n).fill(0);\n    for (let i = m - 1; i >= 0; i--)\n        for (let j = n - 1; j >= 0; j--) {\n            const mul = (num1[i] - '0') * (num2[j] - '0');\n            const p1 = i + j, p2 = i + j + 1;\n            const total = mul + res[p2];\n            res[p2] = total % 10;\n            res[p1] += Math.floor(total / 10);\n        }\n    let str = res.join('');\n    while (str[0] === '0' && str.length > 1) str = str.slice(1);\n    return str;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m + n)",
+    "key_insight": "Digit i * digit j always contributes to positions i+j and i+j+1 in the result \u2014 this position mapping makes grade-school multiplication systematic.",
+    "related": [
+      134,
+      135
+    ]
+  },
+  {
+    "id": 137,
+    "title": "Detect Squares",
+    "slug": "detect-squares",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/detect-squares/",
+    "patterns": [
+      "Math",
+      "Hash Map",
+      "Geometry"
+    ],
+    "hints": [
+      "For a query point, try all points that could be a diagonal corner of a square.",
+      "A diagonal corner has both different x and y, with |dx| == |dy| (forming a square).",
+      "Check if the other two corners exist using a hash map of point counts."
+    ],
+    "approach": "Store point counts in a hash map. For a query point (qx, qy), iterate through all stored points (px, py) where |px-qx| == |py-qy| != 0 (diagonal). Check if the other two corners (qx,py) and (px,qy) exist. Multiply counts.",
+    "solution_python": "class DetectSquares:\n    def __init__(self):\n        self.ptsCount = defaultdict(int)\n        self.pts = []\n\n    def add(self, point: List[int]) -> None:\n        self.ptsCount[tuple(point)] += 1\n        self.pts.append(point)\n\n    def count(self, point: List[int]) -> int:\n        res = 0\n        qx, qy = point\n        for px, py in self.pts:\n            if abs(qx - px) != abs(qy - py) or qx == px or qy == py:\n                continue\n            res += self.ptsCount[(qx, py)] * self.ptsCount[(px, qy)]\n        return res",
+    "solution_js": "var DetectSquares = function() {\n    this.ptsCount = new Map();\n    this.pts = [];\n};\n\nDetectSquares.prototype.add = function(point) {\n    const key = point[0] + ',' + point[1];\n    this.ptsCount.set(key, (this.ptsCount.get(key) || 0) + 1);\n    this.pts.push(point);\n};\n\nDetectSquares.prototype.count = function(point) {\n    let res = 0;\n    const [qx, qy] = point;\n    for (const [px, py] of this.pts) {\n        if (Math.abs(qx - px) !== Math.abs(qy - py) || qx === px || qy === py) continue;\n        res += (this.ptsCount.get(qx + ',' + py) || 0) * (this.ptsCount.get(px + ',' + qy) || 0);\n    }\n    return res;\n};",
+    "time_complexity": "O(n) per count query",
+    "space_complexity": "O(n)",
+    "key_insight": "For each stored point as a potential diagonal corner, the other two corners are uniquely determined \u2014 just check if they exist in the point map.",
+    "related": [
+      130,
+      131
+    ]
+  },
+  {
+    "id": 138,
+    "title": "Reconstruct Itinerary",
+    "slug": "reconstruct-itinerary",
+    "category": "Advanced Graphs",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/reconstruct-itinerary/",
+    "patterns": [
+      "Eulerian Path",
+      "DFS",
+      "Graph"
+    ],
+    "hints": [
+      "This is an Eulerian path problem \u2014 visit every edge exactly once.",
+      "Use Hierholzer's algorithm: DFS and add nodes to the result in post-order.",
+      "Sort destinations lexicographically so the smallest itinerary is found first."
+    ],
+    "approach": "Build an adjacency list with sorted destinations. Use Hierholzer's algorithm (DFS): visit destinations greedily in lexicographic order, and add the current node to the result after all edges from it are used. Reverse the result.",
+    "solution_python": "def findItinerary(self, tickets: List[List[str]]) -> List[str]:\n    graph = defaultdict(list)\n    for src, dst in sorted(tickets, reverse=True):\n        graph[src].append(dst)\n    res = []\n    def dfs(node):\n        while graph[node]:\n            dfs(graph[node].pop())\n        res.append(node)\n    dfs('JFK')\n    return res[::-1]",
+    "solution_js": "var findItinerary = function(tickets) {\n    const graph = new Map();\n    tickets.sort().reverse();\n    for (const [src, dst] of tickets) {\n        if (!graph.has(src)) graph.set(src, []);\n        graph.get(src).push(dst);\n    }\n    const res = [];\n    function dfs(node) {\n        const dests = graph.get(node) || [];\n        while (dests.length) dfs(dests.pop());\n        res.push(node);\n    }\n    dfs('JFK');\n    return res.reverse();\n};",
+    "time_complexity": "O(E log E) for sorting",
+    "space_complexity": "O(E)",
+    "key_insight": "Hierholzer's algorithm finds an Eulerian path by post-order DFS \u2014 nodes are added to result only after all their outgoing edges are consumed.",
+    "related": [
+      87,
+      139
+    ]
+  },
+  {
+    "id": 139,
+    "title": "Min Cost to Connect All Points",
+    "slug": "min-cost-to-connect-all-points",
+    "category": "Advanced Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/min-cost-to-connect-all-points/",
+    "patterns": [
+      "Minimum Spanning Tree",
+      "Prim's",
+      "Kruskal's"
+    ],
+    "hints": [
+      "This is a minimum spanning tree problem with Manhattan distance as edge weights.",
+      "Use Prim's algorithm with a min-heap to greedily add the cheapest edge.",
+      "Start from any point, always connect the nearest unvisited point."
+    ],
+    "approach": "Prim's algorithm. Start from point 0. Use a min-heap of (cost, point). Greedily add the cheapest edge connecting to an unvisited point. Repeat until all points are connected.",
+    "solution_python": "def minCostConnectPoints(self, points: List[List[int]]) -> int:\n    n = len(points)\n    visited = set()\n    heap = [(0, 0)]  # (cost, point_index)\n    total = 0\n    while len(visited) < n:\n        cost, i = heapq.heappop(heap)\n        if i in visited:\n            continue\n        visited.add(i)\n        total += cost\n        for j in range(n):\n            if j not in visited:\n                dist = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1])\n                heapq.heappush(heap, (dist, j))\n    return total",
+    "solution_js": "var minCostConnectPoints = function(points) {\n    const n = points.length;\n    const visited = new Set();\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([0, 0]);\n    let total = 0;\n    while (visited.size < n) {\n        const [cost, i] = heap.dequeue().element;\n        if (visited.has(i)) continue;\n        visited.add(i);\n        total += cost;\n        for (let j = 0; j < n; j++) {\n            if (!visited.has(j)) {\n                const dist = Math.abs(points[i][0]-points[j][0]) + Math.abs(points[i][1]-points[j][1]);\n                heap.enqueue([dist, j]);\n            }\n        }\n    }\n    return total;\n};",
+    "time_complexity": "O(n^2 log n)",
+    "space_complexity": "O(n^2)",
+    "key_insight": "Prim's algorithm greedily grows the MST by always adding the cheapest edge to an unvisited node \u2014 the min-heap efficiently finds this edge.",
+    "related": [
+      89,
+      140
+    ]
+  },
+  {
+    "id": 140,
+    "title": "Network Delay Time",
+    "slug": "network-delay-time",
+    "category": "Advanced Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/network-delay-time/",
+    "patterns": [
+      "Dijkstra's",
+      "Shortest Path"
+    ],
+    "hints": [
+      "Find the shortest path from source to all nodes \u2014 the answer is the maximum of these.",
+      "Use Dijkstra's algorithm with a min-heap for weighted shortest paths.",
+      "If any node is unreachable, return -1."
+    ],
+    "approach": "Dijkstra's algorithm from node k. Use a min-heap to process nodes in order of shortest distance. Track the time to reach each node. The answer is the maximum time to reach any node, or -1 if not all are reachable.",
+    "solution_python": "def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:\n    graph = defaultdict(list)\n    for u, v, w in times:\n        graph[u].append((v, w))\n    heap = [(0, k)]\n    visited = set()\n    t = 0\n    while heap:\n        w, node = heapq.heappop(heap)\n        if node in visited:\n            continue\n        visited.add(node)\n        t = max(t, w)\n        for nei, w2 in graph[node]:\n            if nei not in visited:\n                heapq.heappush(heap, (w + w2, nei))\n    return t if len(visited) == n else -1",
+    "solution_js": "var networkDelayTime = function(times, n, k) {\n    const graph = new Map();\n    for (const [u, v, w] of times) {\n        if (!graph.has(u)) graph.set(u, []);\n        graph.get(u).push([v, w]);\n    }\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([0, k]);\n    const visited = new Set();\n    let t = 0;\n    while (heap.size()) {\n        const [w, node] = heap.dequeue().element;\n        if (visited.has(node)) continue;\n        visited.add(node);\n        t = Math.max(t, w);\n        for (const [nei, w2] of (graph.get(node) || []))\n            if (!visited.has(nei)) heap.enqueue([w + w2, nei]);\n    }\n    return visited.size === n ? t : -1;\n};",
+    "time_complexity": "O(E log V)",
+    "space_complexity": "O(V + E)",
+    "key_insight": "Dijkstra's finds shortest paths from source to all nodes \u2014 the network delay is the maximum shortest path (the last node to receive the signal).",
+    "related": [
+      141,
+      139
+    ]
+  },
+  {
+    "id": 141,
+    "title": "Swim in Rising Water",
+    "slug": "swim-in-rising-water",
+    "category": "Advanced Graphs",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/swim-in-rising-water/",
+    "patterns": [
+      "Dijkstra's",
+      "Binary Search",
+      "BFS"
+    ],
+    "hints": [
+      "You need to find the minimum time to travel from (0,0) to (n-1,n-1).",
+      "The time to traverse a path is the maximum elevation along that path.",
+      "Use Dijkstra's with max-elevation as the 'cost' to minimize the path's bottleneck."
+    ],
+    "approach": "Modified Dijkstra's where the 'distance' is the maximum elevation along the path. Use a min-heap keyed by the max elevation to reach each cell. The first time we reach (n-1,n-1), we have the minimum possible maximum elevation.",
+    "solution_python": "def swimInWater(self, grid: List[List[int]]) -> int:\n    n = len(grid)\n    visited = set()\n    heap = [(grid[0][0], 0, 0)]\n    visited.add((0, 0))\n    while heap:\n        t, r, c = heapq.heappop(heap)\n        if r == n - 1 and c == n - 1:\n            return t\n        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < n and 0 <= nc < n and (nr, nc) not in visited:\n                visited.add((nr, nc))\n                heapq.heappush(heap, (max(t, grid[nr][nc]), nr, nc))\n    return -1",
+    "solution_js": "var swimInWater = function(grid) {\n    const n = grid.length;\n    const visited = new Set();\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([grid[0][0], 0, 0]);\n    visited.add('0,0');\n    while (heap.size()) {\n        const [t, r, c] = heap.dequeue().element;\n        if (r === n-1 && c === n-1) return t;\n        for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]) {\n            const nr = r+dr, nc = c+dc;\n            const key = nr+','+nc;\n            if (nr >= 0 && nc >= 0 && nr < n && nc < n && !visited.has(key)) {\n                visited.add(key);\n                heap.enqueue([Math.max(t, grid[nr][nc]), nr, nc]);\n            }\n        }\n    }\n    return -1;\n};",
+    "time_complexity": "O(n^2 log n)",
+    "space_complexity": "O(n^2)",
+    "key_insight": "This is a minimax path problem \u2014 Dijkstra's minimizes the maximum elevation, treating max(path_cost, neighbor_elevation) as the edge weight.",
+    "related": [
+      140,
+      142
+    ]
+  },
+  {
+    "id": 142,
+    "title": "Alien Dictionary",
+    "slug": "alien-dictionary",
+    "category": "Advanced Graphs",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/alien-dictionary/",
+    "patterns": [
+      "Topological Sort",
+      "BFS",
+      "Graph"
+    ],
+    "hints": [
+      "Compare adjacent words to extract character ordering constraints.",
+      "The first differing character between two adjacent words gives an edge: char1 < char2.",
+      "Use topological sort on the character graph; detect cycles (invalid ordering)."
+    ],
+    "approach": "Build a directed graph of character orderings by comparing adjacent words. Extract edges from the first differing character. Topological sort the graph using DFS with cycle detection. Return the sorted order.",
+    "solution_python": "def alienOrder(self, words: List[str]) -> str:\n    adj = {c: set() for w in words for c in w}\n    for i in range(len(words) - 1):\n        w1, w2 = words[i], words[i + 1]\n        minLen = min(len(w1), len(w2))\n        if len(w1) > len(w2) and w1[:minLen] == w2[:minLen]:\n            return ''\n        for j in range(minLen):\n            if w1[j] != w2[j]:\n                adj[w1[j]].add(w2[j])\n                break\n    visited = {}\n    res = []\n    def dfs(c):\n        if c in visited:\n            return visited[c]\n        visited[c] = True\n        for nei in adj[c]:\n            if dfs(nei):\n                return True\n        visited[c] = False\n        res.append(c)\n        return False\n    for c in adj:\n        if dfs(c):\n            return ''\n    return ''.join(res[::-1])",
+    "solution_js": "var alienOrder = function(words) {\n    const adj = new Map();\n    for (const w of words) for (const c of w) if (!adj.has(c)) adj.set(c, new Set());\n    for (let i = 0; i < words.length - 1; i++) {\n        const w1 = words[i], w2 = words[i+1];\n        const minLen = Math.min(w1.length, w2.length);\n        if (w1.length > w2.length && w1.slice(0, minLen) === w2.slice(0, minLen)) return '';\n        for (let j = 0; j < minLen; j++) {\n            if (w1[j] !== w2[j]) { adj.get(w1[j]).add(w2[j]); break; }\n        }\n    }\n    const visited = new Map();\n    const res = [];\n    function dfs(c) {\n        if (visited.has(c)) return visited.get(c);\n        visited.set(c, true);\n        for (const nei of adj.get(c)) if (dfs(nei)) return true;\n        visited.set(c, false);\n        res.push(c);\n        return false;\n    }\n    for (const c of adj.keys()) if (dfs(c)) return '';\n    return res.reverse().join('');\n};",
+    "time_complexity": "O(C) where C is total characters across all words",
+    "space_complexity": "O(1) \u2014 at most 26 characters",
+    "key_insight": "Adjacent word comparisons yield character ordering edges. Topological sort of the character graph produces the alien alphabet \u2014 cycles mean invalid input.",
+    "related": [
+      87,
+      88
+    ]
+  },
+  {
+    "id": 143,
+    "title": "Cheapest Flights Within K Stops",
+    "slug": "cheapest-flights-within-k-stops",
+    "category": "Advanced Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/",
+    "patterns": [
+      "Bellman-Ford",
+      "BFS",
+      "Shortest Path"
+    ],
+    "hints": [
+      "This is shortest path with a constraint on the number of edges (stops).",
+      "Bellman-Ford with k+1 iterations naturally limits the path to at most k stops.",
+      "Each iteration relaxes edges using only the previous iteration's distances."
+    ],
+    "approach": "Bellman-Ford for k+1 iterations. In each iteration, for each flight (edge), try to relax the destination's cost using the source's cost from the PREVIOUS iteration. This limits paths to at most k+1 edges (k stops).",
+    "solution_python": "def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:\n    prices = [float('inf')] * n\n    prices[src] = 0\n    for i in range(k + 1):\n        tmpPrices = prices[:]\n        for s, d, p in flights:\n            if prices[s] == float('inf'):\n                continue\n            if prices[s] + p < tmpPrices[d]:\n                tmpPrices[d] = prices[s] + p\n        prices = tmpPrices\n    return prices[dst] if prices[dst] != float('inf') else -1",
+    "solution_js": "var findCheapestPrice = function(n, flights, src, dst, k) {\n    let prices = new Array(n).fill(Infinity);\n    prices[src] = 0;\n    for (let i = 0; i <= k; i++) {\n        const tmp = [...prices];\n        for (const [s, d, p] of flights) {\n            if (prices[s] === Infinity) continue;\n            if (prices[s] + p < tmp[d]) tmp[d] = prices[s] + p;\n        }\n        prices = tmp;\n    }\n    return prices[dst] === Infinity ? -1 : prices[dst];\n};",
+    "time_complexity": "O(k * E)",
+    "space_complexity": "O(n)",
+    "key_insight": "Bellman-Ford with k+1 iterations finds shortest paths using at most k+1 edges \u2014 using previous iteration's values prevents exceeding the stop limit.",
+    "related": [
+      140,
+      87
+    ]
+  }
+]

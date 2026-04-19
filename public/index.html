@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="description" content="NeetCode 150 Study System — Review, Quiz, and Master LeetCode problems on any device">
+  <title>LeetCode Study</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <h1 class="app-title">LC Study</h1>
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+      </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>NeetCode 150</h2>
+        <button class="close-btn" id="closeSidebar" aria-label="Close menu">✕</button>
+      </div>
+      <ul class="nav-list">
+        <li><a href="#/" class="nav-link active" data-page="home">📊 Dashboard</a></li>
+        <li><a href="#/problems" class="nav-link" data-page="problems">📋 Problems</a></li>
+        <li><a href="#/review" class="nav-link" data-page="review">🔄 Review</a></li>
+        <li><a href="#/quiz" class="nav-link" data-page="quiz">🧠 Quiz</a></li>
+        <li><a href="#/patterns" class="nav-link" data-page="patterns">🗂️ Patterns</a></li>
+        <li><a href="#/settings" class="nav-link" data-page="settings">⚙️ Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="streak-badge" id="streakBadge">🔥 0 day streak</div>
+      </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content" id="mainContent">
+      <!-- Pages rendered here by router -->
+    </main>
+
+    <nav class="bottom-nav" id="bottomNav">
+      <a href="#/" class="bottom-nav-item active" data-page="home">
+        <span class="bottom-nav-icon">📊</span>
+        <span class="bottom-nav-label">Dashboard</span>
+      </a>
+      <a href="#/problems" class="bottom-nav-item" data-page="problems">
+        <span class="bottom-nav-icon">📋</span>
+        <span class="bottom-nav-label">Problems</span>
+      </a>
+      <a href="#/review" class="bottom-nav-item" data-page="review">
+        <span class="bottom-nav-icon">🔄</span>
+        <span class="bottom-nav-label">Review</span>
+      </a>
+      <a href="#/quiz" class="bottom-nav-item" data-page="quiz">
+        <span class="bottom-nav-icon">🧠</span>
+        <span class="bottom-nav-label">Quiz</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script type="module" src="../src/app.js"></script>
+</body>
+</html>

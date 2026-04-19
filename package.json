@@ -1,0 +1,12 @@
+{
+  "name": "leetcode-study",
+  "version": "1.0.0",
+  "description": "Cross-device LeetCode study system — PWA + Anki",
+  "scripts": {
+    "dev": "echo 'Open http://localhost:8080/public/' && python3 -m http.server 8080",
+    "build": "node scripts/build.js",
+    "generate-anki": "python3 scripts/generate-anki.py"
+  },
+  "keywords": ["leetcode", "study", "pwa", "anki", "interview-prep"],
+  "license": "MIT"
+}
