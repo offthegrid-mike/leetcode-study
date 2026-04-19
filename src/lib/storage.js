@@ -160,6 +160,7 @@ export async function setProgress(problemId, data) {
     ...existing,
     ...data,
     id: problemId, // ensure id is never overwritten
+    updatedAt: data.updatedAt || new Date().toISOString(),
   };
 
   await withTransaction(STORE_PROGRESS, "readwrite", (tx) =>
@@ -244,6 +245,11 @@ export async function addStudySession(session) {
     ...session,
   };
 
+  if (!record.uuid) {
+    record.uuid = crypto.randomUUID?.() ||
+      Math.random().toString(36).substring(2) + Date.now().toString(36);
+  }
+
   await withTransaction(STORE_SESSIONS, "readwrite", (tx) =>
     tx.objectStore(STORE_SESSIONS).put(record)
   );
@@ -303,6 +309,8 @@ export async function getStats() {
  * Export every record from all stores as a JSON-serialisable object.
  * @returns {Promise<{ progress: object[], settings: object[], studySessions: object[], exportedAt: string }>}
  */
+const SYNC_SECRET_KEYS = ['githubToken', 'syncGistId', 'lastSyncedAt'];
+
 export async function exportData() {
   const [progress, settings, studySessions] = await Promise.all([
     getAllFromStore(STORE_PROGRESS),
@@ -312,7 +320,7 @@ export async function exportData() {
 
   return {
     progress,
-    settings,
+    settings: settings.filter(s => !SYNC_SECRET_KEYS.includes(s.key)),
     studySessions,
     exportedAt: new Date().toISOString(),
   };

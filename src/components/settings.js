@@ -1,5 +1,6 @@
-import { createElement, escapeHtml, showToast, createModal, downloadJSON, readFileAsJSON } from '../utils/helpers.js';
+import { createElement, escapeHtml, showToast, createModal, downloadJSON, readFileAsJSON, timeAgo } from '../utils/helpers.js';
 import { getSetting, setSetting, exportData, importData, clearAllData, getStats } from '../lib/storage.js';
+import { setupSync, syncNow, disconnectSync, getSyncInfo } from '../lib/gist-sync.js';
 
 export async function renderSettings(container) {
   container.innerHTML = '';
@@ -7,6 +8,48 @@ export async function renderSettings(container) {
   page.innerHTML = `<h2 class="page-title">⚙️ Settings</h2>`;
 
   const stats = await getStats();
+  const syncInfo = await getSyncInfo();
+
+  // Cloud Sync
+  const syncSection = createElement('div', 'problem-section');
+  if (syncInfo.connected) {
+    syncSection.innerHTML = `
+      <h3 class="section-title">☁️ Cloud Sync</h3>
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-name">✅ Connected</span>
+          <span class="setting-desc">Last synced: ${syncInfo.lastSyncedAt ? timeAgo(syncInfo.lastSyncedAt) : 'Never'}</span>
+        </div>
+        <button class="btn btn-primary" id="syncNowBtn">🔄 Sync Now</button>
+      </div>
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-name">Disconnect</span>
+          <span class="setting-desc">Remove sync connection (local data is kept)</span>
+        </div>
+        <button class="btn btn-danger" id="disconnectSyncBtn">Disconnect</button>
+      </div>
+    `;
+  } else {
+    syncSection.innerHTML = `
+      <h3 class="section-title">☁️ Cloud Sync</h3>
+      <p class="about-text">Sync progress across devices via a private GitHub Gist.</p>
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-name">GitHub Token</span>
+          <span class="setting-desc">
+            Create a <a href="https://github.com/settings/tokens/new?scopes=gist&description=LeetCode+Study+Sync" target="_blank" rel="noopener" style="color:var(--color-primary)">Personal Access Token</a> with <strong>gist</strong> scope
+          </span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="password" id="syncTokenInput" placeholder="ghp_..."
+            style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-input-bg);color:var(--color-text);font-size:0.9rem;width:180px">
+          <button class="btn btn-primary" id="connectSyncBtn">Connect</button>
+        </div>
+      </div>
+    `;
+  }
+  page.appendChild(syncSection);
 
   // Theme
   const themeItem = createElement('div', 'setting-item');
@@ -142,6 +185,55 @@ export async function renderSettings(container) {
         await clearAllData();
         showToast('All progress cleared', 'info');
         setTimeout(() => window.location.reload(), 500);
+      }
+    );
+  });
+
+  // Sync handlers
+  document.getElementById('connectSyncBtn')?.addEventListener('click', async () => {
+    const input = document.getElementById('syncTokenInput');
+    const token = input.value.trim();
+    if (!token) { showToast('Please enter a token', 'error'); return; }
+
+    const btn = document.getElementById('connectSyncBtn');
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+
+    try {
+      const result = await setupSync(token);
+      showToast(`Connected as ${result.username}!`, 'success');
+      setTimeout(() => renderSettings(container), 1000);
+    } catch (err) {
+      showToast(`Failed: ${err.message}`, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Connect';
+    }
+  });
+
+  document.getElementById('syncNowBtn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('syncNowBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Syncing...';
+
+    try {
+      await syncNow();
+      showToast('Sync complete!', 'success');
+      setTimeout(() => renderSettings(container), 1000);
+    } catch (err) {
+      showToast(`Sync failed: ${err.message}`, 'error');
+      btn.disabled = false;
+      btn.textContent = '🔄 Sync Now';
+    }
+  });
+
+  document.getElementById('disconnectSyncBtn')?.addEventListener('click', () => {
+    createModal(
+      'Disconnect Sync',
+      '<p>This will remove the sync connection. Your local data and the remote Gist are kept.</p>',
+      async () => {
+        await disconnectSync();
+        showToast('Sync disconnected', 'info');
+        renderSettings(container);
       }
     );
   });

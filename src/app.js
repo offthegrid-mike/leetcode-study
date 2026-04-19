@@ -1,4 +1,5 @@
 import { initDB, getSetting, setSetting, getAllProgress, getDueReviews, getStats } from './lib/storage.js';
+import { getSyncInfo, syncNow } from './lib/gist-sync.js';
 import { renderDashboard } from './components/progress.js';
 import { renderProblemList } from './components/problem-list.js';
 import { renderProblemView } from './components/problem-view.js';
@@ -23,8 +24,22 @@ class App {
     this.setupSidebar();
     this.setupRouter();
     this.registerServiceWorker();
+    this.backgroundSync();
 
     window.app = this;
+  }
+
+  async backgroundSync() {
+    try {
+      const info = await getSyncInfo();
+      if (info.connected) {
+        await syncNow();
+        await this.loadProgress();
+        this.navigate(window.location.hash || '#/');
+      }
+    } catch {
+      // Silent fail — offline or token expired
+    }
   }
 
   async loadProblems() {

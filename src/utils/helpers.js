@@ -119,7 +119,8 @@ export function showToast(message, type = 'info', duration = 3000) {
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();
 
-  const toast = createElement('div', `toast toast-${type}`, message);
+  const toast = createElement('div', `toast toast-${type}`);
+  toast.textContent = message;
   document.body.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('toast-visible'));
 
