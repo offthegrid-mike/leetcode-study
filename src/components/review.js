@@ -140,6 +140,7 @@ function startReviewSession(container, queue, allProblems, progressMap) {
           lastReviewed: new Date().toISOString(),
         };
         await setProgress(problem.id, newProg);
+        window.app?.scheduleSync();
         progressMap[problem.id] = newProg;
         reviewed++;
         current++;

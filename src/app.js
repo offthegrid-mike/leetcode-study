@@ -14,6 +14,9 @@ class App {
     this.progress = {};
     this.mainContent = null;
     this.currentRoute = '';
+    this._syncing = false;
+    this._syncDebounceTimer = null;
+    this._syncIntervalTimer = null;
   }
 
   async init() {
@@ -25,8 +28,44 @@ class App {
     this.setupRouter();
     this.registerServiceWorker();
     this.backgroundSync();
+    this._setupAutoSync();
 
     window.app = this;
+  }
+
+  _setupAutoSync() {
+    // Sync when the tab regains focus
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.scheduleSync();
+      }
+    });
+
+    // Periodic sync every 5 minutes
+    this._syncIntervalTimer = setInterval(() => {
+      this._doSync();
+    }, 300000);
+  }
+
+  /** Debounced sync — waits 3s of inactivity, then syncs. Safe to call frequently. */
+  scheduleSync() {
+    clearTimeout(this._syncDebounceTimer);
+    this._syncDebounceTimer = setTimeout(() => this._doSync(), 3000);
+  }
+
+  async _doSync() {
+    if (this._syncing) return;
+    try {
+      const info = await getSyncInfo();
+      if (!info.connected) return;
+      this._syncing = true;
+      await syncNow();
+      await this.loadProgress();
+    } catch {
+      // Silent fail — offline or token expired
+    } finally {
+      this._syncing = false;
+    }
   }
 
   async backgroundSync() {

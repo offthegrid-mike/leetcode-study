@@ -188,6 +188,7 @@ function startQuiz(container, problems, progress, type, count = 10) {
   }
 
   function showResults() {
+    window.app?.scheduleSync();
     container.innerHTML = '';
     const page = createElement('div', 'page-quiz-results');
     const pct = Math.round((score / shuffled.length) * 100);

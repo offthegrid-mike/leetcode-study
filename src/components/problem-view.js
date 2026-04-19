@@ -35,6 +35,7 @@ export async function renderProblemView(container, problem, progressData, allPro
     const btn = createElement('button', `status-btn${(progress.status || 'not_started') === s ? ' active' : ''}`, statusLabels[s]);
     btn.addEventListener('click', async () => {
       await setProgress(problem.id, { ...progress, id: problem.id, status: s });
+      window.app?.scheduleSync();
       showToast(`Status updated to ${statusLabels[s]}`, 'success');
       statusSection.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -137,6 +138,7 @@ export async function renderProblemView(container, problem, progressData, allPro
   notesArea.addEventListener('blur', async () => {
     const current = await getProgress(problem.id) || { id: problem.id };
     await setProgress(problem.id, { ...current, notes: notesArea.value });
+    window.app?.scheduleSync();
     showToast('Notes saved', 'info', 1500);
   });
   notesSection.appendChild(notesArea);
@@ -163,6 +165,7 @@ export async function renderProblemView(container, problem, progressData, allPro
         status: quality >= 4 && (current.repetitions || 0) >= 3 ? 'mastered' : 'reviewing',
         lastReviewed: new Date().toISOString(),
       });
+      window.app?.scheduleSync();
       showToast(`Rated "${label}" — next review in ${updated.interval} day${updated.interval !== 1 ? 's' : ''}`, 'success');
       ratingBtns.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
