@@ -6,10 +6,38 @@ export async function renderProblemView(container, problem, progressData, allPro
   container.innerHTML = '';
   const page = createElement('div', 'page-problem-view');
 
-  // Back button
+  // Navigation bar (back + prev/next)
+  const navBar = createElement('div', 'problem-nav-bar');
   const backBtn = createElement('button', 'back-btn', '← Back to Problems');
   backBtn.addEventListener('click', () => { window.location.hash = '#/problems'; });
-  page.appendChild(backBtn);
+  navBar.appendChild(backBtn);
+
+  const prevNextBar = createElement('div', 'prev-next-bar');
+  const currentIndex = allProblems.findIndex(p => p.id === problem.id);
+
+  const prevBtn = createElement('button', 'btn btn-secondary prev-next-btn');
+  prevBtn.textContent = '← Prev';
+  if (currentIndex > 0) {
+    prevBtn.addEventListener('click', () => { window.location.hash = `#/problems/${allProblems[currentIndex - 1].id}`; });
+  } else {
+    prevBtn.disabled = true;
+  }
+  prevNextBar.appendChild(prevBtn);
+
+  const posLabel = createElement('span', 'problem-position');
+  posLabel.textContent = `${currentIndex + 1} / ${allProblems.length}`;
+  prevNextBar.appendChild(posLabel);
+
+  const nextBtn = createElement('button', 'btn btn-secondary prev-next-btn');
+  nextBtn.textContent = 'Next →';
+  if (currentIndex < allProblems.length - 1) {
+    nextBtn.addEventListener('click', () => { window.location.hash = `#/problems/${allProblems[currentIndex + 1].id}`; });
+  } else {
+    nextBtn.disabled = true;
+  }
+  prevNextBar.appendChild(nextBtn);
+  navBar.appendChild(prevNextBar);
+  page.appendChild(navBar);
 
   // Header
   const header = createElement('div', 'problem-header');
@@ -81,7 +109,13 @@ export async function renderProblemView(container, problem, progressData, allPro
 
   // Solution with language tabs
   const solutionSection = createElement('div', 'problem-section');
-  solutionSection.innerHTML = `<h3 class="section-title">📝 Solution</h3>`;
+  const solutionHeader = createElement('div', 'section-title-row');
+  solutionHeader.innerHTML = `<h3 class="section-title">📝 Solution</h3>`;
+
+  const revealBtn = createElement('button', 'btn btn-primary reveal-btn');
+  revealBtn.textContent = '👁️ Reveal Solution';
+  solutionHeader.appendChild(revealBtn);
+  solutionSection.appendChild(solutionHeader);
 
   const langTabs = createElement('div', 'lang-tabs');
   const pyTab = createElement('button', 'lang-tab active', 'Python');
@@ -100,15 +134,14 @@ export async function renderProblemView(container, problem, progressData, allPro
     jsTab.classList.toggle('active', lang === 'javascript');
   };
 
-  // Initially hidden
-  const revealBtn = createElement('button', 'btn btn-primary reveal-btn', '👁️ Reveal Solution');
   let revealed = false;
+  langTabs.style.display = 'none';
   revealBtn.addEventListener('click', () => {
     revealed = !revealed;
     solutionContainer.style.display = revealed ? 'block' : 'none';
+    langTabs.style.display = revealed ? 'flex' : 'none';
     revealBtn.textContent = revealed ? '🙈 Hide Solution' : '👁️ Reveal Solution';
   });
-  solutionSection.appendChild(revealBtn);
 
   solutionContainer.style.display = 'none';
   showSolution('python');
@@ -123,8 +156,16 @@ export async function renderProblemView(container, problem, progressData, allPro
   complexitySection.innerHTML = `
     <h3 class="section-title">⏱️ Complexity</h3>
     <div class="complexity-grid">
-      <div class="complexity-item"><span class="complexity-label">Time</span><span class="complexity-value">${escapeHtml(problem.time_complexity)}</span></div>
-      <div class="complexity-item"><span class="complexity-label">Space</span><span class="complexity-value">${escapeHtml(problem.space_complexity)}</span></div>
+      <div class="complexity-item">
+        <span class="complexity-label">Time</span>
+        <span class="complexity-value">${escapeHtml(problem.time_complexity)}</span>
+        ${problem.time_complexity_explanation ? `<span class="complexity-explanation">${escapeHtml(problem.time_complexity_explanation)}</span>` : ''}
+      </div>
+      <div class="complexity-item">
+        <span class="complexity-label">Space</span>
+        <span class="complexity-value">${escapeHtml(problem.space_complexity)}</span>
+        ${problem.space_complexity_explanation ? `<span class="complexity-explanation">${escapeHtml(problem.space_complexity_explanation)}</span>` : ''}
+      </div>
     </div>
   `;
   page.appendChild(complexitySection);

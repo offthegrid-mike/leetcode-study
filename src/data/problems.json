@@ -19,6 +19,8 @@
     "solution_js": "var containsDuplicate = function(nums) {\n    const seen = new Set();\n    for (const num of nums) {\n        if (seen.has(num)) return true;\n        seen.add(num);\n    }\n    return false;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate through the array once, and each hash set lookup/insert is O(1) on average.",
+    "space_complexity_explanation": "In the worst case (no duplicates), the hash set stores all n elements.",
     "key_insight": "A hash set provides O(1) lookup to detect duplicates in a single pass.",
     "related": [
       2,
@@ -46,6 +48,8 @@
     "solution_js": "var isAnagram = function(s, t) {\n    if (s.length !== t.length) return false;\n    const count = {};\n    for (const c of s) count[c] = (count[c] || 0) + 1;\n    for (const c of t) {\n        count[c] = (count[c] || 0) - 1;\n        if (count[c] < 0) return false;\n    }\n    return true;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "We iterate through both strings once (two O(n) passes), performing O(1) hash map operations per character.",
+    "space_complexity_explanation": "The hash map stores at most 26 lowercase letters, which is a fixed constant regardless of input size.",
     "key_insight": "Anagrams have identical character frequency distributions. Space is O(1) since the alphabet is fixed (26 letters).",
     "related": [
       1,
@@ -72,6 +76,8 @@
     "solution_js": "var twoSum = function(nums, target) {\n    const seen = new Map();\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (seen.has(complement)) return [seen.get(complement), i];\n        seen.set(nums[i], i);\n    }\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the array with O(1) hash map lookups for each element.",
+    "space_complexity_explanation": "The hash map stores up to n elements to track values and their indices.",
     "key_insight": "Using a hash map to store complements turns a nested loop O(n²) problem into O(n).",
     "related": [
       10,
@@ -99,6 +105,8 @@
     "solution_js": "var groupAnagrams = function(strs) {\n    const groups = new Map();\n    for (const s of strs) {\n        const key = s.split('').sort().join('');\n        if (!groups.has(key)) groups.set(key, []);\n        groups.get(key).push(s);\n    }\n    return Array.from(groups.values());\n};",
     "time_complexity": "O(n * k log k)",
     "space_complexity": "O(n * k)",
+    "time_complexity_explanation": "For each of the n strings, sorting its k characters takes O(k log k), giving O(n * k log k) total.",
+    "space_complexity_explanation": "The hash map stores all n strings, each of length up to k, for the grouped result.",
     "key_insight": "Sorting each string creates a canonical form that all anagrams share, enabling hash map grouping.",
     "related": [
       2
@@ -126,6 +134,8 @@
     "solution_js": "var topKFrequent = function(nums, k) {\n    const count = new Map();\n    for (const num of nums) count.set(num, (count.get(num) || 0) + 1);\n    const buckets = Array.from({length: nums.length + 1}, () => []);\n    for (const [num, freq] of count) buckets[freq].push(num);\n    const result = [];\n    for (let i = buckets.length - 1; i > 0; i--) {\n        for (const num of buckets[i]) {\n            result.push(num);\n            if (result.length === k) return result;\n        }\n    }\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Counting frequencies is O(n) and bucket sort over n+1 buckets is O(n), giving linear time overall.",
+    "space_complexity_explanation": "The frequency map and bucket array each store up to n entries.",
     "key_insight": "Bucket sort by frequency achieves O(n) time — better than the O(n log k) heap approach.",
     "related": [
       4
@@ -151,6 +161,8 @@
     "solution_js": "var encode = function(strs) {\n    return strs.map(s => s.length + '#' + s).join('');\n};\n\nvar decode = function(s) {\n    const result = [];\n    let i = 0;\n    while (i < s.length) {\n        let j = s.indexOf('#', i);\n        const len = parseInt(s.substring(i, j));\n        result.push(s.substring(j + 1, j + 1 + len));\n        i = j + 1 + len;\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Encoding and decoding both scan through all characters across all strings exactly once.",
+    "space_complexity_explanation": "The output uses the same total characters as the input (plus small length prefixes), so no extra space beyond the result.",
     "key_insight": "Length-prefixing eliminates delimiter ambiguity — the length tells you exactly how many characters to read.",
     "related": []
   },
@@ -174,6 +186,8 @@
     "solution_js": "var productExceptSelf = function(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(1);\n    let prefix = 1;\n    for (let i = 0; i < n; i++) {\n        result[i] = prefix;\n        prefix *= nums[i];\n    }\n    let suffix = 1;\n    for (let i = n - 1; i >= 0; i--) {\n        result[i] *= suffix;\n        suffix *= nums[i];\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear passes through the array: one for prefix products and one for suffix products.",
+    "space_complexity_explanation": "The output array is required by the problem, and only a single extra variable (running suffix) is used beyond it.",
     "key_insight": "Product except self = prefix product × suffix product. Two passes avoid division entirely.",
     "related": [
       14
@@ -200,6 +214,8 @@
     "solution_js": "var isValidSudoku = function(board) {\n    const rows = Array.from({length: 9}, () => new Set());\n    const cols = Array.from({length: 9}, () => new Set());\n    const boxes = Array.from({length: 9}, () => new Set());\n    for (let r = 0; r < 9; r++) {\n        for (let c = 0; c < 9; c++) {\n            const d = board[r][c];\n            if (d === '.') continue;\n            const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);\n            if (rows[r].has(d) || cols[c].has(d) || boxes[box].has(d)) return false;\n            rows[r].add(d);\n            cols[c].add(d);\n            boxes[box].add(d);\n        }\n    }\n    return true;\n};",
     "time_complexity": "O(81)",
     "space_complexity": "O(81)",
+    "time_complexity_explanation": "We visit each of the 81 cells exactly once, performing constant-time set operations at each cell.",
+    "space_complexity_explanation": "The sets for rows, columns, and boxes store at most 81 entries total (9 sets × 9 digits per dimension).",
     "key_insight": "Map each cell to its 3×3 box with (row // 3, col // 3) and use sets to check all three constraints in one pass.",
     "related": []
   },
@@ -223,6 +239,8 @@
     "solution_js": "var longestConsecutive = function(nums) {\n    const numSet = new Set(nums);\n    let longest = 0;\n    for (const num of numSet) {\n        if (!numSet.has(num - 1)) {\n            let length = 1;\n            while (numSet.has(num + length)) length++;\n            longest = Math.max(longest, length);\n        }\n    }\n    return longest;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the set is O(n). Each element is visited at most twice (once as a potential start, once during extension), giving O(n) total.",
+    "space_complexity_explanation": "The hash set stores all n numbers from the input array.",
     "key_insight": "Only start counting from sequence beginnings (where num-1 is absent) to ensure each element is visited at most twice.",
     "related": [
       1
@@ -248,6 +266,8 @@
     "solution_js": "var isPalindrome = function(s) {\n    let l = 0, r = s.length - 1;\n    while (l < r) {\n        while (l < r && !isAlphaNum(s[l])) l++;\n        while (l < r && !isAlphaNum(s[r])) r--;\n        if (s[l].toLowerCase() !== s[r].toLowerCase()) return false;\n        l++;\n        r--;\n    }\n    return true;\n};\n\nfunction isAlphaNum(c) {\n    return /[a-zA-Z0-9]/.test(c);\n}",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "The two pointers traverse the string once from both ends, each character is visited at most once.",
+    "space_complexity_explanation": "Only two pointer variables are used; no additional data structures are needed.",
     "key_insight": "Two pointers from both ends let you check palindrome properties in-place without creating a new string.",
     "related": [
       3
@@ -273,6 +293,8 @@
     "solution_js": "var twoSum = function(numbers, target) {\n    let l = 0, r = numbers.length - 1;\n    while (l < r) {\n        const s = numbers[l] + numbers[r];\n        if (s === target) return [l + 1, r + 1];\n        else if (s < target) l++;\n        else r--;\n    }\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "The two pointers start at opposite ends and move inward, visiting each element at most once.",
+    "space_complexity_explanation": "Only two pointer variables are needed, no extra data structures.",
     "key_insight": "In a sorted array, two pointers can find a target sum in O(n) time and O(1) space.",
     "related": [
       3,
@@ -300,6 +322,8 @@
     "solution_js": "var threeSum = function(nums) {\n    nums.sort((a, b) => a - b);\n    const result = [];\n    for (let i = 0; i < nums.length - 2; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) continue;\n        let l = i + 1, r = nums.length - 1;\n        while (l < r) {\n            const s = nums[i] + nums[l] + nums[r];\n            if (s < 0) l++;\n            else if (s > 0) r--;\n            else {\n                result.push([nums[i], nums[l], nums[r]]);\n                while (l < r && nums[l] === nums[l + 1]) l++;\n                while (l < r && nums[r] === nums[r - 1]) r--;\n                l++;\n                r--;\n            }\n        }\n    }\n    return result;\n};",
     "time_complexity": "O(n²)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting is O(n log n). For each of the n elements, the two-pointer scan is O(n), giving O(n²) total.",
+    "space_complexity_explanation": "Sorting is done in-place and only pointer variables are used (ignoring the output list).",
     "key_insight": "Reduce 3Sum to Two Sum II by sorting and fixing one element, then using two pointers. Skip duplicates at all levels.",
     "related": [
       11
@@ -326,6 +350,8 @@
     "solution_js": "var maxArea = function(height) {\n    let l = 0, r = height.length - 1, maxArea = 0;\n    while (l < r) {\n        const area = Math.min(height[l], height[r]) * (r - l);\n        maxArea = Math.max(maxArea, area);\n        if (height[l] < height[r]) l++;\n        else r--;\n    }\n    return maxArea;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "The two pointers traverse the array once from both ends, moving one pointer per step.",
+    "space_complexity_explanation": "Only two pointers and a running maximum variable are used.",
     "key_insight": "Move the shorter line's pointer inward — the area is bottlenecked by the shorter side, so only changing it can help.",
     "related": [
       14
@@ -352,6 +378,8 @@
     "solution_js": "var trap = function(height) {\n    let l = 0, r = height.length - 1;\n    let leftMax = 0, rightMax = 0, water = 0;\n    while (l <= r) {\n        if (leftMax <= rightMax) {\n            leftMax = Math.max(leftMax, height[l]);\n            water += leftMax - height[l];\n            l++;\n        } else {\n            rightMax = Math.max(rightMax, height[r]);\n            water += rightMax - height[r];\n            r--;\n        }\n    }\n    return water;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array using two pointers, with O(1) work at each step.",
+    "space_complexity_explanation": "Only two pointers and two running maximum variables are used, no auxiliary data structures.",
     "key_insight": "Process from the side with the smaller max — water at that position is determined regardless of what's on the other side.",
     "related": [
       13,
@@ -379,6 +407,8 @@
     "solution_js": "var maxProfit = function(prices) {\n    let minPrice = Infinity, maxProfit = 0;\n    for (const price of prices) {\n        minPrice = Math.min(minPrice, price);\n        maxProfit = Math.max(maxProfit, price - minPrice);\n    }\n    return maxProfit;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the prices array, updating the minimum price and maximum profit at each step.",
+    "space_complexity_explanation": "Only two variables are needed: minimum price so far and maximum profit.",
     "key_insight": "Track the running minimum buy price — the optimal sell is always at the maximum difference from the lowest point so far.",
     "related": []
   },
@@ -403,6 +433,8 @@
     "solution_js": "var lengthOfLongestSubstring = function(s) {\n    const charSet = new Set();\n    let l = 0, result = 0;\n    for (let r = 0; r < s.length; r++) {\n        while (charSet.has(s[r])) {\n            charSet.delete(s[l]);\n            l++;\n        }\n        charSet.add(s[r]);\n        result = Math.max(result, r - l + 1);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(min(n, m))",
+    "time_complexity_explanation": "Each character is added and removed from the set at most once, so the total work is O(n) across both pointers.",
+    "space_complexity_explanation": "The hash set stores at most min(n, m) characters, where m is the alphabet size.",
     "key_insight": "Sliding window with a set maintains the longest valid window — each character enters and leaves the set at most once.",
     "related": [
       17,
@@ -430,6 +462,8 @@
     "solution_js": "var characterReplacement = function(s, k) {\n    const count = {};\n    let l = 0, maxFreq = 0, result = 0;\n    for (let r = 0; r < s.length; r++) {\n        count[s[r]] = (count[s[r]] || 0) + 1;\n        maxFreq = Math.max(maxFreq, count[s[r]]);\n        while ((r - l + 1) - maxFreq > k) {\n            count[s[l]]--;\n            l++;\n        }\n        result = Math.max(result, r - l + 1);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Both left and right pointers move at most n steps total, and frequency updates are O(1) per step.",
+    "space_complexity_explanation": "The frequency array has a fixed size of 26 (one per uppercase letter), regardless of input size.",
     "key_insight": "Window is valid when (size - maxFreq) ≤ k. maxFreq never needs to decrease since we only care about beating the current best.",
     "related": [
       16
@@ -456,6 +490,8 @@
     "solution_js": "var checkInclusion = function(s1, s2) {\n    if (s1.length > s2.length) return false;\n    const s1Count = new Array(26).fill(0);\n    const s2Count = new Array(26).fill(0);\n    for (let i = 0; i < s1.length; i++) {\n        s1Count[s1.charCodeAt(i) - 97]++;\n        s2Count[s2.charCodeAt(i) - 97]++;\n    }\n    let matches = 0;\n    for (let i = 0; i < 26; i++) if (s1Count[i] === s2Count[i]) matches++;\n    for (let i = s1.length; i < s2.length; i++) {\n        if (matches === 26) return true;\n        let idx = s2.charCodeAt(i) - 97;\n        s2Count[idx]++;\n        if (s2Count[idx] === s1Count[idx]) matches++;\n        else if (s2Count[idx] === s1Count[idx] + 1) matches--;\n        idx = s2.charCodeAt(i - s1.length) - 97;\n        s2Count[idx]--;\n        if (s2Count[idx] === s1Count[idx]) matches++;\n        else if (s2Count[idx] === s1Count[idx] - 1) matches--;\n    }\n    return matches === 26;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "The window slides across s2 once, performing O(1) frequency updates and match tracking at each step.",
+    "space_complexity_explanation": "Two frequency arrays of fixed size 26 are used, independent of input length.",
     "key_insight": "Track the number of matching character frequencies (out of 26). When all match, you've found a permutation.",
     "related": [
       2,
@@ -483,6 +519,8 @@
     "solution_js": "var minWindow = function(s, t) {\n    const tCount = {};\n    for (const c of t) tCount[c] = (tCount[c] || 0) + 1;\n    const required = Object.keys(tCount).length;\n    let formed = 0, l = 0;\n    const window = {};\n    let ans = [Infinity, 0, 0];\n    for (let r = 0; r < s.length; r++) {\n        const c = s[r];\n        window[c] = (window[c] || 0) + 1;\n        if (tCount[c] && window[c] === tCount[c]) formed++;\n        while (formed === required) {\n            if (r - l + 1 < ans[0]) ans = [r - l + 1, l, r];\n            window[s[l]]--;\n            if (tCount[s[l]] && window[s[l]] < tCount[s[l]]) formed--;\n            l++;\n        }\n    }\n    return ans[0] === Infinity ? '' : s.substring(ans[1], ans[2] + 1);\n};",
     "time_complexity": "O(n + m)",
     "space_complexity": "O(n + m)",
+    "time_complexity_explanation": "Each character is visited at most twice (once by expanding right, once by shrinking left), giving O(n) for s. Building t's frequency map is O(m).",
+    "space_complexity_explanation": "The frequency maps for both s and t store up to the total number of distinct characters.",
     "key_insight": "Expand to satisfy the constraint, then contract to minimize — the classic sliding window pattern for 'minimum window' problems.",
     "related": [
       16,
@@ -510,6 +548,8 @@
     "solution_js": "var maxSlidingWindow = function(nums, k) {\n    const dq = [];\n    const result = [];\n    for (let i = 0; i < nums.length; i++) {\n        while (dq.length && nums[dq[dq.length - 1]] <= nums[i]) dq.pop();\n        dq.push(i);\n        if (dq[0] <= i - k) dq.shift();\n        if (i >= k - 1) result.push(nums[dq[0]]);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(k)",
+    "time_complexity_explanation": "Each element is added to and removed from the deque at most once, giving amortized O(1) per element.",
+    "space_complexity_explanation": "The deque stores at most k elements (the current window's indices).",
     "key_insight": "A monotonic decreasing deque maintains potential maximums — smaller elements are discarded since they can never be the max while a larger element is in the window.",
     "related": [
       26
@@ -535,6 +575,8 @@
     "solution_js": "var isValid = function(s) {\n    const stack = [];\n    const pairs = {')': '(', ']': '[', '}': '{'};\n    for (const c of s) {\n        if (pairs[c]) {\n            if (!stack.length || stack[stack.length - 1] !== pairs[c]) return false;\n            stack.pop();\n        } else {\n            stack.push(c);\n        }\n    }\n    return stack.length === 0;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate through each of the n characters once, performing O(1) stack push/pop per character.",
+    "space_complexity_explanation": "In the worst case (all opening brackets), the stack stores up to n elements.",
     "key_insight": "A stack naturally handles nested structure — the most recent unmatched opener should match the next closer.",
     "related": [
       24
@@ -561,6 +603,8 @@
     "solution_js": "var MinStack = function() {\n    this.stack = [];\n};\n\nMinStack.prototype.push = function(val) {\n    const curMin = this.stack.length ? Math.min(val, this.stack[this.stack.length - 1][1]) : val;\n    this.stack.push([val, curMin]);\n};\n\nMinStack.prototype.pop = function() {\n    this.stack.pop();\n};\n\nMinStack.prototype.top = function() {\n    return this.stack[this.stack.length - 1][0];\n};\n\nMinStack.prototype.getMin = function() {\n    return this.stack[this.stack.length - 1][1];\n};",
     "time_complexity": "O(1)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each push, pop, top, and getMin operation is O(1) since we only access the top of the stack.",
+    "space_complexity_explanation": "Each element pushed stores an extra minimum value, so space grows linearly with the number of elements.",
     "key_insight": "Store (value, current_min) pairs so the minimum is always accessible at the top of the stack.",
     "related": []
   },
@@ -584,6 +628,8 @@
     "solution_js": "var evalRPN = function(tokens) {\n    const stack = [];\n    for (const token of tokens) {\n        if (['+', '-', '*', '/'].includes(token)) {\n            const b = stack.pop(), a = stack.pop();\n            if (token === '+') stack.push(a + b);\n            else if (token === '-') stack.push(a - b);\n            else if (token === '*') stack.push(a * b);\n            else stack.push(Math.trunc(a / b));\n        } else {\n            stack.push(Number(token));\n        }\n    }\n    return stack[0];\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "We process each of the n tokens exactly once, with O(1) stack operations per token.",
+    "space_complexity_explanation": "The stack can hold up to n/2 operands at once in the worst case.",
     "key_insight": "A stack naturally evaluates postfix expressions — operators always apply to the two most recent operands.",
     "related": []
   },
@@ -608,6 +654,8 @@
     "solution_js": "var generateParenthesis = function(n) {\n    const result = [];\n    function backtrack(curr, open, close) {\n        if (curr.length === 2 * n) {\n            result.push(curr);\n            return;\n        }\n        if (open < n) backtrack(curr + '(', open + 1, close);\n        if (close < open) backtrack(curr + ')', open, close + 1);\n    }\n    backtrack('', 0, 0);\n    return result;\n};",
     "time_complexity": "O(4^n / sqrt(n))",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "The number of valid parenthesizations is the nth Catalan number, which is O(4^n / sqrt(n)), and building each takes O(n) time.",
+    "space_complexity_explanation": "The recursion depth is at most 2n (the string length), so the call stack uses O(n) space.",
     "key_insight": "Only add ')' when close < open — this single rule guarantees all generated combinations are valid.",
     "related": [
       21
@@ -633,6 +681,8 @@
     "solution_js": "var dailyTemperatures = function(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    const stack = [];\n    for (let i = 0; i < n; i++) {\n        while (stack.length && temperatures[i] > temperatures[stack[stack.length - 1]]) {\n            const j = stack.pop();\n            result[j] = i - j;\n        }\n        stack.push(i);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each index is pushed and popped from the stack at most once, giving O(n) amortized across all elements.",
+    "space_complexity_explanation": "The stack and result array each store up to n elements.",
     "key_insight": "A monotonic decreasing stack efficiently finds the next greater element — each element is pushed and popped at most once.",
     "related": [
       26,
@@ -660,6 +710,8 @@
     "solution_js": "var carFleet = function(target, position, speed) {\n    const pairs = position.map((p, i) => [p, speed[i]]);\n    pairs.sort((a, b) => b[0] - a[0]);\n    const stack = [];\n    for (const [pos, spd] of pairs) {\n        const time = (target - pos) / spd;\n        if (!stack.length || time > stack[stack.length - 1]) {\n            stack.push(time);\n        }\n    }\n    return stack.length;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the cars by position takes O(n log n), and the subsequent single-pass stack processing is O(n).",
+    "space_complexity_explanation": "The stack and the array of calculated times each store up to n entries.",
     "key_insight": "Sort by position descending and use a stack of arrival times — a slower car ahead forces faster cars behind to merge into its fleet.",
     "related": [
       25
@@ -685,6 +737,8 @@
     "solution_js": "var largestRectangleArea = function(heights) {\n    const stack = [];\n    let maxArea = 0;\n    for (let i = 0; i < heights.length; i++) {\n        let start = i;\n        while (stack.length && stack[stack.length - 1][1] > heights[i]) {\n            const [idx, h] = stack.pop();\n            maxArea = Math.max(maxArea, h * (i - idx));\n            start = idx;\n        }\n        stack.push([start, heights[i]]);\n    }\n    for (const [idx, h] of stack) {\n        maxArea = Math.max(maxArea, h * (heights.length - idx));\n    }\n    return maxArea;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each bar is pushed and popped from the stack at most once, giving O(n) amortized total work.",
+    "space_complexity_explanation": "The stack stores up to n bar indices in the worst case (all ascending heights).",
     "key_insight": "A monotonic increasing stack lets you determine, for each bar, how far left and right it can extend as the minimum height.",
     "related": [
       14,
@@ -711,6 +765,8 @@
     "solution_js": "var search = function(nums, target) {\n    let l = 0, r = nums.length - 1;\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] === target) return mid;\n        else if (nums[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return -1;\n};",
     "time_complexity": "O(log n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each iteration halves the search space, so at most log₂(n) comparisons are needed.",
+    "space_complexity_explanation": "Only two pointers (left and right) and a midpoint variable are used.",
     "key_insight": "Halving the search space each iteration gives O(log n) — the foundation of all binary search variants.",
     "related": [
       29,
@@ -738,6 +794,8 @@
     "solution_js": "var searchMatrix = function(matrix, target) {\n    const m = matrix.length, n = matrix[0].length;\n    let l = 0, r = m * n - 1;\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        const val = matrix[Math.floor(mid / n)][mid % n];\n        if (val === target) return true;\n        else if (val < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return false;\n};",
     "time_complexity": "O(log(m * n))",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search on m*n virtual indices, with each step halving the search space, gives O(log(m*n)).",
+    "space_complexity_explanation": "Only a constant number of variables for indices and bounds are needed.",
     "key_insight": "Flatten the 2D matrix conceptually into a 1D sorted array using index math: row = idx // cols, col = idx % cols.",
     "related": [
       28
@@ -763,6 +821,8 @@
     "solution_js": "var minEatingSpeed = function(piles, h) {\n    let l = 1, r = Math.max(...piles);\n    while (l < r) {\n        const mid = Math.floor((l + r) / 2);\n        const hours = piles.reduce((sum, p) => sum + Math.ceil(p / mid), 0);\n        if (hours <= h) r = mid;\n        else l = mid + 1;\n    }\n    return l;\n};",
     "time_complexity": "O(n log m)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search over the range of speeds is O(log m), and each feasibility check iterates all n piles in O(n).",
+    "space_complexity_explanation": "Only a few variables for binary search bounds and the hour calculation are needed.",
     "key_insight": "Binary search on the answer — when the search space is a range of valid answers, binary search finds the optimal one.",
     "related": [
       28
@@ -788,6 +848,8 @@
     "solution_js": "var findMin = function(nums) {\n    let l = 0, r = nums.length - 1;\n    while (l < r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] > nums[r]) l = mid + 1;\n        else r = mid;\n    }\n    return nums[l];\n};",
     "time_complexity": "O(log n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each step of binary search halves the search space, requiring at most O(log n) iterations.",
+    "space_complexity_explanation": "Only a constant number of pointer variables are used.",
     "key_insight": "Compare mid with the right boundary — if mid > right, the rotation point (minimum) must be to the right of mid.",
     "related": [
       32
@@ -813,6 +875,8 @@
     "solution_js": "var search = function(nums, target) {\n    let l = 0, r = nums.length - 1;\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] === target) return mid;\n        if (nums[l] <= nums[mid]) {\n            if (nums[l] <= target && target < nums[mid]) r = mid - 1;\n            else l = mid + 1;\n        } else {\n            if (nums[mid] < target && target <= nums[r]) l = mid + 1;\n            else r = mid - 1;\n        }\n    }\n    return -1;\n};",
     "time_complexity": "O(log n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search halves the search space each step, needing O(log n) iterations with O(1) work each.",
+    "space_complexity_explanation": "Only constant extra space for the binary search pointers.",
     "key_insight": "In a rotated sorted array, one half is always sorted — determine which half and whether the target falls within it.",
     "related": [
       31
@@ -840,6 +904,8 @@
     "solution_js": "var TimeMap = function() {\n    this.store = new Map();\n};\n\nTimeMap.prototype.set = function(key, value, timestamp) {\n    if (!this.store.has(key)) this.store.set(key, []);\n    this.store.get(key).push([timestamp, value]);\n};\n\nTimeMap.prototype.get = function(key, timestamp) {\n    if (!this.store.has(key)) return '';\n    const vals = this.store.get(key);\n    let l = 0, r = vals.length - 1, result = '';\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (vals[mid][0] <= timestamp) {\n            result = vals[mid][1];\n            l = mid + 1;\n        } else {\n            r = mid - 1;\n        }\n    }\n    return result;\n};",
     "time_complexity": "O(log n) per get, O(1) per set",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each get operation uses binary search on the timestamp list, which is O(log n). Each set appends in O(1).",
+    "space_complexity_explanation": "All key-value-timestamp entries are stored, using O(n) total space.",
     "key_insight": "Timestamps arrive in order so the list is naturally sorted — binary search gives O(log n) lookups for the floor timestamp.",
     "related": [
       28
@@ -865,6 +931,8 @@
     "solution_js": "var findMedianSortedArrays = function(nums1, nums2) {\n    if (nums1.length > nums2.length) [nums1, nums2] = [nums2, nums1];\n    const m = nums1.length, n = nums2.length;\n    const half = Math.floor((m + n + 1) / 2);\n    let l = 0, r = m;\n    while (l <= r) {\n        const i = Math.floor((l + r) / 2);\n        const j = half - i;\n        const left1 = i > 0 ? nums1[i - 1] : -Infinity;\n        const right1 = i < m ? nums1[i] : Infinity;\n        const left2 = j > 0 ? nums2[j - 1] : -Infinity;\n        const right2 = j < n ? nums2[j] : Infinity;\n        if (left1 <= right2 && left2 <= right1) {\n            if ((m + n) % 2) return Math.max(left1, left2);\n            return (Math.max(left1, left2) + Math.min(right1, right2)) / 2;\n        } else if (left1 > right2) {\n            r = i - 1;\n        } else {\n            l = i + 1;\n        }\n    }\n};",
     "time_complexity": "O(log(min(m, n)))",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search on the smaller array takes O(log(min(m,n))) steps to find the correct partition.",
+    "space_complexity_explanation": "Only a constant number of variables for partition indices and boundary values are needed.",
     "key_insight": "Binary search on the partition point of the smaller array — a correct partition means all left elements ≤ all right elements.",
     "related": []
   },
@@ -888,6 +956,8 @@
     "solution_js": "var reverseList = function(head) {\n    let prev = null, curr = head;\n    while (curr) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    return prev;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "We traverse the linked list once, performing O(1) pointer manipulation at each of the n nodes.",
+    "space_complexity_explanation": "Only two extra pointers (prev and curr) are used, modifying the list in place.",
     "key_insight": "Three pointers (prev, curr, next) let you reverse each link in one pass without extra space.",
     "related": [
       36,
@@ -915,6 +985,8 @@
     "solution_js": "var mergeTwoLists = function(list1, list2) {\n    const dummy = new ListNode();\n    let curr = dummy;\n    while (list1 && list2) {\n        if (list1.val <= list2.val) {\n            curr.next = list1;\n            list1 = list1.next;\n        } else {\n            curr.next = list2;\n            list2 = list2.next;\n        }\n        curr = curr.next;\n    }\n    curr.next = list1 || list2;\n    return dummy.next;\n};",
     "time_complexity": "O(n + m)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each node from both lists is visited exactly once, giving O(n + m) where n and m are the list lengths.",
+    "space_complexity_explanation": "Only a dummy node and a pointer are used; nodes are rearranged in place.",
     "key_insight": "A dummy head node eliminates special cases for the first element and simplifies list construction.",
     "related": [
       35,
@@ -942,6 +1014,8 @@
     "solution_js": "var reorderList = function(head) {\n    let slow = head, fast = head.next;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    let second = slow.next;\n    slow.next = null;\n    let prev = null;\n    while (second) {\n        const next = second.next;\n        second.next = prev;\n        prev = second;\n        second = next;\n    }\n    let first = head;\n    second = prev;\n    while (second) {\n        const tmp1 = first.next, tmp2 = second.next;\n        first.next = second;\n        second.next = tmp1;\n        first = tmp1;\n        second = tmp2;\n    }\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Finding the middle (O(n)), reversing the second half (O(n)), and interleaving (O(n)) are each linear.",
+    "space_complexity_explanation": "All operations modify pointers in place using only a constant number of extra variables.",
     "key_insight": "Decompose into three classic operations: find middle (slow/fast), reverse list, and merge two lists.",
     "related": [
       35,
@@ -969,6 +1043,8 @@
     "solution_js": "var removeNthFromEnd = function(head, n) {\n    const dummy = new ListNode(0, head);\n    let slow = dummy, fast = head;\n    for (let i = 0; i < n; i++) fast = fast.next;\n    while (fast) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    slow.next = slow.next.next;\n    return dummy.next;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Both fast and slow pointers traverse the list at most once, giving O(n) total.",
+    "space_complexity_explanation": "Only the dummy node and two pointer variables are used.",
     "key_insight": "Two pointers spaced n apart — when fast hits the end, slow is at the node before the one to remove.",
     "related": [
       35
@@ -995,6 +1071,8 @@
     "solution_js": "var copyRandomList = function(head) {\n    if (!head) return null;\n    const oldToNew = new Map();\n    let curr = head;\n    while (curr) {\n        oldToNew.set(curr, new Node(curr.val));\n        curr = curr.next;\n    }\n    curr = head;\n    while (curr) {\n        oldToNew.get(curr).next = oldToNew.get(curr.next) || null;\n        oldToNew.get(curr).random = oldToNew.get(curr.random) || null;\n        curr = curr.next;\n    }\n    return oldToNew.get(head);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Two passes through the n-node list: one to create copy nodes and one to assign next/random pointers.",
+    "space_complexity_explanation": "The hash map stores one entry per original node, mapping it to its copy.",
     "key_insight": "A hash map from original to copy nodes lets you resolve random pointers in a second pass.",
     "related": []
   },
@@ -1018,6 +1096,8 @@
     "solution_js": "var addTwoNumbers = function(l1, l2) {\n    const dummy = new ListNode();\n    let curr = dummy, carry = 0;\n    while (l1 || l2 || carry) {\n        const v1 = l1 ? l1.val : 0;\n        const v2 = l2 ? l2.val : 0;\n        const total = v1 + v2 + carry;\n        carry = Math.floor(total / 10);\n        curr.next = new ListNode(total % 10);\n        curr = curr.next;\n        l1 = l1 ? l1.next : null;\n        l2 = l2 ? l2.next : null;\n    }\n    return dummy.next;\n};",
     "time_complexity": "O(max(m, n))",
     "space_complexity": "O(max(m, n))",
+    "time_complexity_explanation": "We traverse both lists once in parallel, processing O(max(m, n)) nodes total.",
+    "space_complexity_explanation": "A new linked list node is created for each digit of the result, which has at most max(m, n) + 1 nodes.",
     "key_insight": "Reverse-order storage means digits align perfectly for addition — just simulate grade-school addition with carry.",
     "related": [
       36
@@ -1044,6 +1124,8 @@
     "solution_js": "var hasCycle = function(head) {\n    let slow = head, fast = head;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n        if (slow === fast) return true;\n    }\n    return false;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "In the worst case, the slow pointer traverses the entire list once before the fast pointer catches up.",
+    "space_complexity_explanation": "Only two pointers (slow and fast) are used, with no additional data structures.",
     "key_insight": "Floyd's tortoise and hare — a fast pointer lapping a slow pointer proves a cycle exists, using only O(1) space.",
     "related": [
       42
@@ -1070,6 +1152,8 @@
     "solution_js": "var findDuplicate = function(nums) {\n    let slow = 0, fast = 0;\n    do {\n        slow = nums[slow];\n        fast = nums[nums[fast]];\n    } while (slow !== fast);\n    let slow2 = 0;\n    while (slow !== slow2) {\n        slow = nums[slow];\n        slow2 = nums[slow2];\n    }\n    return slow;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Floyd's algorithm uses a slow and fast pointer, each traversing the array at most twice (O(n) total).",
+    "space_complexity_explanation": "Only two pointer variables are used; the array itself serves as the implicit linked list.",
     "key_insight": "Reinterpret the array as a linked list — the duplicate number is the entrance to the cycle, found via Floyd's algorithm.",
     "related": [
       41
@@ -1097,6 +1181,8 @@
     "solution_js": "var LRUCache = function(capacity) {\n    this.cap = capacity;\n    this.cache = new Map();\n};\n\nLRUCache.prototype.get = function(key) {\n    if (!this.cache.has(key)) return -1;\n    const val = this.cache.get(key);\n    this.cache.delete(key);\n    this.cache.set(key, val);\n    return val;\n};\n\nLRUCache.prototype.put = function(key, value) {\n    if (this.cache.has(key)) this.cache.delete(key);\n    this.cache.set(key, value);\n    if (this.cache.size > this.cap) {\n        const firstKey = this.cache.keys().next().value;\n        this.cache.delete(firstKey);\n    }\n};",
     "time_complexity": "O(1)",
     "space_complexity": "O(capacity)",
+    "time_complexity_explanation": "Both get and put are O(1) because hash map lookup and doubly linked list insertion/removal are each O(1).",
+    "space_complexity_explanation": "The hash map and doubly linked list together store at most 'capacity' entries.",
     "key_insight": "Hash map + doubly linked list gives O(1) for both lookup and order manipulation. JS Map maintains insertion order natively.",
     "related": []
   },
@@ -1122,6 +1208,8 @@
     "solution_js": "var mergeKLists = function(lists) {\n    if (!lists.length) return null;\n    while (lists.length > 1) {\n        const merged = [];\n        for (let i = 0; i < lists.length; i += 2) {\n            const l1 = lists[i];\n            const l2 = i + 1 < lists.length ? lists[i + 1] : null;\n            merged.push(mergeTwoLists(l1, l2));\n        }\n        lists = merged;\n    }\n    return lists[0];\n};\n\nfunction mergeTwoLists(l1, l2) {\n    const dummy = new ListNode();\n    let curr = dummy;\n    while (l1 && l2) {\n        if (l1.val <= l2.val) { curr.next = l1; l1 = l1.next; }\n        else { curr.next = l2; l2 = l2.next; }\n        curr = curr.next;\n    }\n    curr.next = l1 || l2;\n    return dummy.next;\n}",
     "time_complexity": "O(n log k)",
     "space_complexity": "O(k)",
+    "time_complexity_explanation": "Each of the n total nodes is pushed and popped from the min-heap once, and each heap operation costs O(log k).",
+    "space_complexity_explanation": "The min-heap holds at most k nodes at any time (one from each list).",
     "key_insight": "A min-heap of k elements efficiently selects the global minimum. Divide-and-conquer merge is an alternative O(n log k) approach.",
     "related": [
       36
@@ -1147,6 +1235,8 @@
     "solution_js": "var reverseKGroup = function(head, k) {\n    const dummy = new ListNode(0, head);\n    let groupPrev = dummy;\n    while (true) {\n        let kth = groupPrev;\n        for (let i = 0; i < k; i++) {\n            kth = kth.next;\n            if (!kth) return dummy.next;\n        }\n        const groupNext = kth.next;\n        let prev = groupNext, curr = groupPrev.next;\n        for (let i = 0; i < k; i++) {\n            const next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        const tmp = groupPrev.next;\n        groupPrev.next = kth;\n        groupPrev = tmp;\n    }\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "We make a single pass through the list, reversing each group of k nodes with O(1) work per node.",
+    "space_complexity_explanation": "Only a constant number of pointers are used for tracking group boundaries and reversals.",
     "key_insight": "Reverse each k-group independently, using a predecessor pointer to reconnect reversed segments to the rest of the list.",
     "related": [
       35
@@ -1173,6 +1263,8 @@
     "solution_js": "var invertTree = function(root) {\n    if (!root) return null;\n    [root.left, root.right] = [root.right, root.left];\n    invertTree(root.left);\n    invertTree(root.right);\n    return root;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node in the tree is visited exactly once to swap its children.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h, which is O(log n) for balanced trees or O(n) for skewed trees.",
     "key_insight": "Swap children at every node — the recursive structure naturally handles the entire tree.",
     "related": [
       47,
@@ -1200,6 +1292,8 @@
     "solution_js": "var maxDepth = function(root) {\n    if (!root) return 0;\n    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node is visited exactly once in the DFS traversal.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h, which is O(n) in the worst case for a skewed tree.",
     "key_insight": "Tree depth is a natural recursive problem — the depth of any node depends only on the depths of its children.",
     "related": [
       46,
@@ -1228,6 +1322,8 @@
     "solution_js": "var diameterOfBinaryTree = function(root) {\n    let diameter = 0;\n    function height(node) {\n        if (!node) return 0;\n        const left = height(node.left);\n        const right = height(node.right);\n        diameter = Math.max(diameter, left + right);\n        return 1 + Math.max(left, right);\n    }\n    height(root);\n    return diameter;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Each node is visited exactly once, computing height and updating the diameter in O(1) per node.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "Piggyback on the height computation — at each node, left_height + right_height gives the diameter through that node.",
     "related": [
       47,
@@ -1255,6 +1351,8 @@
     "solution_js": "var isBalanced = function(root) {\n    function height(node) {\n        if (!node) return 0;\n        const left = height(node.left);\n        const right = height(node.right);\n        if (left === -1 || right === -1 || Math.abs(left - right) > 1) return -1;\n        return 1 + Math.max(left, right);\n    }\n    return height(root) !== -1;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Each node is visited once, computing and comparing subtree heights in O(1) per node.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "Use -1 as a sentinel for 'unbalanced' — it short-circuits the height computation and avoids redundant work.",
     "related": [
       47
@@ -1281,6 +1379,8 @@
     "solution_js": "var isSameTree = function(p, q) {\n    if (!p && !q) return true;\n    if (!p || !q || p.val !== q.val) return false;\n    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Each corresponding pair of nodes is visited once, with O(1) comparison per node.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "Structural equality of trees reduces to: same value at root, and recursive equality of both subtrees.",
     "related": [
       51
@@ -1307,6 +1407,8 @@
     "solution_js": "var isSubtree = function(root, subRoot) {\n    if (!root) return false;\n    if (isSameTree(root, subRoot)) return true;\n    return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);\n};\n\nfunction isSameTree(p, q) {\n    if (!p && !q) return true;\n    if (!p || !q || p.val !== q.val) return false;\n    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n}",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "For each of the m nodes in the main tree, the isSameTree check may visit up to n nodes of the subtree.",
+    "space_complexity_explanation": "The recursion stack depth is bounded by the height of the main tree.",
     "key_insight": "Subtree check = traverse the main tree and run isSameTree at each node. It composes two simple recursive functions.",
     "related": [
       50
@@ -1333,6 +1435,8 @@
     "solution_js": "var lowestCommonAncestor = function(root, p, q) {\n    while (root) {\n        if (p.val < root.val && q.val < root.val) root = root.left;\n        else if (p.val > root.val && q.val > root.val) root = root.right;\n        else return root;\n    }\n};",
     "time_complexity": "O(h)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "We follow a single root-to-node path, visiting at most h nodes (the tree height).",
+    "space_complexity_explanation": "The iterative approach uses only a single pointer variable, no recursion stack.",
     "key_insight": "The LCA in a BST is the first node where p and q diverge to different subtrees (or equal the node).",
     "related": [
       57
@@ -1359,6 +1463,8 @@
     "solution_js": "var levelOrder = function(root) {\n    if (!root) return [];\n    const result = [];\n    const queue = [root];\n    while (queue.length) {\n        const level = [];\n        const size = queue.length;\n        for (let i = 0; i < size; i++) {\n            const node = queue.shift();\n            level.push(node.val);\n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        result.push(level);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Every node is visited exactly once during the BFS traversal.",
+    "space_complexity_explanation": "The queue holds at most one full level of the tree, which can be up to n/2 nodes in a complete tree.",
     "key_insight": "Process nodes in batches of queue.size() to separate levels — this is the core BFS level-order pattern.",
     "related": [
       54
@@ -1385,6 +1491,8 @@
     "solution_js": "var rightSideView = function(root) {\n    if (!root) return [];\n    const result = [];\n    const queue = [root];\n    while (queue.length) {\n        const size = queue.length;\n        let node;\n        for (let i = 0; i < size; i++) {\n            node = queue.shift();\n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        result.push(node.val);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Every node is visited exactly once during the level-order BFS traversal.",
+    "space_complexity_explanation": "The queue stores up to one full level of nodes, which can be up to n/2 in a complete tree.",
     "key_insight": "The right side view is simply the last node at each BFS level — a small modification to level-order traversal.",
     "related": [
       53
@@ -1411,6 +1519,8 @@
     "solution_js": "var goodNodes = function(root) {\n    function dfs(node, maxVal) {\n        if (!node) return 0;\n        const good = node.val >= maxVal ? 1 : 0;\n        maxVal = Math.max(maxVal, node.val);\n        return good + dfs(node.left, maxVal) + dfs(node.right, maxVal);\n    }\n    return dfs(root, root.val);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node is visited exactly once during the DFS traversal.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "Pass the path maximum as a DFS parameter — a node is 'good' if it meets or exceeds all ancestors on its path.",
     "related": [
       47
@@ -1438,6 +1548,8 @@
     "solution_js": "var isValidBST = function(root) {\n    function valid(node, low, high) {\n        if (!node) return true;\n        if (node.val <= low || node.val >= high) return false;\n        return valid(node.left, low, node.val) && valid(node.right, node.val, high);\n    }\n    return valid(root, -Infinity, Infinity);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node is visited exactly once, with O(1) bound-checking at each node.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "Pass valid range bounds (low, high) down the recursion — every node must satisfy low < val < high.",
     "related": [
       52,
@@ -1466,6 +1578,8 @@
     "solution_js": "var kthSmallest = function(root, k) {\n    const stack = [];\n    let curr = root;\n    while (stack.length || curr) {\n        while (curr) {\n            stack.push(curr);\n            curr = curr.left;\n        }\n        curr = stack.pop();\n        k--;\n        if (k === 0) return curr.val;\n        curr = curr.right;\n    }\n};",
     "time_complexity": "O(h + k)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "The in-order traversal visits at most h nodes to reach the leftmost, then pops k nodes to find the answer.",
+    "space_complexity_explanation": "The stack holds at most h nodes (the height of the tree) at any time.",
     "key_insight": "In-order traversal of a BST yields sorted order — the kth node visited is the kth smallest element.",
     "related": [
       56
@@ -1493,6 +1607,8 @@
     "solution_js": "var buildTree = function(preorder, inorder) {\n    const inorderMap = new Map();\n    inorder.forEach((val, idx) => inorderMap.set(val, idx));\n    let preIdx = 0;\n    function build(left, right) {\n        if (left > right) return null;\n        const rootVal = preorder[preIdx++];\n        const root = new TreeNode(rootVal);\n        const mid = inorderMap.get(rootVal);\n        root.left = build(left, mid - 1);\n        root.right = build(mid + 1, right);\n        return root;\n    }\n    return build(0, inorder.length - 1);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each node is created once, and the hash map lookup for splitting inorder is O(1), giving O(n) total.",
+    "space_complexity_explanation": "The hash map for inorder indices uses O(n), plus O(n) for the recursion stack in the worst case.",
     "key_insight": "Preorder gives the root; inorder splits the tree into left and right subtrees. A hash map makes root lookups O(1).",
     "related": [
       53
@@ -1519,6 +1635,8 @@
     "solution_js": "var maxPathSum = function(root) {\n    let maxSum = -Infinity;\n    function dfs(node) {\n        if (!node) return 0;\n        const left = Math.max(dfs(node.left), 0);\n        const right = Math.max(dfs(node.right), 0);\n        maxSum = Math.max(maxSum, left + node.val + right);\n        return node.val + Math.max(left, right);\n    }\n    dfs(root);\n    return maxSum;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node is visited exactly once in the DFS, computing the max path contribution in O(1) per node.",
+    "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
     "key_insight": "At each node, the best path through it uses both children, but the value returned to the parent can only use one branch.",
     "related": [
       48
@@ -1546,6 +1664,8 @@
     "solution_js": "var serialize = function(root) {\n    const result = [];\n    function dfs(node) {\n        if (!node) { result.push('N'); return; }\n        result.push(String(node.val));\n        dfs(node.left);\n        dfs(node.right);\n    }\n    dfs(root);\n    return result.join(',');\n};\n\nvar deserialize = function(data) {\n    const vals = data.split(',');\n    let i = 0;\n    function dfs() {\n        if (vals[i] === 'N') { i++; return null; }\n        const node = new TreeNode(Number(vals[i++]));\n        node.left = dfs();\n        node.right = dfs();\n        return node;\n    }\n    return dfs();\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Serialization and deserialization each visit all n nodes exactly once.",
+    "space_complexity_explanation": "The serialized string and the queue/list used during deserialization store all n node values.",
     "key_insight": "Preorder traversal with null markers uniquely defines a binary tree — the deserialization just replays the traversal.",
     "related": [
       58
@@ -1571,6 +1691,8 @@
     "solution_js": "var Trie = function() {\n    this.root = {};\n};\n\nTrie.prototype.insert = function(word) {\n    let node = this.root;\n    for (const c of word) {\n        if (!node[c]) node[c] = {};\n        node = node[c];\n    }\n    node.isEnd = true;\n};\n\nTrie.prototype.search = function(word) {\n    let node = this.root;\n    for (const c of word) {\n        if (!node[c]) return false;\n        node = node[c];\n    }\n    return node.isEnd === true;\n};\n\nTrie.prototype.startsWith = function(prefix) {\n    let node = this.root;\n    for (const c of prefix) {\n        if (!node[c]) return false;\n        node = node[c];\n    }\n    return true;\n};",
     "time_complexity": "O(m) per operation",
     "space_complexity": "O(n * m)",
+    "time_complexity_explanation": "Each operation traverses at most m characters (the word length), with O(1) work per character.",
+    "space_complexity_explanation": "In the worst case (no shared prefixes), the trie stores all characters of all n words, each of length up to m.",
     "key_insight": "A trie stores words character-by-character in a tree — shared prefixes share nodes, making prefix operations efficient.",
     "related": [
       62,
@@ -1598,6 +1720,8 @@
     "solution_js": "var WordDictionary = function() {\n    this.root = {};\n};\n\nWordDictionary.prototype.addWord = function(word) {\n    let node = this.root;\n    for (const c of word) {\n        if (!node[c]) node[c] = {};\n        node = node[c];\n    }\n    node.isEnd = true;\n};\n\nWordDictionary.prototype.search = function(word) {\n    function dfs(idx, node) {\n        for (let i = idx; i < word.length; i++) {\n            const c = word[i];\n            if (c === '.') {\n                return Object.keys(node).some(key =>\n                    key !== 'isEnd' && dfs(i + 1, node[key])\n                );\n            }\n            if (!node[c]) return false;\n            node = node[c];\n        }\n        return node.isEnd === true;\n    }\n    return dfs(0, this.root);\n};",
     "time_complexity": "O(m) for add, O(26^m) worst case for search with dots",
     "space_complexity": "O(n * m)",
+    "time_complexity_explanation": "AddWord traverses m characters in O(m). Search with '.' wildcards may branch to all 26 children at each level, giving O(26^m) worst case.",
+    "space_complexity_explanation": "The trie stores all characters across all n inserted words of average length m.",
     "key_insight": "The '.' wildcard transforms trie search into a DFS that branches at each wildcard position, exploring all possible matches.",
     "related": [
       61,
@@ -1626,6 +1750,8 @@
     "solution_js": "var findWords = function(board, words) {\n    const root = {};\n    for (const word of words) {\n        let node = root;\n        for (const c of word) {\n            if (!node[c]) node[c] = {};\n            node = node[c];\n        }\n        node.word = word;\n    }\n    const m = board.length, n = board[0].length;\n    const result = [];\n    function dfs(r, c, node) {\n        if (r < 0 || r >= m || c < 0 || c >= n) return;\n        const char = board[r][c];\n        if (!node[char]) return;\n        const next = node[char];\n        if (next.word) {\n            result.push(next.word);\n            delete next.word;\n        }\n        board[r][c] = '.';\n        dfs(r+1, c, next);\n        dfs(r-1, c, next);\n        dfs(r, c+1, next);\n        dfs(r, c-1, next);\n        board[r][c] = char;\n        if (!Object.keys(next).length) delete node[char];\n    }\n    for (let r = 0; r < m; r++) {\n        for (let c = 0; c < n; c++) {\n            dfs(r, c, root);\n        }\n    }\n    return result;\n};",
     "time_complexity": "O(m * n * 4^L)",
     "space_complexity": "O(N * L)",
+    "time_complexity_explanation": "For each of m*n cells, the DFS can explore up to 4^L paths (4 directions, L levels deep) following the trie.",
+    "space_complexity_explanation": "The trie stores all N words of average length L, plus the recursion stack of depth L.",
     "key_insight": "A trie built from all words guides the DFS — it simultaneously searches for all words and prunes impossible paths.",
     "related": [
       61,
@@ -1653,6 +1779,8 @@
     "solution_js": "var KthLargest = function(k, nums) {\n    this.k = k;\n    this.heap = new MinPriorityQueue();\n    for (const n of nums) this.heap.enqueue(n);\n    while (this.heap.size() > k) this.heap.dequeue();\n};\n\nKthLargest.prototype.add = function(val) {\n    this.heap.enqueue(val);\n    if (this.heap.size() > this.k) this.heap.dequeue();\n    return this.heap.front().element;\n};",
     "time_complexity": "O(n log k) init, O(log k) add",
     "space_complexity": "O(k)",
+    "time_complexity_explanation": "Initialization heapifies n elements (O(n)) and pops down to size k (O((n-k) log k)). Each add is a single heap push/pop at O(log k).",
+    "space_complexity_explanation": "The min-heap stores exactly k elements at all times.",
     "key_insight": "A min-heap of size k naturally keeps the kth largest at the top, since all elements below the kth largest get removed.",
     "related": [
       70,
@@ -1680,6 +1808,8 @@
     "solution_js": "var lastStoneWeight = function(stones) {\n    const heap = new MaxPriorityQueue();\n    for (const s of stones) heap.enqueue(s);\n    while (heap.size() > 1) {\n        const first = heap.dequeue().element;\n        const second = heap.dequeue().element;\n        if (first !== second) heap.enqueue(first - second);\n    }\n    return heap.size() ? heap.front().element : 0;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each of the n-1 rounds involves two heap pops and possibly one push, each O(log n), giving O(n log n).",
+    "space_complexity_explanation": "The heap stores up to n stone weights.",
     "key_insight": "A max-heap gives O(log n) access to the largest element, perfect for simulating the stone-smashing process.",
     "related": [
       64,
@@ -1707,6 +1837,8 @@
     "solution_js": "var kClosest = function(points, k) {\n    const heap = new MaxPriorityQueue({ priority: x => x[0] });\n    for (const [x, y] of points) {\n        const dist = x * x + y * y;\n        heap.enqueue([dist, x, y]);\n        if (heap.size() > k) heap.dequeue();\n    }\n    const res = [];\n    while (heap.size()) {\n        const [, x, y] = heap.dequeue().element;\n        res.push([x, y]);\n    }\n    return res;\n};",
     "time_complexity": "O(n log k)",
     "space_complexity": "O(k)",
+    "time_complexity_explanation": "For each of n points, a heap push/pop takes O(log k), giving O(n log k) total.",
+    "space_complexity_explanation": "The max-heap stores at most k points at any time.",
     "key_insight": "For top-k smallest problems, use a max-heap of size k — it efficiently discards elements larger than the kth smallest.",
     "related": [
       67,
@@ -1734,6 +1866,8 @@
     "solution_js": "var findKthLargest = function(nums, k) {\n    const heap = new MinPriorityQueue();\n    for (const n of nums) {\n        heap.enqueue(n);\n        if (heap.size() > k) heap.dequeue();\n    }\n    return heap.front().element;\n};",
     "time_complexity": "O(n log k)",
     "space_complexity": "O(k)",
+    "time_complexity_explanation": "Each of the n elements is pushed onto the heap in O(log k), and excess elements are popped in O(log k).",
+    "space_complexity_explanation": "The min-heap stores exactly k elements.",
     "key_insight": "A min-heap of size k naturally maintains the kth largest element at the top — all smaller elements have been evicted.",
     "related": [
       64,
@@ -1762,6 +1896,8 @@
     "solution_js": "var leastInterval = function(tasks, n) {\n    const freq = new Map();\n    for (const t of tasks) freq.set(t, (freq.get(t) || 0) + 1);\n    const heap = new MaxPriorityQueue();\n    for (const f of freq.values()) heap.enqueue(f);\n    const queue = [];\n    let time = 0;\n    while (heap.size() || queue.length) {\n        time++;\n        if (heap.size()) {\n            const cnt = heap.dequeue().element - 1;\n            if (cnt > 0) queue.push([cnt, time + n]);\n        }\n        if (queue.length && queue[0][1] === time) {\n            heap.enqueue(queue.shift()[0]);\n        }\n    }\n    return time;\n};",
     "time_complexity": "O(n * m) where m is number of tasks",
     "space_complexity": "O(1) — at most 26 unique tasks",
+    "time_complexity_explanation": "In the worst case, we process each time unit up to the total number of task instances, scheduling the most frequent task greedily each interval.",
+    "space_complexity_explanation": "The frequency count uses at most 26 entries (one per uppercase letter), which is constant.",
     "key_insight": "Greedily scheduling the most frequent task minimizes idle time; the cooldown queue ensures tasks respect the gap constraint.",
     "related": [
       69,
@@ -1790,6 +1926,8 @@
     "solution_js": "var Twitter = function() {\n    this.count = 0;\n    this.tweetMap = new Map();\n    this.followMap = new Map();\n};\n\nTwitter.prototype.postTweet = function(userId, tweetId) {\n    if (!this.tweetMap.has(userId)) this.tweetMap.set(userId, []);\n    this.tweetMap.get(userId).push([this.count++, tweetId]);\n};\n\nTwitter.prototype.getNewsFeed = function(userId) {\n    const res = [];\n    const heap = new MaxPriorityQueue({ priority: x => x[0] });\n    const follows = this.followMap.get(userId) || new Set();\n    follows.add(userId);\n    for (const fId of follows) {\n        const tweets = this.tweetMap.get(fId);\n        if (tweets && tweets.length) {\n            const idx = tweets.length - 1;\n            heap.enqueue([tweets[idx][0], tweets[idx][1], fId, idx - 1]);\n        }\n    }\n    while (heap.size() && res.length < 10) {\n        const [, tweetId, fId, idx] = heap.dequeue().element;\n        res.push(tweetId);\n        if (idx >= 0) {\n            const tweets = this.tweetMap.get(fId);\n            heap.enqueue([tweets[idx][0], tweets[idx][1], fId, idx - 1]);\n        }\n    }\n    return res;\n};\n\nTwitter.prototype.follow = function(followerId, followeeId) {\n    if (!this.followMap.has(followerId)) this.followMap.set(followerId, new Set());\n    this.followMap.get(followerId).add(followeeId);\n};\n\nTwitter.prototype.unfollow = function(followerId, followeeId) {\n    const s = this.followMap.get(followerId);\n    if (s) s.delete(followeeId);\n};",
     "time_complexity": "O(k log n) for getNewsFeed where k=10, n=followers",
     "space_complexity": "O(N) for all tweets and follow relationships",
+    "time_complexity_explanation": "getNewsFeed merges tweets from all followed users using a heap, extracting the top 10 in O(k log n) where n is the number of followed users.",
+    "space_complexity_explanation": "All tweets and follower relationships are stored, using O(N) space across all users.",
     "key_insight": "Getting the news feed is a k-way merge problem — use a heap to efficiently merge sorted tweet lists from followed users.",
     "related": [
       68,
@@ -1817,6 +1955,8 @@
     "solution_js": "var MedianFinder = function() {\n    this.small = new MaxPriorityQueue();\n    this.large = new MinPriorityQueue();\n};\n\nMedianFinder.prototype.addNum = function(num) {\n    if (this.large.size() && num > this.large.front().element) {\n        this.large.enqueue(num);\n    } else {\n        this.small.enqueue(num);\n    }\n    if (this.small.size() > this.large.size() + 1) {\n        this.large.enqueue(this.small.dequeue().element);\n    }\n    if (this.large.size() > this.small.size() + 1) {\n        this.small.enqueue(this.large.dequeue().element);\n    }\n};\n\nMedianFinder.prototype.findMedian = function() {\n    if (this.small.size() > this.large.size()) return this.small.front().element;\n    if (this.large.size() > this.small.size()) return this.large.front().element;\n    return (this.small.front().element + this.large.front().element) / 2;\n};",
     "time_complexity": "O(log n) addNum, O(1) findMedian",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each addNum performs at most two heap push/pop operations, each O(log n). findMedian reads heap tops in O(1).",
+    "space_complexity_explanation": "Both heaps together store all n numbers that have been added.",
     "key_insight": "Two heaps split the data into lower and upper halves, giving O(1) access to the middle element(s) for median calculation.",
     "related": [
       64,
@@ -1844,6 +1984,8 @@
     "solution_js": "var subsets = function(nums) {\n    const res = [];\n    const subset = [];\n    function backtrack(i) {\n        if (i >= nums.length) {\n            res.push([...subset]);\n            return;\n        }\n        subset.push(nums[i]);\n        backtrack(i + 1);\n        subset.pop();\n        backtrack(i + 1);\n    }\n    backtrack(0);\n    return res;\n};",
     "time_complexity": "O(n * 2^n)",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "There are 2^n subsets, and copying each subset takes up to O(n) time, giving O(n * 2^n) total.",
+    "space_complexity_explanation": "The recursion stack goes at most n levels deep (one per element decision).",
     "key_insight": "Each element has a binary choice (include/exclude), creating a decision tree with 2^n leaves — one for each subset.",
     "related": [
       74,
@@ -1871,6 +2013,8 @@
     "solution_js": "var combinationSum = function(candidates, target) {\n    const res = [];\n    function backtrack(i, cur, total) {\n        if (total === target) { res.push([...cur]); return; }\n        if (i >= candidates.length || total > target) return;\n        cur.push(candidates[i]);\n        backtrack(i, cur, total + candidates[i]);\n        cur.pop();\n        backtrack(i + 1, cur, total);\n    }\n    backtrack(0, [], 0);\n    return res;\n};",
     "time_complexity": "O(2^(t/m)) where t=target, m=min candidate",
     "space_complexity": "O(t/m) recursion depth",
+    "time_complexity_explanation": "In the worst case, the recursion tree has branching factor 2 with depth up to t/m, where t is the target and m is the smallest candidate.",
+    "space_complexity_explanation": "The recursion depth is at most t/m, since each recursive call reduces the remaining target by at least m.",
     "key_insight": "Allowing reuse means we recurse with the same index when including an element, but advance when excluding to prevent duplicates.",
     "related": [
       75,
@@ -1897,6 +2041,8 @@
     "solution_js": "var permute = function(nums) {\n    const res = [];\n    function backtrack(perm) {\n        if (perm.length === nums.length) {\n            res.push([...perm]);\n            return;\n        }\n        for (const n of nums) {\n            if (!perm.includes(n)) {\n                perm.push(n);\n                backtrack(perm);\n                perm.pop();\n            }\n        }\n    }\n    backtrack([]);\n    return res;\n};",
     "time_complexity": "O(n * n!)",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "There are n! permutations, and building each one involves O(n) work for copying, giving O(n * n!).",
+    "space_complexity_explanation": "The recursion depth is n (one level per position in the permutation).",
     "key_insight": "Permutations require trying every unused element at each position — the decision tree has n choices, then n-1, then n-2, yielding n! leaves.",
     "related": [
       71,
@@ -1924,6 +2070,8 @@
     "solution_js": "var subsetsWithDup = function(nums) {\n    nums.sort((a, b) => a - b);\n    const res = [];\n    function backtrack(i, subset) {\n        if (i >= nums.length) {\n            res.push([...subset]);\n            return;\n        }\n        subset.push(nums[i]);\n        backtrack(i + 1, subset);\n        subset.pop();\n        while (i + 1 < nums.length && nums[i] === nums[i + 1]) i++;\n        backtrack(i + 1, subset);\n    }\n    backtrack(0, []);\n    return res;\n};",
     "time_complexity": "O(n * 2^n)",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "In the worst case there are O(2^n) subsets, and copying each takes O(n) time. Sorting is O(n log n).",
+    "space_complexity_explanation": "The recursion stack goes at most n levels deep.",
     "key_insight": "Sorting + skipping consecutive duplicates on the 'exclude' branch prevents generating duplicate subsets.",
     "related": [
       71,
@@ -1951,6 +2099,8 @@
     "solution_js": "var combinationSum2 = function(candidates, target) {\n    const res = [];\n    candidates.sort((a, b) => a - b);\n    function backtrack(i, cur, total) {\n        if (total === target) { res.push([...cur]); return; }\n        for (let j = i; j < candidates.length; j++) {\n            if (total + candidates[j] > target) break;\n            if (j > i && candidates[j] === candidates[j - 1]) continue;\n            cur.push(candidates[j]);\n            backtrack(j + 1, cur, total + candidates[j]);\n            cur.pop();\n        }\n    }\n    backtrack(0, [], 0);\n    return res;\n};",
     "time_complexity": "O(2^n)",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "Each element is either included or excluded, giving up to O(2^n) combinations in the worst case.",
+    "space_complexity_explanation": "The recursion depth is at most n (one level per candidate considered).",
     "key_insight": "Sort + skip same-level duplicates (j > i && candidates[j] == candidates[j-1]) eliminates duplicate combinations while allowing each element to be used once.",
     "related": [
       72,
@@ -1979,6 +2129,8 @@
     "solution_js": "var exist = function(board, word) {\n    const rows = board.length, cols = board[0].length;\n    function dfs(r, c, i) {\n        if (i === word.length) return true;\n        if (r < 0 || c < 0 || r >= rows || c >= cols ||\n            board[r][c] !== word[i]) return false;\n        const temp = board[r][c];\n        board[r][c] = '#';\n        const res = dfs(r+1,c,i+1) || dfs(r-1,c,i+1) ||\n                    dfs(r,c+1,i+1) || dfs(r,c-1,i+1);\n        board[r][c] = temp;\n        return res;\n    }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (dfs(r, c, 0)) return true;\n    return false;\n};",
     "time_complexity": "O(m * n * 4^L) where L is word length",
     "space_complexity": "O(L) recursion depth",
+    "time_complexity_explanation": "For each of m*n starting cells, the DFS can explore up to 4^L paths (four directions at each of L levels).",
+    "space_complexity_explanation": "The recursion stack depth equals the word length L (one frame per character matched).",
     "key_insight": "Backtracking on a grid requires marking/unmarking visited cells to prevent revisiting during the current path while allowing other paths to use the same cell.",
     "related": [
       80,
@@ -2006,6 +2158,8 @@
     "solution_js": "var partition = function(s) {\n    const res = [];\n    function isPalin(str, l, r) {\n        while (l < r) { if (str[l++] !== str[r--]) return false; }\n        return true;\n    }\n    function backtrack(i, part) {\n        if (i >= s.length) { res.push([...part]); return; }\n        for (let j = i; j < s.length; j++) {\n            if (isPalin(s, i, j)) {\n                part.push(s.substring(i, j + 1));\n                backtrack(j + 1, part);\n                part.pop();\n            }\n        }\n    }\n    backtrack(0, []);\n    return res;\n};",
     "time_complexity": "O(n * 2^n)",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "In the worst case, there are O(2^n) possible partitioning points, and checking each palindrome takes O(n).",
+    "space_complexity_explanation": "The recursion depth is at most n (one level per partition cut).",
     "key_insight": "At each position, try every possible palindrome substring as the next partition segment — only valid palindromes lead to recursive calls.",
     "related": [
       71,
@@ -2032,6 +2186,8 @@
     "solution_js": "var letterCombinations = function(digits) {\n    if (!digits.length) return [];\n    const phone = {'2':'abc','3':'def','4':'ghi','5':'jkl',\n                   '6':'mno','7':'pqrs','8':'tuv','9':'wxyz'};\n    const res = [];\n    function backtrack(i, cur) {\n        if (i === digits.length) { res.push(cur); return; }\n        for (const c of phone[digits[i]]) {\n            backtrack(i + 1, cur + c);\n        }\n    }\n    backtrack(0, '');\n    return res;\n};",
     "time_complexity": "O(4^n) where n is number of digits",
     "space_complexity": "O(n) recursion depth",
+    "time_complexity_explanation": "For n digits, each can map to 3 or 4 letters, giving at most 4^n combinations. Each combination takes O(n) to build.",
+    "space_complexity_explanation": "The recursion depth equals n (one level per digit processed).",
     "key_insight": "Each digit maps to 3-4 letters, creating a decision tree where each level corresponds to a digit and each branch to a letter choice.",
     "related": [
       73,
@@ -2059,6 +2215,8 @@
     "solution_js": "var solveNQueens = function(n) {\n    const res = [];\n    const cols = new Set(), posDiag = new Set(), negDiag = new Set();\n    const board = Array.from({length: n}, () => Array(n).fill('.'));\n    function backtrack(r) {\n        if (r === n) {\n            res.push(board.map(row => row.join('')));\n            return;\n        }\n        for (let c = 0; c < n; c++) {\n            if (cols.has(c) || posDiag.has(r+c) || negDiag.has(r-c)) continue;\n            cols.add(c); posDiag.add(r+c); negDiag.add(r-c);\n            board[r][c] = 'Q';\n            backtrack(r + 1);\n            cols.delete(c); posDiag.delete(r+c); negDiag.delete(r-c);\n            board[r][c] = '.';\n        }\n    }\n    backtrack(0);\n    return res;\n};",
     "time_complexity": "O(n!)",
     "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "The first row has n choices, the second at most n-2 (avoiding column and diagonals), etc., giving roughly O(n!) placements to explore.",
+    "space_complexity_explanation": "The board representation uses O(n²) space, plus O(n) for the three tracking sets and recursion stack.",
     "key_insight": "Three sets (columns, positive diagonals r+c, negative diagonals r-c) provide O(1) conflict checking for queen placement.",
     "related": [
       73,
@@ -2087,6 +2245,8 @@
     "solution_js": "var numIslands = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    let count = 0;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] === '0') return;\n        grid[r][c] = '0';\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);\n    }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (grid[r][c] === '1') { count++; dfs(r,c); }\n    return count;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n) worst case recursion",
+    "time_complexity_explanation": "Each cell is visited at most once (either by the main loop or during a DFS), giving O(m * n) total.",
+    "space_complexity_explanation": "In the worst case (all land), the DFS recursion stack can be as deep as m * n cells.",
     "key_insight": "Each DFS/BFS from an unvisited '1' discovers exactly one island — marking visited cells prevents double counting.",
     "related": [
       82,
@@ -2115,6 +2275,8 @@
     "solution_js": "var cloneGraph = function(node) {\n    if (!node) return null;\n    const oldToNew = new Map();\n    function dfs(node) {\n        if (oldToNew.has(node)) return oldToNew.get(node);\n        const copy = new _Node(node.val);\n        oldToNew.set(node, copy);\n        for (const nei of node.neighbors) {\n            copy.neighbors.push(dfs(nei));\n        }\n        return copy;\n    }\n    return dfs(node);\n};",
     "time_complexity": "O(V + E)",
     "space_complexity": "O(V)",
+    "time_complexity_explanation": "Each node is visited once during the DFS, and each edge is traversed once, giving O(V + E).",
+    "space_complexity_explanation": "The hash map stores one clone per original node, using O(V) space.",
     "key_insight": "A hash map from original to clone node handles cycles — if a node is already cloned, return the existing clone instead of recursing.",
     "related": [
       80,
@@ -2143,6 +2305,8 @@
     "solution_js": "var maxAreaOfIsland = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] === 0) return 0;\n        grid[r][c] = 0;\n        return 1 + dfs(r+1,c) + dfs(r-1,c) + dfs(r,c+1) + dfs(r,c-1);\n    }\n    let max = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (grid[r][c] === 1) max = Math.max(max, dfs(r,c));\n    return max;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n) worst case recursion",
+    "time_complexity_explanation": "Each cell is visited at most once across all DFS calls, giving O(m * n) total.",
+    "space_complexity_explanation": "In the worst case (one large island), the DFS recursion stack can be as deep as m * n.",
     "key_insight": "DFS naturally computes island area by summing 1 for the current cell plus the recursive results from all four directions.",
     "related": [
       80,
@@ -2171,6 +2335,8 @@
     "solution_js": "var pacificAtlantic = function(heights) {\n    const rows = heights.length, cols = heights[0].length;\n    const pac = new Set(), atl = new Set();\n    function dfs(r, c, visit, prev) {\n        const key = r + ',' + c;\n        if (r < 0 || c < 0 || r >= rows || c >= cols ||\n            visit.has(key) || heights[r][c] < prev) return;\n        visit.add(key);\n        dfs(r+1,c,visit,heights[r][c]); dfs(r-1,c,visit,heights[r][c]);\n        dfs(r,c+1,visit,heights[r][c]); dfs(r,c-1,visit,heights[r][c]);\n    }\n    for (let c = 0; c < cols; c++) {\n        dfs(0,c,pac,heights[0][c]);\n        dfs(rows-1,c,atl,heights[rows-1][c]);\n    }\n    for (let r = 0; r < rows; r++) {\n        dfs(r,0,pac,heights[r][0]);\n        dfs(r,cols-1,atl,heights[r][cols-1]);\n    }\n    const res = [];\n    for (const key of pac) if (atl.has(key)) res.push(key.split(',').map(Number));\n    return res;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Two DFS traversals, each visiting every cell at most once, gives O(m * n) total work.",
+    "space_complexity_explanation": "The visited matrices for Pacific and Atlantic reachability each use O(m * n) space.",
     "key_insight": "Reverse the problem: instead of flowing water downhill from each cell, flow uphill from ocean borders — the intersection gives cells that reach both oceans.",
     "related": [
       80,
@@ -2199,6 +2365,8 @@
     "solution_js": "var solve = function(board) {\n    const rows = board.length, cols = board[0].length;\n    function dfs(r, c) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || board[r][c] !== 'O') return;\n        board[r][c] = 'T';\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);\n    }\n    for (let r = 0; r < rows; r++) { dfs(r,0); dfs(r,cols-1); }\n    for (let c = 0; c < cols; c++) { dfs(0,c); dfs(rows-1,c); }\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++) {\n            if (board[r][c] === 'O') board[r][c] = 'X';\n            else if (board[r][c] === 'T') board[r][c] = 'O';\n        }\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n) worst case recursion",
+    "time_complexity_explanation": "Each cell is visited at most once during the border DFS/BFS, plus one full scan of the board.",
+    "space_complexity_explanation": "In the worst case, the DFS recursion stack or BFS queue can hold up to O(m * n) border-connected cells.",
     "key_insight": "Reverse thinking: instead of finding surrounded regions, find unsurrounded ones (connected to border) and mark them safe first.",
     "related": [
       80,
@@ -2227,6 +2395,8 @@
     "solution_js": "var orangesRotting = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n    const queue = [];\n    let fresh = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++) {\n            if (grid[r][c] === 2) queue.push([r,c]);\n            else if (grid[r][c] === 1) fresh++;\n        }\n    let minutes = 0, qi = 0;\n    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];\n    while (qi < queue.length && fresh > 0) {\n        minutes++;\n        const size = queue.length - qi;\n        for (let i = 0; i < size; i++) {\n            const [r,c] = queue[qi++];\n            for (const [dr,dc] of dirs) {\n                const nr = r+dr, nc = c+dc;\n                if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && grid[nr][nc] === 1) {\n                    grid[nr][nc] = 2;\n                    fresh--;\n                    queue.push([nr,nc]);\n                }\n            }\n        }\n    }\n    return fresh === 0 ? minutes : -1;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is processed at most once by the BFS, and we scan the entire grid for initial rotten oranges.",
+    "space_complexity_explanation": "The BFS queue can hold up to all m * n cells in the worst case.",
     "key_insight": "Multi-source BFS naturally models simultaneous spreading — all rotten oranges are starting points, and each BFS level is one time step.",
     "related": [
       80,
@@ -2255,6 +2425,8 @@
     "solution_js": "var wallsAndGates = function(rooms) {\n    const rows = rooms.length, cols = rooms[0].length;\n    const queue = [];\n    let qi = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (rooms[r][c] === 0) queue.push([r,c]);\n    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];\n    while (qi < queue.length) {\n        const [r,c] = queue[qi++];\n        for (const [dr,dc] of dirs) {\n            const nr = r+dr, nc = c+dc;\n            if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && rooms[nr][nc] === 2147483647) {\n                rooms[nr][nc] = rooms[r][c] + 1;\n                queue.push([nr,nc]);\n            }\n        }\n    }\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is visited at most once by the multi-source BFS, giving O(m * n) total.",
+    "space_complexity_explanation": "The BFS queue can hold up to all m * n cells.",
     "key_insight": "Multi-source BFS from all gates simultaneously fills each room with its shortest distance — no need to BFS from each room individually.",
     "related": [
       85,
@@ -2283,6 +2455,8 @@
     "solution_js": "var canFinish = function(numCourses, prerequisites) {\n    const preMap = new Map();\n    for (let i = 0; i < numCourses; i++) preMap.set(i, []);\n    for (const [crs, pre] of prerequisites) preMap.get(crs).push(pre);\n    const visiting = new Set();\n    function dfs(crs) {\n        if (visiting.has(crs)) return false;\n        if (preMap.get(crs).length === 0) return true;\n        visiting.add(crs);\n        for (const pre of preMap.get(crs)) {\n            if (!dfs(pre)) return false;\n        }\n        visiting.delete(crs);\n        preMap.set(crs, []);\n        return true;\n    }\n    for (let c = 0; c < numCourses; c++)\n        if (!dfs(c)) return false;\n    return true;\n};",
     "time_complexity": "O(V + E)",
     "space_complexity": "O(V + E)",
+    "time_complexity_explanation": "DFS visits each course (vertex) once and traverses each prerequisite (edge) once.",
+    "space_complexity_explanation": "The adjacency list stores all edges, and the visited/visiting arrays track all vertices.",
     "key_insight": "Course scheduling is cycle detection in a directed graph — a cycle means circular dependencies that make completion impossible.",
     "related": [
       88,
@@ -2310,6 +2484,8 @@
     "solution_js": "var findOrder = function(numCourses, prerequisites) {\n    const preMap = new Map();\n    for (let i = 0; i < numCourses; i++) preMap.set(i, []);\n    for (const [crs, pre] of prerequisites) preMap.get(crs).push(pre);\n    const output = [], visit = new Set(), cycle = new Set();\n    function dfs(crs) {\n        if (cycle.has(crs)) return false;\n        if (visit.has(crs)) return true;\n        cycle.add(crs);\n        for (const pre of preMap.get(crs))\n            if (!dfs(pre)) return false;\n        cycle.delete(crs);\n        visit.add(crs);\n        output.push(crs);\n        return true;\n    }\n    for (let c = 0; c < numCourses; c++)\n        if (!dfs(c)) return [];\n    return output;\n};",
     "time_complexity": "O(V + E)",
     "space_complexity": "O(V + E)",
+    "time_complexity_explanation": "DFS visits each course once and each prerequisite edge once, same as standard topological sort.",
+    "space_complexity_explanation": "The adjacency list stores all edges, plus arrays for visit states and the output ordering.",
     "key_insight": "DFS post-order naturally produces topological order — a course is added to output only after all its prerequisites are fully processed.",
     "related": [
       87,
@@ -2337,6 +2513,8 @@
     "solution_js": "var findRedundantConnection = function(edges) {\n    const n = edges.length;\n    const parent = Array.from({length: n+1}, (_, i) => i);\n    const rank = new Array(n+1).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu === pv) return [u, v];\n        if (rank[pu] > rank[pv]) parent[pv] = pu;\n        else if (rank[pu] < rank[pv]) parent[pu] = pv;\n        else { parent[pv] = pu; rank[pu]++; }\n    }\n};",
     "time_complexity": "O(n * α(n)) ≈ O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each edge is processed once with Union-Find, where find/union is nearly O(1) amortized due to path compression and union by rank.",
+    "space_complexity_explanation": "The parent and rank arrays each store n entries for the Union-Find structure.",
     "key_insight": "Union-Find detects cycles in real-time: if an edge connects two already-connected nodes, it's the redundant edge creating the cycle.",
     "related": [
       90,
@@ -2365,6 +2543,8 @@
     "solution_js": "var countComponents = function(n, edges) {\n    const parent = Array.from({length: n}, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    let components = n;\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu !== pv) {\n            if (rank[pu] > rank[pv]) parent[pv] = pu;\n            else if (rank[pu] < rank[pv]) parent[pu] = pv;\n            else { parent[pv] = pu; rank[pu]++; }\n            components--;\n        }\n    }\n    return components;\n};",
     "time_complexity": "O(n + e * α(n))",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each edge triggers a union operation, which is nearly O(1) amortized with path compression. Processing all edges is O(n + e * α(n)).",
+    "space_complexity_explanation": "The Union-Find parent and rank arrays store n entries.",
     "key_insight": "Start with n components; each edge that successfully unions two different components reduces the count by exactly one.",
     "related": [
       89,
@@ -2392,6 +2572,8 @@
     "solution_js": "var validTree = function(n, edges) {\n    if (edges.length !== n - 1) return false;\n    const parent = Array.from({length: n}, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    function find(x) {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    }\n    for (const [u, v] of edges) {\n        const pu = find(u), pv = find(v);\n        if (pu === pv) return false;\n        if (rank[pu] > rank[pv]) parent[pv] = pu;\n        else if (rank[pu] < rank[pv]) parent[pu] = pv;\n        else { parent[pv] = pu; rank[pu]++; }\n    }\n    return true;\n};",
     "time_complexity": "O(n * α(n))",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "We check the edge count in O(1), then process each edge with a near-O(1) union-find operation.",
+    "space_complexity_explanation": "The Union-Find parent and rank arrays store n entries.",
     "key_insight": "A graph is a valid tree iff it has exactly n-1 edges and no cycles — Union-Find checks both properties efficiently.",
     "related": [
       89,
@@ -2419,6 +2601,8 @@
     "solution_js": "var ladderLength = function(beginWord, endWord, wordList) {\n    if (!wordList.includes(endWord)) return 0;\n    const nei = new Map();\n    wordList.push(beginWord);\n    for (const word of wordList) {\n        for (let j = 0; j < word.length; j++) {\n            const pat = word.slice(0,j) + '*' + word.slice(j+1);\n            if (!nei.has(pat)) nei.set(pat, []);\n            nei.get(pat).push(word);\n        }\n    }\n    const visit = new Set([beginWord]);\n    const queue = [beginWord];\n    let qi = 0, res = 1;\n    while (qi < queue.length) {\n        const size = queue.length - qi;\n        for (let i = 0; i < size; i++) {\n            const word = queue[qi++];\n            if (word === endWord) return res;\n            for (let j = 0; j < word.length; j++) {\n                const pat = word.slice(0,j) + '*' + word.slice(j+1);\n                for (const nw of (nei.get(pat) || [])) {\n                    if (!visit.has(nw)) { visit.add(nw); queue.push(nw); }\n                }\n            }\n        }\n        res++;\n    }\n    return 0;\n};",
     "time_complexity": "O(m^2 * n) where m=word length, n=word count",
     "space_complexity": "O(m^2 * n)",
+    "time_complexity_explanation": "Building the adjacency list with wildcard patterns takes O(m² * n) — for each of n words, m patterns of length m. BFS visits each word once.",
+    "space_complexity_explanation": "The adjacency list with wildcard pattern keys stores O(m² * n) entries.",
     "key_insight": "Wildcard patterns (h*t) create an implicit graph where words differing by one letter share a pattern — BFS on this graph finds the shortest transformation.",
     "related": [
       80,
@@ -2446,6 +2630,8 @@
     "solution_js": "var climbStairs = function(n) {\n    if (n <= 2) return n;\n    let prev = 1, curr = 2;\n    for (let i = 3; i <= n; i++) {\n        [prev, curr] = [curr, prev + curr];\n    }\n    return curr;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single loop from step 3 to n, computing each value in O(1) from the previous two.",
+    "space_complexity_explanation": "Only two variables are needed to track the previous two step counts.",
     "key_insight": "This is the Fibonacci sequence in disguise — each step's count is the sum of the two preceding steps because you can arrive via a 1-step or 2-step jump.",
     "related": [
       94,
@@ -2472,6 +2658,8 @@
     "solution_js": "var minCostClimbingStairs = function(cost) {\n    for (let i = 2; i < cost.length; i++) {\n        cost[i] += Math.min(cost[i-1], cost[i-2]);\n    }\n    return Math.min(cost[cost.length-1], cost[cost.length-2]);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the n steps, computing each minimum cost in O(1) from the previous two values.",
+    "space_complexity_explanation": "Only two variables track the previous two minimum costs, no array needed.",
     "key_insight": "Each step accumulates the minimum cost to reach it; the answer considers both possible final jumps (from last or second-to-last step).",
     "related": [
       93,
@@ -2498,6 +2686,8 @@
     "solution_js": "var rob = function(nums) {\n    let rob1 = 0, rob2 = 0;\n    for (const n of nums) {\n        [rob1, rob2] = [rob2, Math.max(rob2, rob1 + n)];\n    }\n    return rob2;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the n houses, making an O(1) max decision at each house.",
+    "space_complexity_explanation": "Only two variables track the maximum profit at the previous two houses.",
     "key_insight": "The optimal robbery at each house is the better of skipping it (keep previous max) or robbing it (current value + max from two houses back, avoiding adjacency).",
     "related": [
       96,
@@ -2524,6 +2714,8 @@
     "solution_js": "var rob = function(nums) {\n    if (nums.length === 1) return nums[0];\n    function helper(arr) {\n        let rob1 = 0, rob2 = 0;\n        for (const n of arr) [rob1, rob2] = [rob2, Math.max(rob2, rob1 + n)];\n        return rob2;\n    }\n    return Math.max(helper(nums.slice(0, -1)), helper(nums.slice(1)));\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear passes of House Robber (one on nums[0..n-2], one on nums[1..n-1]), each O(n).",
+    "space_complexity_explanation": "Each linear pass uses only two tracking variables, same as House Robber.",
     "key_insight": "Break the circular dependency by running the linear solution twice — once excluding first house, once excluding last — and taking the maximum.",
     "related": [
       95,
@@ -2551,6 +2743,8 @@
     "solution_js": "var longestPalindrome = function(s) {\n    let res = '';\n    for (let i = 0; i < s.length; i++) {\n        for (const [li, ri] of [[i,i],[i,i+1]]) {\n            let l = li, r = ri;\n            while (l >= 0 && r < s.length && s[l] === s[r]) {\n                if (r - l + 1 > res.length) res = s.slice(l, r+1);\n                l--; r++;\n            }\n        }\n    }\n    return res;\n};",
     "time_complexity": "O(n^2)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "For each of n centers, expansion takes O(n) in the worst case, giving O(n²) total.",
+    "space_complexity_explanation": "Only variables for the current center, expansion bounds, and the best result are needed.",
     "key_insight": "Every palindrome has a center — expanding outward from each of the 2n-1 possible centers finds all palindromic substrings in O(n^2) time.",
     "related": [
       98,
@@ -2578,6 +2772,8 @@
     "solution_js": "var countSubstrings = function(s) {\n    let count = 0;\n    for (let i = 0; i < s.length; i++) {\n        for (const [li, ri] of [[i,i],[i,i+1]]) {\n            let l = li, r = ri;\n            while (l >= 0 && r < s.length && s[l] === s[r]) {\n                count++; l--; r++;\n            }\n        }\n    }\n    return count;\n};",
     "time_complexity": "O(n^2)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "For each of the n possible centers (both odd and even), expanding outward takes O(n) worst case, giving O(n²).",
+    "space_complexity_explanation": "Only a counter and expansion variables are needed, no extra data structures.",
     "key_insight": "Each successful expansion from a center produces one more palindromic substring — count every expansion step rather than just tracking the longest.",
     "related": [
       97,
@@ -2604,6 +2800,8 @@
     "solution_js": "var numDecodings = function(s) {\n    const dp = new Array(s.length + 1).fill(0);\n    dp[s.length] = 1;\n    for (let i = s.length - 1; i >= 0; i--) {\n        if (s[i] === '0') { dp[i] = 0; continue; }\n        dp[i] = dp[i + 1];\n        if (i + 1 < s.length && (s[i] === '1' || (s[i] === '2' && s[i+1] <= '6'))) {\n            dp[i] += dp[i + 2];\n        }\n    }\n    return dp[0];\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the string of length n, computing each dp value in O(1) from at most two previous values.",
+    "space_complexity_explanation": "The dp array stores one value per character position in the string.",
     "key_insight": "Each position branches into 1-digit or 2-digit decodings (like Fibonacci), but '0' kills the single-digit branch and two-digit values must be 10-26.",
     "related": [
       93,
@@ -2631,6 +2829,8 @@
     "solution_js": "var coinChange = function(coins, amount) {\n    const dp = new Array(amount + 1).fill(amount + 1);\n    dp[0] = 0;\n    for (let a = 1; a <= amount; a++) {\n        for (const c of coins) {\n            if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);\n        }\n    }\n    return dp[amount] > amount ? -1 : dp[amount];\n};",
     "time_complexity": "O(amount * coins)",
     "space_complexity": "O(amount)",
+    "time_complexity_explanation": "Two nested loops: the outer iterates over amounts 1 to target, and the inner tries each coin, giving O(amount × coins).",
+    "space_complexity_explanation": "The dp array stores one value for each amount from 0 to the target.",
     "key_insight": "Each amount builds on smaller subproblems — using coin c means 1 + the optimal solution for (amount - c).",
     "related": [
       101,
@@ -2657,6 +2857,8 @@
     "solution_js": "var maxProduct = function(nums) {\n    let res = Math.max(...nums);\n    let curMin = 1, curMax = 1;\n    for (const n of nums) {\n        const vals = [n, n * curMax, n * curMin];\n        curMax = Math.max(...vals);\n        curMin = Math.min(...vals);\n        res = Math.max(res, curMax);\n    }\n    return res;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array, updating curMax and curMin in O(1) at each element.",
+    "space_complexity_explanation": "Only three variables are needed: curMax, curMin, and the global maximum.",
     "key_insight": "Negative numbers can flip min to max — tracking both the running maximum and minimum product handles sign changes correctly.",
     "related": [
       95,
@@ -2684,6 +2886,8 @@
     "solution_js": "var wordBreak = function(s, wordDict) {\n    const dp = new Array(s.length + 1).fill(false);\n    dp[s.length] = true;\n    for (let i = s.length - 1; i >= 0; i--) {\n        for (const w of wordDict) {\n            if (i + w.length <= s.length && s.slice(i, i + w.length) === w) {\n                dp[i] = dp[i + w.length];\n            }\n            if (dp[i]) break;\n        }\n    }\n    return dp[0];\n};",
     "time_complexity": "O(n * m * k) where m=dict size, k=avg word length",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "For each of the n positions, we check each of the m dictionary words, and each comparison can take up to k characters.",
+    "space_complexity_explanation": "The dp array stores one boolean per position in the string.",
     "key_insight": "Each position is segmentable if it matches a dictionary word AND the remaining suffix is also segmentable — classic DP with string matching.",
     "related": [
       99,
@@ -2711,6 +2915,8 @@
     "solution_js": "var lengthOfLIS = function(nums) {\n    const dp = new Array(nums.length).fill(1);\n    for (let i = 1; i < nums.length; i++) {\n        for (let j = 0; j < i; j++) {\n            if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1);\n        }\n    }\n    return Math.max(...dp);\n};",
     "time_complexity": "O(n^2)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Two nested loops: for each of the n elements, we check all previous elements, giving O(n²) comparisons.",
+    "space_complexity_explanation": "The dp array stores the longest increasing subsequence length ending at each of the n elements.",
     "key_insight": "Each element extends the best subsequence ending at any smaller previous element — dp[i] considers all valid predecessors.",
     "related": [
       104,
@@ -2738,6 +2944,8 @@
     "solution_js": "var canPartition = function(nums) {\n    const total = nums.reduce((a, b) => a + b, 0);\n    if (total % 2) return false;\n    const target = total / 2;\n    let dp = new Set([0]);\n    for (const n of nums) {\n        const next = new Set(dp);\n        for (const s of dp) next.add(s + n);\n        dp = next;\n        if (dp.has(target)) return true;\n    }\n    return false;\n};",
     "time_complexity": "O(n * sum)",
     "space_complexity": "O(sum)",
+    "time_complexity_explanation": "For each of the n numbers, we iterate over the current achievable sums (up to target/2), giving O(n × sum).",
+    "space_complexity_explanation": "The set of achievable sums can contain up to O(sum) distinct values.",
     "key_insight": "Equal partition = finding a subset summing to total/2. This is the 0/1 knapsack problem, solvable with a DP set of achievable sums.",
     "related": [
       100,
@@ -2765,6 +2973,8 @@
     "solution_js": "var uniquePaths = function(m, n) {\n    const row = new Array(n).fill(1);\n    for (let i = 1; i < m; i++)\n        for (let j = 1; j < n; j++)\n            row[j] += row[j - 1];\n    return row[n - 1];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "We fill each of the m × n cells once, with O(1) work per cell.",
+    "space_complexity_explanation": "Only a single row of n values is needed at a time (optimized from the full m × n grid).",
     "key_insight": "Only right and down moves means each cell's path count is the sum from above and left — optimizable to a single row of DP.",
     "related": [
       106,
@@ -2792,6 +3002,8 @@
     "solution_js": "var longestCommonSubsequence = function(text1, text2) {\n    const m = text1.length, n = text2.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));\n    for (let i = m-1; i >= 0; i--)\n        for (let j = n-1; j >= 0; j--)\n            dp[i][j] = text1[i] === text2[j]\n                ? 1 + dp[i+1][j+1]\n                : Math.max(dp[i+1][j], dp[i][j+1]);\n    return dp[0][0];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "We fill each of the m × n cells in the DP table once, with O(1) work per cell.",
+    "space_complexity_explanation": "The full m × n DP table is stored to compute the LCS length.",
     "key_insight": "Character match extends the diagonal LCS by 1; mismatch takes the best of either skip — this naturally builds the optimal subsequence length.",
     "related": [
       103,
@@ -2819,6 +3031,8 @@
     "solution_js": "var maxProfit = function(prices) {\n    const dp = new Map();\n    function dfs(i, buying) {\n        if (i >= prices.length) return 0;\n        const key = i + ',' + buying;\n        if (dp.has(key)) return dp.get(key);\n        const cooldown = dfs(i + 1, buying);\n        let res;\n        if (buying) {\n            res = Math.max(dfs(i + 1, false) - prices[i], cooldown);\n        } else {\n            res = Math.max(dfs(i + 2, true) + prices[i], cooldown);\n        }\n        dp.set(key, res);\n        return res;\n    }\n    return dfs(0, true);\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the n days, updating O(1) state variables (buy, sell, cooldown) at each day.",
+    "space_complexity_explanation": "Three state arrays (or variables with optimization) track the profit for each day's possible actions.",
     "key_insight": "The cooldown constraint means after selling at day i, the next buy can't happen until day i+2 — model this with a state machine DP.",
     "related": [
       95,
@@ -2846,6 +3060,8 @@
     "solution_js": "var change = function(amount, coins) {\n    const dp = new Array(amount + 1).fill(0);\n    dp[0] = 1;\n    for (const c of coins) {\n        for (let a = c; a <= amount; a++) {\n            dp[a] += dp[a - c];\n        }\n    }\n    return dp[amount];\n};",
     "time_complexity": "O(amount * coins)",
     "space_complexity": "O(amount)",
+    "time_complexity_explanation": "The outer loop processes each coin type and the inner loop iterates over all amounts, giving O(amount × coins).",
+    "space_complexity_explanation": "The dp array stores the number of combinations for each amount from 0 to the target.",
     "key_insight": "Processing coins in the outer loop ensures each combination is counted once (not permutations) — coin ordering is fixed.",
     "related": [
       100,
@@ -2873,6 +3089,8 @@
     "solution_js": "var findTargetSumWays = function(nums, target) {\n    let dp = new Map();\n    dp.set(0, 1);\n    for (const n of nums) {\n        const next = new Map();\n        for (const [s, count] of dp) {\n            next.set(s + n, (next.get(s + n) || 0) + count);\n            next.set(s - n, (next.get(s - n) || 0) + count);\n        }\n        dp = next;\n    }\n    return dp.get(target) || 0;\n};",
     "time_complexity": "O(n * sum)",
     "space_complexity": "O(sum)",
+    "time_complexity_explanation": "The DFS branches twice at each of the n elements (add or subtract), but memoization bounds unique states to O(n × sum).",
+    "space_complexity_explanation": "The memoization cache stores results for up to O(n × sum) unique (index, current_sum) states.",
     "key_insight": "Each number creates a binary branch (+/-), but many paths reach the same sum — DP collapses identical states to avoid exponential computation.",
     "related": [
       104,
@@ -2900,6 +3118,8 @@
     "solution_js": "var isInterleave = function(s1, s2, s3) {\n    if (s1.length + s2.length !== s3.length) return false;\n    const dp = Array.from({length: s1.length+1}, () => new Array(s2.length+1).fill(false));\n    dp[s1.length][s2.length] = true;\n    for (let i = s1.length; i >= 0; i--)\n        for (let j = s2.length; j >= 0; j--) {\n            if (i < s1.length && s1[i] === s3[i+j] && dp[i+1][j]) dp[i][j] = true;\n            if (j < s2.length && s2[j] === s3[i+j] && dp[i][j+1]) dp[i][j] = true;\n        }\n    return dp[0][0];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each of the m × n cells in the DP table is computed once in O(1), giving O(m × n) total.",
+    "space_complexity_explanation": "The full m × n DP table stores boolean values for each (i, j) subproblem.",
     "key_insight": "Two pointers (i into s1, j into s2) define the state — at position i+j in s3, we can take from s1[i] or s2[j] if they match.",
     "related": [
       106,
@@ -2928,6 +3148,8 @@
     "solution_js": "var longestIncreasingPath = function(matrix) {\n    const rows = matrix.length, cols = matrix[0].length;\n    const dp = Array.from({length: rows}, () => new Array(cols).fill(0));\n    function dfs(r, c, prev) {\n        if (r < 0 || c < 0 || r >= rows || c >= cols || matrix[r][c] <= prev) return 0;\n        if (dp[r][c]) return dp[r][c];\n        let res = 1;\n        for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]])\n            res = Math.max(res, 1 + dfs(r+dr, c+dc, matrix[r][c]));\n        dp[r][c] = res;\n        return res;\n    }\n    let result = 0;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            result = Math.max(result, dfs(r, c, -Infinity));\n    return result;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is computed once via DFS with memoization, and each computation does O(1) work per neighbor.",
+    "space_complexity_explanation": "The memoization table stores one value per cell, using O(m × n) space.",
     "key_insight": "Strictly increasing values guarantee a DAG (no cycles), making memoization safe — each cell's result is computed exactly once.",
     "related": [
       82,
@@ -2955,6 +3177,8 @@
     "solution_js": "var numDistinct = function(s, t) {\n    const dp = Array.from({length: s.length+1}, () => new Array(t.length+1).fill(0));\n    for (let i = 0; i <= s.length; i++) dp[i][0] = 1;\n    for (let i = 1; i <= s.length; i++)\n        for (let j = 1; j <= t.length; j++) {\n            dp[i][j] = dp[i-1][j];\n            if (s[i-1] === t[j-1]) dp[i][j] += dp[i-1][j-1];\n        }\n    return dp[s.length][t.length];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each of the m × n cells in the DP table is computed once with O(1) work.",
+    "space_complexity_explanation": "The full m × n DP table is used to store subsequence counts for each subproblem.",
     "key_insight": "When characters match, you have two choices (use the match + skip it), combining both counts. When they don't match, you must skip the s character.",
     "related": [
       106,
@@ -2982,6 +3206,8 @@
     "solution_js": "var minDistance = function(word1, word2) {\n    const m = word1.length, n = word2.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));\n    for (let i = 0; i <= m; i++) dp[i][0] = i;\n    for (let j = 0; j <= n; j++) dp[0][j] = j;\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++) {\n            if (word1[i-1] === word2[j-1]) dp[i][j] = dp[i-1][j-1];\n            else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);\n        }\n    return dp[m][n];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each of the m × n cells in the DP table is filled once, considering three possible operations in O(1).",
+    "space_complexity_explanation": "The m × n DP table stores the edit distance for each pair of prefixes.",
     "key_insight": "Three operations map to three adjacent DP cells: insert=right, delete=down, replace=diagonal — take the minimum plus one operation cost.",
     "related": [
       106,
@@ -3009,6 +3235,8 @@
     "solution_js": "var maxCoins = function(nums) {\n    nums = [1, ...nums, 1];\n    const n = nums.length;\n    const dp = Array.from({length: n}, () => new Array(n).fill(0));\n    for (let len = 1; len <= n - 2; len++)\n        for (let l = 1; l <= n - 1 - len; l++) {\n            const r = l + len - 1;\n            for (let i = l; i <= r; i++) {\n                const coins = nums[l-1] * nums[i] * nums[r+1] + dp[l][i-1] + dp[i+1][r];\n                dp[l][r] = Math.max(dp[l][r], coins);\n            }\n        }\n    return dp[1][n-2];\n};",
     "time_complexity": "O(n^3)",
     "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "Three nested loops: two for the interval endpoints (l, r) and one for the last balloon choice within the interval, giving O(n³).",
+    "space_complexity_explanation": "The 2D DP table stores the maximum coins for each of the O(n²) intervals.",
     "key_insight": "Thinking about which balloon to burst LAST (not first) in a range makes the subproblems independent — the boundaries are fixed.",
     "related": [
       113,
@@ -3036,6 +3264,8 @@
     "solution_js": "var isMatch = function(s, p) {\n    const m = s.length, n = p.length;\n    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(false));\n    dp[0][0] = true;\n    for (let j = 1; j <= n; j++)\n        if (p[j-1] === '*') dp[0][j] = dp[0][j-2];\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++) {\n            if (p[j-1] === '*') {\n                dp[i][j] = dp[i][j-2];\n                if (p[j-2] === '.' || p[j-2] === s[i-1])\n                    dp[i][j] = dp[i][j] || dp[i-1][j];\n            } else if (p[j-1] === '.' || p[j-1] === s[i-1]) {\n                dp[i][j] = dp[i-1][j-1];\n            }\n        }\n    return dp[m][n];\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each of the m × n cells in the DP table is computed once, with O(1) transitions per cell.",
+    "space_complexity_explanation": "The m × n DP table stores match results for each (string position, pattern position) pair.",
     "key_insight": "The '*' operator has two DP transitions: skip the pattern pair entirely (zero matches) or consume one more character from s (if it matches the preceding pattern element).",
     "related": [
       102,
@@ -3063,6 +3293,8 @@
     "solution_js": "var maxSubArray = function(nums) {\n    let maxSub = nums[0], curSum = 0;\n    for (const n of nums) {\n        if (curSum < 0) curSum = 0;\n        curSum += n;\n        maxSub = Math.max(maxSub, curSum);\n    }\n    return maxSub;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the n elements, updating the running sum and maximum in O(1) per element.",
+    "space_complexity_explanation": "Only two variables (current sum and maximum sum) are needed.",
     "key_insight": "A negative running sum only hurts future subarrays — reset to zero and start fresh, since any extension would be worse than starting over.",
     "related": [
       101,
@@ -3089,6 +3321,8 @@
     "solution_js": "var canJump = function(nums) {\n    let goal = nums.length - 1;\n    for (let i = nums.length - 2; i >= 0; i--) {\n        if (i + nums[i] >= goal) goal = i;\n    }\n    return goal === 0;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array, updating the farthest reachable index in O(1) at each position.",
+    "space_complexity_explanation": "Only one variable tracks the farthest reachable index.",
     "key_insight": "Work backwards: if a position can reach the current goal, it becomes the new goal. If the goal reaches index 0, the end is reachable.",
     "related": [
       118,
@@ -3116,6 +3350,8 @@
     "solution_js": "var jump = function(nums) {\n    let jumps = 0, l = 0, r = 0;\n    while (r < nums.length - 1) {\n        let farthest = 0;\n        for (let i = l; i <= r; i++)\n            farthest = Math.max(farthest, i + nums[i]);\n        l = r + 1;\n        r = farthest;\n        jumps++;\n    }\n    return jumps;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array, updating the farthest reach and jump count in O(1) per element.",
+    "space_complexity_explanation": "Only a few tracking variables (current end, farthest, jump count) are needed.",
     "key_insight": "Each jump explores a 'level' of reachable indices (like BFS) — the minimum jumps equals the number of BFS levels to reach the end.",
     "related": [
       117,
@@ -3142,6 +3378,8 @@
     "solution_js": "var canCompleteCircuit = function(gas, cost) {\n    let totalGas = 0, totalCost = 0;\n    for (let i = 0; i < gas.length; i++) { totalGas += gas[i]; totalCost += cost[i]; }\n    if (totalGas < totalCost) return -1;\n    let tank = 0, start = 0;\n    for (let i = 0; i < gas.length; i++) {\n        tank += gas[i] - cost[i];\n        if (tank < 0) { tank = 0; start = i + 1; }\n    }\n    return start;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through all n stations, computing cumulative gas surplus/deficit in O(1) per station.",
+    "space_complexity_explanation": "Only a few variables track the total surplus, current tank, and starting station.",
     "key_insight": "If you fail at station j from start i, all stations between i and j also fail — so jump the start to j+1, combining multiple failure proofs in one pass.",
     "related": [
       117,
@@ -3170,6 +3408,8 @@
     "solution_js": "var isNStraightHand = function(hand, groupSize) {\n    if (hand.length % groupSize) return false;\n    const count = new Map();\n    for (const c of hand) count.set(c, (count.get(c) || 0) + 1);\n    const sorted = [...count.keys()].sort((a, b) => a - b);\n    for (const card of sorted) {\n        while (count.get(card) > 0) {\n            for (let i = card; i < card + groupSize; i++) {\n                if ((count.get(i) || 0) <= 0) return false;\n                count.set(i, count.get(i) - 1);\n            }\n        }\n    }\n    return true;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting takes O(n log n), then forming groups requires scanning through all n cards.",
+    "space_complexity_explanation": "The frequency counter stores up to n distinct card values.",
     "key_insight": "Greedily start each group from the smallest available card — this forces a unique grouping and quickly reveals if valid groups are impossible.",
     "related": [
       124,
@@ -3196,6 +3436,8 @@
     "solution_js": "var mergeTriplets = function(triplets, target) {\n    const good = new Set();\n    for (const t of triplets) {\n        if (t[0] > target[0] || t[1] > target[1] || t[2] > target[2]) continue;\n        for (let i = 0; i < 3; i++)\n            if (t[i] === target[i]) good.add(i);\n    }\n    return good.size === 3;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through all n triplets, checking each against the target in O(1).",
+    "space_complexity_explanation": "Only three boolean flags track whether each target position has been matched.",
     "key_insight": "Triplets with any value exceeding the target are unusable (merge only takes max). Among valid triplets, we just need each target position covered by at least one.",
     "related": [
       119,
@@ -3223,6 +3465,8 @@
     "solution_js": "var partitionLabels = function(s) {\n    const last = {};\n    for (let i = 0; i < s.length; i++) last[s[i]] = i;\n    const res = [];\n    let start = 0, end = 0;\n    for (let i = 0; i < s.length; i++) {\n        end = Math.max(end, last[s[i]]);\n        if (i === end) { res.push(end - start + 1); start = end + 1; }\n    }\n    return res;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1) — at most 26 letters",
+    "time_complexity_explanation": "Two passes through the string: one to record last occurrences, one to determine partitions.",
+    "space_complexity_explanation": "The last-occurrence map stores at most 26 entries (one per lowercase letter).",
     "key_insight": "A partition must contain all occurrences of each character in it — tracking last occurrences and expanding greedily finds minimum partitions.",
     "related": [
       124,
@@ -3250,6 +3494,8 @@
     "solution_js": "var checkValidString = function(s) {\n    let leftMin = 0, leftMax = 0;\n    for (const c of s) {\n        if (c === '(') { leftMin++; leftMax++; }\n        else if (c === ')') { leftMin--; leftMax--; }\n        else { leftMin--; leftMax++; }\n        if (leftMax < 0) return false;\n        if (leftMin < 0) leftMin = 0;\n    }\n    return leftMin === 0;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the string, updating the possible open-count range in O(1) per character.",
+    "space_complexity_explanation": "Only two variables (leftMin and leftMax) track the range of possible open counts.",
     "key_insight": "Instead of trying all '*' possibilities, track the range [min, max] of possible open counts — if 0 is within range at the end, some valid assignment exists.",
     "related": [
       116,
@@ -3277,6 +3523,8 @@
     "solution_js": "var insert = function(intervals, newInterval) {\n    const res = [];\n    for (let i = 0; i < intervals.length; i++) {\n        if (newInterval[1] < intervals[i][0]) {\n            res.push(newInterval);\n            return res.concat(intervals.slice(i));\n        } else if (newInterval[0] > intervals[i][1]) {\n            res.push(intervals[i]);\n        } else {\n            newInterval = [Math.min(newInterval[0], intervals[i][0]),\n                          Math.max(newInterval[1], intervals[i][1])];\n        }\n    }\n    res.push(newInterval);\n    return res;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the sorted intervals, with O(1) comparison and merge operations per interval.",
+    "space_complexity_explanation": "The result list stores up to n intervals in the worst case (no overlaps).",
     "key_insight": "Three cases per interval: entirely before (add as-is), overlapping (merge), entirely after (add remaining). The merged interval grows to encompass all overlaps.",
     "related": [
       125,
@@ -3304,6 +3552,8 @@
     "solution_js": "var merge = function(intervals) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const res = [intervals[0]];\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] <= res[res.length-1][1]) {\n            res[res.length-1][1] = Math.max(res[res.length-1][1], intervals[i][1]);\n        } else {\n            res.push(intervals[i]);\n        }\n    }\n    return res;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting takes O(n log n), and the subsequent merge pass is O(n).",
+    "space_complexity_explanation": "The result list stores up to n merged intervals.",
     "key_insight": "Sorting by start time ensures overlapping intervals are consecutive — a single pass then merges them by extending end times.",
     "related": [
       124,
@@ -3332,6 +3582,8 @@
     "solution_js": "var eraseOverlapIntervals = function(intervals) {\n    intervals.sort((a, b) => a[1] - b[1]);\n    let count = 0, prevEnd = -Infinity;\n    for (const [start, end] of intervals) {\n        if (start >= prevEnd) prevEnd = end;\n        else count++;\n    }\n    return count;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting by end time takes O(n log n), and the greedy scan is O(n).",
+    "space_complexity_explanation": "Sorting is in-place, and only a counter and a tracking variable are needed.",
     "key_insight": "Sort by end time and greedily keep earliest-ending intervals — this maximizes non-overlapping intervals, minimizing removals.",
     "related": [
       125,
@@ -3359,6 +3611,8 @@
     "solution_js": "var canAttendMeetings = function(intervals) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] < intervals[i-1][1]) return false;\n    }\n    return true;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting the intervals takes O(n log n), and the overlap check is a single O(n) pass.",
+    "space_complexity_explanation": "Sorting is done in-place with no additional data structures needed.",
     "key_insight": "Sorting by start time makes overlap detection trivial — just check if each meeting starts before the previous one ends.",
     "related": [
       128,
@@ -3387,6 +3641,8 @@
     "solution_js": "var minMeetingRooms = function(intervals) {\n    const starts = intervals.map(i => i[0]).sort((a,b) => a-b);\n    const ends = intervals.map(i => i[1]).sort((a,b) => a-b);\n    let res = 0, count = 0, s = 0, e = 0;\n    while (s < starts.length) {\n        if (starts[s] < ends[e]) { count++; s++; }\n        else { count--; e++; }\n        res = Math.max(res, count);\n    }\n    return res;\n};",
     "time_complexity": "O(n log n)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the start and end time arrays each takes O(n log n), and the two-pointer scan is O(n).",
+    "space_complexity_explanation": "Two separate arrays of size n store the start and end times.",
     "key_insight": "Separating and sorting start/end times creates a sweep line — tracking concurrent meetings with two pointers finds the peak overlap.",
     "related": [
       127,
@@ -3415,6 +3671,8 @@
     "solution_js": "var minInterval = function(intervals, queries) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const sortedQ = queries.map((q, i) => [q, i]).sort((a, b) => a[0] - b[0]);\n    const res = new Array(queries.length).fill(-1);\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    let j = 0;\n    for (const [q, idx] of sortedQ) {\n        while (j < intervals.length && intervals[j][0] <= q) {\n            const [l, r] = intervals[j];\n            heap.enqueue([r - l + 1, r]);\n            j++;\n        }\n        while (heap.size() && heap.front().element[1] < q) heap.dequeue();\n        if (heap.size()) res[idx] = heap.front().element[0];\n    }\n    return res;\n};",
     "time_complexity": "O((n + q) log n)",
     "space_complexity": "O(n + q)",
+    "time_complexity_explanation": "Sorting intervals and queries takes O((n + q) log n). Each interval is pushed/popped from the heap once.",
+    "space_complexity_explanation": "The heap and sorted query arrays together use O(n + q) space.",
     "key_insight": "Processing sorted queries with a min-heap of interval sizes — lazily adding and removing intervals — efficiently finds the smallest containing interval for each query.",
     "related": [
       128,
@@ -3442,6 +3700,8 @@
     "solution_js": "var rotate = function(matrix) {\n    const n = matrix.length;\n    for (let i = 0; i < n; i++)\n        for (let j = i + 1; j < n; j++)\n            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];\n    for (const row of matrix) row.reverse();\n};",
     "time_complexity": "O(n^2)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "The transpose visits each of the n² cells once, and reversing each row is O(n), giving O(n²) total.",
+    "space_complexity_explanation": "All operations are done in-place by swapping elements, no extra matrix needed.",
     "key_insight": "90° clockwise rotation = transpose + reverse rows. This decomposition makes in-place rotation simple with just swaps.",
     "related": [
       131,
@@ -3469,6 +3729,8 @@
     "solution_js": "var spiralOrder = function(matrix) {\n    const res = [];\n    let top = 0, bottom = matrix.length - 1;\n    let left = 0, right = matrix[0].length - 1;\n    while (top <= bottom && left <= right) {\n        for (let c = left; c <= right; c++) res.push(matrix[top][c]);\n        top++;\n        for (let r = top; r <= bottom; r++) res.push(matrix[r][right]);\n        right--;\n        if (top <= bottom) {\n            for (let c = right; c >= left; c--) res.push(matrix[bottom][c]);\n            bottom--;\n        }\n        if (left <= right) {\n            for (let r = bottom; r >= top; r--) res.push(matrix[r][left]);\n            left++;\n        }\n    }\n    return res;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(1) excluding output",
+    "time_complexity_explanation": "Each of the m × n cells is visited exactly once during the spiral traversal.",
+    "space_complexity_explanation": "Only four boundary variables are used (excluding the output list).",
     "key_insight": "Four shrinking boundaries (top/bottom/left/right) define the unvisited rectangle — traverse each edge in order and shrink inward.",
     "related": [
       130,
@@ -3496,6 +3758,8 @@
     "solution_js": "var setZeroes = function(matrix) {\n    const rows = matrix.length, cols = matrix[0].length;\n    let rowZero = false;\n    for (let r = 0; r < rows; r++)\n        for (let c = 0; c < cols; c++)\n            if (matrix[r][c] === 0) {\n                matrix[0][c] = 0;\n                if (r > 0) matrix[r][0] = 0;\n                else rowZero = true;\n            }\n    for (let r = 1; r < rows; r++)\n        for (let c = 1; c < cols; c++)\n            if (matrix[0][c] === 0 || matrix[r][0] === 0) matrix[r][c] = 0;\n    if (matrix[0][0] === 0)\n        for (let r = 0; r < rows; r++) matrix[r][0] = 0;\n    if (rowZero)\n        for (let c = 0; c < cols; c++) matrix[0][c] = 0;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two passes through the m × n matrix: one to mark zeros and one to apply them.",
+    "space_complexity_explanation": "The first row and column serve as in-place markers, requiring only two extra boolean flags.",
     "key_insight": "Reuse the first row and column as markers to achieve O(1) space — just need an extra flag for the first row since it overlaps with column markers.",
     "related": [
       130,
@@ -3524,6 +3788,8 @@
     "solution_js": "var isHappy = function(n) {\n    const seen = new Set();\n    while (n !== 1) {\n        if (seen.has(n)) return false;\n        seen.add(n);\n        n = String(n).split('').reduce((sum, d) => sum + d * d, 0);\n    }\n    return true;\n};",
     "time_complexity": "O(log n) per step, bounded iterations",
     "space_complexity": "O(log n)",
+    "time_complexity_explanation": "Each step computes the sum of squared digits in O(log n) time (number of digits). The process is bounded by the cycle detection.",
+    "space_complexity_explanation": "The set stores previously seen numbers, which is bounded by the cycle length (at most O(log n) distinct values).",
     "key_insight": "The digit-square-sum sequence either reaches 1 or enters a cycle — detecting the cycle (via set or Floyd's algorithm) determines happiness.",
     "related": [
       134,
@@ -3551,6 +3817,8 @@
     "solution_js": "var plusOne = function(digits) {\n    for (let i = digits.length - 1; i >= 0; i--) {\n        if (digits[i] < 9) { digits[i]++; return digits; }\n        digits[i] = 0;\n    }\n    return [1, ...digits];\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass from the last digit to the first, with O(1) work per digit.",
+    "space_complexity_explanation": "The operation modifies the array in place; a new array is only needed if all digits are 9.",
     "key_insight": "Only 9s cause carries — stop as soon as a non-9 digit is found. The only case needing an extra digit is all 9s (like 999 → 1000).",
     "related": [
       133,
@@ -3579,6 +3847,8 @@
     "solution_js": "var myPow = function(x, n) {\n    function helper(x, n) {\n        if (x === 0) return 0;\n        if (n === 0) return 1;\n        let res = helper(x * x, Math.floor(n / 2));\n        return n % 2 ? x * res : res;\n    }\n    const res = helper(x, Math.abs(n));\n    return n >= 0 ? res : 1 / res;\n};",
     "time_complexity": "O(log n)",
     "space_complexity": "O(log n) recursion",
+    "time_complexity_explanation": "Each recursive call squares the problem size, reducing n by half each time, giving O(log n) multiplications.",
+    "space_complexity_explanation": "The recursion stack depth is O(log n), one frame per halving of the exponent.",
     "key_insight": "Binary exponentiation squares the base and halves the exponent each step — reducing O(n) multiplications to O(log n).",
     "related": [
       136,
@@ -3606,6 +3876,8 @@
     "solution_js": "var multiply = function(num1, num2) {\n    if (num1 === '0' || num2 === '0') return '0';\n    const m = num1.length, n = num2.length;\n    const res = new Array(m + n).fill(0);\n    for (let i = m - 1; i >= 0; i--)\n        for (let j = n - 1; j >= 0; j--) {\n            const mul = (num1[i] - '0') * (num2[j] - '0');\n            const p1 = i + j, p2 = i + j + 1;\n            const total = mul + res[p2];\n            res[p2] = total % 10;\n            res[p1] += Math.floor(total / 10);\n        }\n    let str = res.join('');\n    while (str[0] === '0' && str.length > 1) str = str.slice(1);\n    return str;\n};",
     "time_complexity": "O(m * n)",
     "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "Each of the m digits in num1 is multiplied with each of the n digits in num2, giving O(m × n) single-digit multiplications.",
+    "space_complexity_explanation": "The result array has at most m + n digits to store intermediate sums and the final product.",
     "key_insight": "Digit i * digit j always contributes to positions i+j and i+j+1 in the result — this position mapping makes grade-school multiplication systematic.",
     "related": [
       134,
@@ -3634,6 +3906,8 @@
     "solution_js": "var DetectSquares = function() {\n    this.ptsCount = new Map();\n    this.pts = [];\n};\n\nDetectSquares.prototype.add = function(point) {\n    const key = point[0] + ',' + point[1];\n    this.ptsCount.set(key, (this.ptsCount.get(key) || 0) + 1);\n    this.pts.push(point);\n};\n\nDetectSquares.prototype.count = function(point) {\n    let res = 0;\n    const [qx, qy] = point;\n    for (const [px, py] of this.pts) {\n        if (Math.abs(qx - px) !== Math.abs(qy - py) || qx === px || qy === py) continue;\n        res += (this.ptsCount.get(qx + ',' + py) || 0) * (this.ptsCount.get(px + ',' + qy) || 0);\n    }\n    return res;\n};",
     "time_complexity": "O(n) per count query",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "For each count query, we iterate through all stored points to find diagonal matches, checking two corners per candidate.",
+    "space_complexity_explanation": "The hash map stores the count of all n points that have been added.",
     "key_insight": "For each stored point as a potential diagonal corner, the other two corners are uniquely determined — just check if they exist in the point map.",
     "related": [
       130,
@@ -3662,6 +3936,8 @@
     "solution_js": "var findItinerary = function(tickets) {\n    const graph = new Map();\n    tickets.sort().reverse();\n    for (const [src, dst] of tickets) {\n        if (!graph.has(src)) graph.set(src, []);\n        graph.get(src).push(dst);\n    }\n    const res = [];\n    function dfs(node) {\n        const dests = graph.get(node) || [];\n        while (dests.length) dfs(dests.pop());\n        res.push(node);\n    }\n    dfs('JFK');\n    return res.reverse();\n};",
     "time_complexity": "O(E log E) for sorting",
     "space_complexity": "O(E)",
+    "time_complexity_explanation": "Sorting the adjacency lists takes O(E log E). The DFS visits each edge exactly once.",
+    "space_complexity_explanation": "The adjacency list and the result path together store O(E) entries.",
     "key_insight": "Hierholzer's algorithm finds an Eulerian path by post-order DFS — nodes are added to result only after all their outgoing edges are consumed.",
     "related": [
       87,
@@ -3690,6 +3966,8 @@
     "solution_js": "var minCostConnectPoints = function(points) {\n    const n = points.length;\n    const visited = new Set();\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([0, 0]);\n    let total = 0;\n    while (visited.size < n) {\n        const [cost, i] = heap.dequeue().element;\n        if (visited.has(i)) continue;\n        visited.add(i);\n        total += cost;\n        for (let j = 0; j < n; j++) {\n            if (!visited.has(j)) {\n                const dist = Math.abs(points[i][0]-points[j][0]) + Math.abs(points[i][1]-points[j][1]);\n                heap.enqueue([dist, j]);\n            }\n        }\n    }\n    return total;\n};",
     "time_complexity": "O(n^2 log n)",
     "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "Prim's algorithm processes all O(n²) possible edges, each with a heap operation costing O(log(n²)) = O(log n).",
+    "space_complexity_explanation": "The adjacency list or distance array stores O(n²) edges (complete graph of n points).",
     "key_insight": "Prim's algorithm greedily grows the MST by always adding the cheapest edge to an unvisited node — the min-heap efficiently finds this edge.",
     "related": [
       89,
@@ -3717,6 +3995,8 @@
     "solution_js": "var networkDelayTime = function(times, n, k) {\n    const graph = new Map();\n    for (const [u, v, w] of times) {\n        if (!graph.has(u)) graph.set(u, []);\n        graph.get(u).push([v, w]);\n    }\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([0, k]);\n    const visited = new Set();\n    let t = 0;\n    while (heap.size()) {\n        const [w, node] = heap.dequeue().element;\n        if (visited.has(node)) continue;\n        visited.add(node);\n        t = Math.max(t, w);\n        for (const [nei, w2] of (graph.get(node) || []))\n            if (!visited.has(nei)) heap.enqueue([w + w2, nei]);\n    }\n    return visited.size === n ? t : -1;\n};",
     "time_complexity": "O(E log V)",
     "space_complexity": "O(V + E)",
+    "time_complexity_explanation": "Dijkstra's algorithm processes each vertex once and each edge once, with heap operations costing O(log V) each.",
+    "space_complexity_explanation": "The adjacency list stores all edges, and the distance array and heap store up to V entries.",
     "key_insight": "Dijkstra's finds shortest paths from source to all nodes — the network delay is the maximum shortest path (the last node to receive the signal).",
     "related": [
       141,
@@ -3745,6 +4025,8 @@
     "solution_js": "var swimInWater = function(grid) {\n    const n = grid.length;\n    const visited = new Set();\n    const heap = new MinPriorityQueue({ priority: x => x[0] });\n    heap.enqueue([grid[0][0], 0, 0]);\n    visited.add('0,0');\n    while (heap.size()) {\n        const [t, r, c] = heap.dequeue().element;\n        if (r === n-1 && c === n-1) return t;\n        for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]) {\n            const nr = r+dr, nc = c+dc;\n            const key = nr+','+nc;\n            if (nr >= 0 && nc >= 0 && nr < n && nc < n && !visited.has(key)) {\n                visited.add(key);\n                heap.enqueue([Math.max(t, grid[nr][nc]), nr, nc]);\n            }\n        }\n    }\n    return -1;\n};",
     "time_complexity": "O(n^2 log n)",
     "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "Modified Dijkstra's processes each cell, with up to n² heap operations each costing O(log(n²)).",
+    "space_complexity_explanation": "The visited matrix and the min-heap each store up to n² entries.",
     "key_insight": "This is a minimax path problem — Dijkstra's minimizes the maximum elevation, treating max(path_cost, neighbor_elevation) as the edge weight.",
     "related": [
       140,
@@ -3773,6 +4055,8 @@
     "solution_js": "var alienOrder = function(words) {\n    const adj = new Map();\n    for (const w of words) for (const c of w) if (!adj.has(c)) adj.set(c, new Set());\n    for (let i = 0; i < words.length - 1; i++) {\n        const w1 = words[i], w2 = words[i+1];\n        const minLen = Math.min(w1.length, w2.length);\n        if (w1.length > w2.length && w1.slice(0, minLen) === w2.slice(0, minLen)) return '';\n        for (let j = 0; j < minLen; j++) {\n            if (w1[j] !== w2[j]) { adj.get(w1[j]).add(w2[j]); break; }\n        }\n    }\n    const visited = new Map();\n    const res = [];\n    function dfs(c) {\n        if (visited.has(c)) return visited.get(c);\n        visited.set(c, true);\n        for (const nei of adj.get(c)) if (dfs(nei)) return true;\n        visited.set(c, false);\n        res.push(c);\n        return false;\n    }\n    for (const c of adj.keys()) if (dfs(c)) return '';\n    return res.reverse().join('');\n};",
     "time_complexity": "O(C) where C is total characters across all words",
     "space_complexity": "O(1) — at most 26 characters",
+    "time_complexity_explanation": "We compare each pair of adjacent words (summing to C total characters) to extract edges, then topological sort is O(V + E) where V ≤ 26.",
+    "space_complexity_explanation": "The graph has at most 26 nodes and at most 26² edges, which is constant regardless of input size.",
     "key_insight": "Adjacent word comparisons yield character ordering edges. Topological sort of the character graph produces the alien alphabet — cycles mean invalid input.",
     "related": [
       87,
@@ -3801,6 +4085,8 @@
     "solution_js": "var findCheapestPrice = function(n, flights, src, dst, k) {\n    let prices = new Array(n).fill(Infinity);\n    prices[src] = 0;\n    for (let i = 0; i <= k; i++) {\n        const tmp = [...prices];\n        for (const [s, d, p] of flights) {\n            if (prices[s] === Infinity) continue;\n            if (prices[s] + p < tmp[d]) tmp[d] = prices[s] + p;\n        }\n        prices = tmp;\n    }\n    return prices[dst] === Infinity ? -1 : prices[dst];\n};",
     "time_complexity": "O(k * E)",
     "space_complexity": "O(n)",
+    "time_complexity_explanation": "Bellman-Ford runs k+1 relaxation rounds, each processing all E flight edges once.",
+    "space_complexity_explanation": "Two distance arrays of size n (current and previous round) are used for the relaxation.",
     "key_insight": "Bellman-Ford with k+1 iterations finds shortest paths using at most k+1 edges — using previous iteration's values prevents exceeding the stop limit.",
     "related": [
       140,

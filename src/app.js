@@ -6,6 +6,7 @@ import { renderProblemView } from './components/problem-view.js';
 import { renderReview } from './components/review.js';
 import { renderQuiz } from './components/quiz.js';
 import { renderPatterns } from './components/patterns.js';
+import { renderKnowledge } from './components/knowledge.js';
 import { renderSettings } from './components/settings.js';
 
 class App {
@@ -193,6 +194,9 @@ class App {
         break;
       case 'patterns':
         renderPatterns(this.mainContent);
+        break;
+      case 'knowledge':
+        renderKnowledge(this.mainContent);
         break;
       case 'settings':
         renderSettings(this.mainContent);
