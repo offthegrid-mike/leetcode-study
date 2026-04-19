@@ -84,7 +84,7 @@ async function fetchSyncGist(token, gistId) {
 
 // ── Merge logic ─────────────────────────────────────────────────────
 
-function mergeProgress(localRecords, remoteRecords) {
+export function mergeProgress(localRecords, remoteRecords) {
   const merged = new Map();
 
   for (const r of localRecords) {
@@ -107,7 +107,7 @@ function mergeProgress(localRecords, remoteRecords) {
   return Array.from(merged.values());
 }
 
-function mergeSessions(localSessions, remoteSessions) {
+export function mergeSessions(localSessions, remoteSessions) {
   const localUuids = new Set(localSessions.map(s => s.uuid).filter(Boolean));
   const merged = [...localSessions];
 

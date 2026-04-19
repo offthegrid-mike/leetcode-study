@@ -5,8 +5,19 @@
   "scripts": {
     "dev": "echo 'Open http://localhost:8080/public/' && python3 -m http.server 8080",
     "build": "node scripts/build.js",
-    "generate-anki": "python3 scripts/generate-anki.py"
+    "generate-anki": "python3 scripts/generate-anki.py",
+    "test": "vitest run"
   },
-  "keywords": ["leetcode", "study", "pwa", "anki", "interview-prep"],
-  "license": "MIT"
+  "keywords": [
+    "leetcode",
+    "study",
+    "pwa",
+    "anki",
+    "interview-prep"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^29.0.2",
+    "vitest": "^4.1.4"
+  }
 }
