@@ -4092,5 +4092,753 @@
       140,
       87
     ]
+  },
+  {
+    "id": 144,
+    "title": "Longest Common Prefix",
+    "slug": "longest-common-prefix",
+    "category": "Arrays & Hashing",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/longest-common-prefix/",
+    "patterns": [
+      "String Matching",
+      "Vertical Scanning"
+    ],
+    "hints": [
+      "Compare characters across all strings at the same position.",
+      "Use the first string as the reference prefix and shorten it whenever a mismatch is found.",
+      "For each string, keep trimming the prefix from the end until it matches the start of that string."
+    ],
+    "approach": "Use the first string as the initial prefix candidate. For each subsequent string, repeatedly trim the last character of the prefix until the current string starts with it. If the prefix becomes empty, return an empty string.",
+    "solution_python": "class Solution:\n    def longestCommonPrefix(self, strs: List[str]) -> str:\n        if not strs:\n            return \"\"\n        prefix = strs[0]\n        for s in strs[1:]:\n            while not s.startswith(prefix):\n                prefix = prefix[:-1]\n                if not prefix:\n                    return \"\"\n        return prefix",
+    "solution_js": "var longestCommonPrefix = function(strs) {\n    if (!strs.length) return \"\";\n    let prefix = strs[0];\n    for (let i = 1; i < strs.length; i++) {\n        while (!strs[i].startsWith(prefix)) {\n            prefix = prefix.slice(0, -1);\n            if (!prefix) return \"\";\n        }\n    }\n    return prefix;\n};",
+    "time_complexity": "O(S)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "S is the total number of characters across all strings. In the worst case we compare every character once.",
+    "space_complexity_explanation": "We only store the prefix in-place, reusing the first string's memory.",
+    "key_insight": "The common prefix can only shrink as you examine more strings — use the first string as a baseline and trim it down.",
+    "related": [
+      2,
+      6,
+      61
+    ]
+  },
+  {
+    "id": 145,
+    "title": "Roman to Integer",
+    "slug": "roman-to-integer",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/roman-to-integer/",
+    "patterns": [
+      "Hash Map",
+      "Linear Scan"
+    ],
+    "hints": [
+      "Map each Roman symbol to its integer value and scan left to right.",
+      "Roman numerals subtract when a smaller value appears before a larger value.",
+      "If the current symbol's value is less than the next symbol's value, subtract it; otherwise add it."
+    ],
+    "approach": "Create a map of Roman symbols to values. Iterate through the string; if the current character's value is less than the next character's value, subtract it from the result; otherwise add it. This handles all subtraction cases (IV, IX, XL, etc.) naturally.",
+    "solution_python": "class Solution:\n    def romanToInt(self, s: str) -> int:\n        roman = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n        result = 0\n        for i in range(len(s)):\n            if i + 1 < len(s) and roman[s[i]] < roman[s[i + 1]]:\n                result -= roman[s[i]]\n            else:\n                result += roman[s[i]]\n        return result",
+    "solution_js": "var romanToInt = function(s) {\n    const roman = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000};\n    let result = 0;\n    for (let i = 0; i < s.length; i++) {\n        if (i + 1 < s.length && roman[s[i]] < roman[s[i + 1]]) {\n            result -= roman[s[i]];\n        } else {\n            result += roman[s[i]];\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We iterate through the string once, and each lookup in the map is O(1). n is the length of the string.",
+    "space_complexity_explanation": "The Roman numeral map has a fixed size of 7 entries regardless of input.",
+    "key_insight": "A smaller value appearing before a larger value always means subtraction — this single rule handles all six special cases (IV, IX, XL, XC, CD, CM).",
+    "related": [
+      133,
+      134,
+      135
+    ]
+  },
+  {
+    "id": 146,
+    "title": "Integer to Roman",
+    "slug": "integer-to-roman",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/integer-to-roman/",
+    "patterns": [
+      "Greedy",
+      "Hash Map"
+    ],
+    "hints": [
+      "Think greedily — always use the largest Roman numeral that fits into the remaining value.",
+      "Pre-define all 13 value-symbol pairs including subtraction forms like 900 (CM) and 400 (CD).",
+      "Repeatedly subtract the largest value that fits and append the corresponding symbol."
+    ],
+    "approach": "Pre-define all 13 value-symbol pairs in descending order (including subtractive forms like 900=CM, 400=CD). Greedily pick the largest value that fits into num, append its symbol, subtract the value, and repeat until num reaches zero.",
+    "solution_python": "class Solution:\n    def intToRoman(self, num: int) -> str:\n        values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]\n        symbols = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']\n        result = \"\"\n        for i, val in enumerate(values):\n            while num >= val:\n                result += symbols[i]\n                num -= val\n        return result",
+    "solution_js": "var intToRoman = function(num) {\n    const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];\n    const symbols = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];\n    let result = \"\";\n    for (let i = 0; i < values.length; i++) {\n        while (num >= values[i]) {\n            result += symbols[i];\n            num -= values[i];\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The input is bounded by 3999, so the number of iterations is bounded by a constant (at most 15 'M' symbols for 3000).",
+    "space_complexity_explanation": "The lookup tables and output string are bounded by constant size given the fixed input range.",
+    "key_insight": "By including all six subtractive forms (IV, IX, XL, XC, CD, CM) in the value table, the greedy algorithm works perfectly without any special-case logic.",
+    "related": [
+      134,
+      133,
+      136
+    ]
+  },
+  {
+    "id": 147,
+    "title": "Next Permutation",
+    "slug": "next-permutation",
+    "category": "Arrays & Hashing",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/next-permutation/",
+    "patterns": [
+      "Two Pointers",
+      "In-place Manipulation"
+    ],
+    "hints": [
+      "The next permutation is found by making the smallest possible increase from the right side.",
+      "Find the rightmost position where the sequence stops decreasing (a 'dip'), then find the smallest element to its right that is larger, and swap them.",
+      "After swapping, reverse the suffix to its smallest (ascending) order."
+    ],
+    "approach": "Scan from right to find the first index i where nums[i] < nums[i+1] (the descent point). Then find the smallest element greater than nums[i] in the suffix and swap them. Finally, reverse the suffix starting at i+1 to make it the smallest possible arrangement.",
+    "solution_python": "class Solution:\n    def nextPermutation(self, nums: List[int]) -> None:\n        n = len(nums)\n        i = n - 2\n        while i >= 0 and nums[i] >= nums[i + 1]:\n            i -= 1\n        if i >= 0:\n            j = n - 1\n            while nums[j] <= nums[i]:\n                j -= 1\n            nums[i], nums[j] = nums[j], nums[i]\n        left, right = i + 1, n - 1\n        while left < right:\n            nums[left], nums[right] = nums[right], nums[left]\n            left += 1\n            right -= 1",
+    "solution_js": "var nextPermutation = function(nums) {\n    const n = nums.length;\n    let i = n - 2;\n    while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n    if (i >= 0) {\n        let j = n - 1;\n        while (nums[j] <= nums[i]) j--;\n        [nums[i], nums[j]] = [nums[j], nums[i]];\n    }\n    let left = i + 1, right = n - 1;\n    while (left < right) {\n        [nums[left], nums[right]] = [nums[right], nums[left]];\n        left++;\n        right--;\n    }\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We make at most two linear scans (finding i, finding j) and one linear reversal — all O(n) where n is the array length.",
+    "space_complexity_explanation": "All operations are performed in-place with only a constant number of pointer variables.",
+    "key_insight": "The suffix to the right of the descent point is always in descending order, so reversing it gives the smallest possible arrangement for that suffix.",
+    "related": [
+      73,
+      71,
+      74
+    ]
+  },
+  {
+    "id": 148,
+    "title": "Jump Game II",
+    "slug": "jump-game-ii",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/jump-game-ii/",
+    "patterns": [
+      "Greedy",
+      "BFS"
+    ],
+    "hints": [
+      "Think in 'levels' like BFS — all positions reachable with the same number of jumps form one level.",
+      "Track the farthest reachable index within the current level; when you reach the end of the level, you must jump.",
+      "You only need to jump when you've exhausted all positions in the current 'frontier'."
+    ],
+    "approach": "Use a greedy BFS-like approach. Track currentEnd (end of current jump level) and farthest (maximum reach found so far). Iterate through indices; whenever i reaches currentEnd, increment jumps and set currentEnd to farthest. Stop before the last index since reaching it doesn't require another jump.",
+    "solution_python": "class Solution:\n    def jump(self, nums: List[int]) -> int:\n        jumps = 0\n        current_end = 0\n        farthest = 0\n        for i in range(len(nums) - 1):\n            farthest = max(farthest, i + nums[i])\n            if i == current_end:\n                jumps += 1\n                current_end = farthest\n        return jumps",
+    "solution_js": "var jump = function(nums) {\n    let jumps = 0, currentEnd = 0, farthest = 0;\n    for (let i = 0; i < nums.length - 1; i++) {\n        farthest = Math.max(farthest, i + nums[i]);\n        if (i === currentEnd) {\n            jumps++;\n            currentEnd = farthest;\n        }\n    }\n    return jumps;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array where n is the length of nums.",
+    "space_complexity_explanation": "Only three integer variables are maintained regardless of input size.",
+    "key_insight": "Model jumps as BFS levels — always extend to the farthest reachable position within each level, and count one jump per level transition.",
+    "related": [
+      117,
+      116,
+      93
+    ]
+  },
+  {
+    "id": 149,
+    "title": "Gas Station",
+    "slug": "gas-station",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/gas-station/",
+    "patterns": [
+      "Greedy",
+      "Linear Scan"
+    ],
+    "hints": [
+      "If the total gas is at least the total cost, a valid starting station must exist.",
+      "Simulate driving around and track your running fuel. When it goes negative, the current start is invalid.",
+      "Whenever your tank drops below zero, reset the start to the next station — that's the only viable candidate."
+    ],
+    "approach": "First check if total gas >= total cost; if not, return -1. Then greedily find the start: maintain a running tank total. Whenever the tank goes negative, the current starting station can't work, so reset the start to the next station and reset the tank. The final candidate is guaranteed to be valid.",
+    "solution_python": "class Solution:\n    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:\n        if sum(gas) < sum(cost):\n            return -1\n        start = 0\n        tank = 0\n        for i in range(len(gas)):\n            tank += gas[i] - cost[i]\n            if tank < 0:\n                start = i + 1\n                tank = 0\n        return start",
+    "solution_js": "var canCompleteCircuit = function(gas, cost) {\n    const totalGas = gas.reduce((a, b) => a + b, 0);\n    const totalCost = cost.reduce((a, b) => a + b, 0);\n    if (totalGas < totalCost) return -1;\n    let start = 0, tank = 0;\n    for (let i = 0; i < gas.length; i++) {\n        tank += gas[i] - cost[i];\n        if (tank < 0) {\n            start = i + 1;\n            tank = 0;\n        }\n    }\n    return start;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear passes — one for summing totals and one for finding the start — each O(n) where n is the number of stations.",
+    "space_complexity_explanation": "Only a constant number of variables are used.",
+    "key_insight": "If you can't reach station j from station i, then no station between i and j can be a valid starting point either — this lets you skip ahead rather than brute-force every start.",
+    "related": [
+      116,
+      117,
+      122
+    ]
+  },
+  {
+    "id": 150,
+    "title": "Sqrt(x)",
+    "slug": "sqrtx",
+    "category": "Binary Search",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/sqrtx/",
+    "patterns": [
+      "Binary Search"
+    ],
+    "hints": [
+      "The integer square root is the largest integer whose square does not exceed x.",
+      "Binary search between 1 and x/2 for the answer.",
+      "When mid*mid <= x < (mid+1)*(mid+1), mid is the answer — return hi after the loop ends."
+    ],
+    "approach": "Binary search in the range [1, x/2]. For each midpoint, compare mid*mid to x. If equal, return mid immediately. If mid*mid < x, search higher; otherwise search lower. When the loop ends, hi holds the floor of the square root.",
+    "solution_python": "class Solution:\n    def mySqrt(self, x: int) -> int:\n        if x < 2:\n            return x\n        lo, hi = 1, x // 2\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            if mid * mid == x:\n                return mid\n            elif mid * mid < x:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        return hi",
+    "solution_js": "var mySqrt = function(x) {\n    if (x < 2) return x;\n    let lo = 1, hi = Math.floor(x / 2);\n    while (lo <= hi) {\n        const mid = Math.floor((lo + hi) / 2);\n        if (mid * mid === x) return mid;\n        else if (mid * mid < x) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return hi;\n};",
+    "time_complexity": "O(log x)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search halves the search space each iteration, giving O(log x) iterations over a range of size x/2.",
+    "space_complexity_explanation": "Only a constant number of pointer variables are used.",
+    "key_insight": "After the binary search loop, hi always points to the largest integer whose square is <= x — the floor square root.",
+    "related": [
+      28,
+      34,
+      135
+    ]
+  },
+  {
+    "id": 151,
+    "title": "Perfect Squares",
+    "slug": "perfect-squares",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/perfect-squares/",
+    "patterns": [
+      "Dynamic Programming",
+      "BFS"
+    ],
+    "hints": [
+      "Think of this as an unbounded coin change problem where the coins are perfect squares.",
+      "Build dp[i] = minimum number of perfect squares that sum to i.",
+      "For each i, try subtracting every perfect square j*j <= i and take the minimum."
+    ],
+    "approach": "Use bottom-up DP: dp[0] = 0 and dp[i] = min(dp[i - j*j] + 1) for all j where j*j <= i. This is equivalent to the coin change problem where the coins are 1, 4, 9, 16, ... Build the table from 1 to n.",
+    "solution_python": "class Solution:\n    def numSquares(self, n: int) -> int:\n        dp = [float('inf')] * (n + 1)\n        dp[0] = 0\n        for i in range(1, n + 1):\n            j = 1\n            while j * j <= i:\n                dp[i] = min(dp[i], dp[i - j * j] + 1)\n                j += 1\n        return dp[n]",
+    "solution_js": "var numSquares = function(n) {\n    const dp = new Array(n + 1).fill(Infinity);\n    dp[0] = 0;\n    for (let i = 1; i <= n; i++) {\n        for (let j = 1; j * j <= i; j++) {\n            dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n        }\n    }\n    return dp[n];\n};",
+    "time_complexity": "O(n * sqrt(n))",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "For each value from 1 to n, we try all perfect squares up to it, which is O(sqrt(i)) per value, giving O(n * sqrt(n)) total.",
+    "space_complexity_explanation": "The dp array has n+1 entries.",
+    "key_insight": "This is identical in structure to the coin change problem — perfect squares are the 'coins' and you want the minimum count to sum to n.",
+    "related": [
+      100,
+      93,
+      94
+    ]
+  },
+  {
+    "id": 152,
+    "title": "Ugly Number II",
+    "slug": "ugly-number-ii",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/ugly-number-ii/",
+    "patterns": [
+      "Dynamic Programming",
+      "Three Pointers"
+    ],
+    "hints": [
+      "Generate ugly numbers in order — each ugly number is 2x, 3x, or 5x of a previous ugly number.",
+      "Use three pointers tracking which ugly number each factor (2, 3, 5) should multiply next.",
+      "Always pick the minimum next candidate and advance the pointer(s) that produced it."
+    ],
+    "approach": "Maintain an array of ugly numbers and three pointers p2, p3, p5. At each step, the next ugly number is the minimum of ugly[p2]*2, ugly[p3]*3, and ugly[p5]*5. Advance all pointers that produced the minimum to avoid duplicates.",
+    "solution_python": "class Solution:\n    def nthUglyNumber(self, n: int) -> int:\n        ugly = [1] * n\n        p2 = p3 = p5 = 0\n        for i in range(1, n):\n            next2 = ugly[p2] * 2\n            next3 = ugly[p3] * 3\n            next5 = ugly[p5] * 5\n            next_ugly = min(next2, next3, next5)\n            ugly[i] = next_ugly\n            if next_ugly == next2:\n                p2 += 1\n            if next_ugly == next3:\n                p3 += 1\n            if next_ugly == next5:\n                p5 += 1\n        return ugly[-1]",
+    "solution_js": "var nthUglyNumber = function(n) {\n    const ugly = new Array(n).fill(1);\n    let p2 = 0, p3 = 0, p5 = 0;\n    for (let i = 1; i < n; i++) {\n        const next2 = ugly[p2] * 2;\n        const next3 = ugly[p3] * 3;\n        const next5 = ugly[p5] * 5;\n        const nextUgly = Math.min(next2, next3, next5);\n        ugly[i] = nextUgly;\n        if (nextUgly === next2) p2++;\n        if (nextUgly === next3) p3++;\n        if (nextUgly === next5) p5++;\n    }\n    return ugly[n - 1];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We compute exactly n ugly numbers, one per iteration, with O(1) work per step.",
+    "space_complexity_explanation": "The ugly array stores all n generated ugly numbers.",
+    "key_insight": "All ugly numbers are products of previous ugly numbers times 2, 3, or 5 — three pointers ensure we never miss or duplicate a candidate.",
+    "related": [
+      93,
+      100,
+      64
+    ]
+  },
+  {
+    "id": 153,
+    "title": "Maximum Sum Circular Subarray",
+    "slug": "maximum-sum-circular-subarray",
+    "category": "1-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+    "patterns": [
+      "Kadane's Algorithm",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "There are two cases: the max subarray is either entirely within the array, or it wraps around.",
+      "A wrapping subarray equals the total sum minus the minimum non-wrapping subarray.",
+      "Run Kadane's algorithm to find both the maximum subarray and the minimum subarray sums."
+    ],
+    "approach": "Run Kadane's algorithm simultaneously for both maximum and minimum subarray sums. The answer is the maximum of: (1) the standard max subarray sum, or (2) total - min subarray sum (the wrapping case). If all elements are negative, the wrapping case would give 0 which is wrong — in that case return the max subarray sum.",
+    "solution_python": "class Solution:\n    def maxSubarraySumCircular(self, nums: List[int]) -> int:\n        total = sum(nums)\n        max_sum = nums[0]\n        cur_max = 0\n        min_sum = nums[0]\n        cur_min = 0\n        for num in nums:\n            cur_max = max(cur_max + num, num)\n            max_sum = max(max_sum, cur_max)\n            cur_min = min(cur_min + num, num)\n            min_sum = min(min_sum, cur_min)\n        return max(max_sum, total - min_sum) if max_sum > 0 else max_sum",
+    "solution_js": "var maxSubarraySumCircular = function(nums) {\n    let total = nums.reduce((a, b) => a + b, 0);\n    let maxSum = nums[0], curMax = 0;\n    let minSum = nums[0], curMin = 0;\n    for (const num of nums) {\n        curMax = Math.max(curMax + num, num);\n        maxSum = Math.max(maxSum, curMax);\n        curMin = Math.min(curMin + num, num);\n        minSum = Math.min(minSum, curMin);\n    }\n    return maxSum > 0 ? Math.max(maxSum, total - minSum) : maxSum;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array computing both max and min Kadane values simultaneously.",
+    "space_complexity_explanation": "Only a constant number of tracking variables are needed.",
+    "key_insight": "A circular subarray that wraps around is equivalent to the total sum minus some non-wrapping middle subarray — so minimizing the middle maximizes the wrap-around portion.",
+    "related": [
+      101,
+      116,
+      95
+    ]
+  },
+  {
+    "id": 154,
+    "title": "Longest Palindromic Subsequence",
+    "slug": "longest-palindromic-subsequence",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/longest-palindromic-subsequence/",
+    "patterns": [
+      "Dynamic Programming",
+      "Interval DP"
+    ],
+    "hints": [
+      "Think about matching characters from both ends of the string.",
+      "Define dp[i][j] as the length of the longest palindromic subsequence in s[i..j].",
+      "If s[i] == s[j], dp[i][j] = dp[i+1][j-1] + 2; otherwise dp[i][j] = max(dp[i+1][j], dp[i][j-1])."
+    ],
+    "approach": "Use interval DP where dp[i][j] = longest palindromic subsequence in s[i..j]. Base case: dp[i][i] = 1. For each length from 2 to n, if s[i] == s[j], extend the inner result by 2; otherwise take the max of skipping either endpoint.",
+    "solution_python": "class Solution:\n    def longestPalindromeSubseq(self, s: str) -> int:\n        n = len(s)\n        dp = [[0] * n for _ in range(n)]\n        for i in range(n):\n            dp[i][i] = 1\n        for length in range(2, n + 1):\n            for i in range(n - length + 1):\n                j = i + length - 1\n                if s[i] == s[j]:\n                    dp[i][j] = dp[i + 1][j - 1] + 2\n                else:\n                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])\n        return dp[0][n - 1]",
+    "solution_js": "var longestPalindromeSubseq = function(s) {\n    const n = s.length;\n    const dp = Array.from({length: n}, () => new Array(n).fill(0));\n    for (let i = 0; i < n; i++) dp[i][i] = 1;\n    for (let len = 2; len <= n; len++) {\n        for (let i = 0; i <= n - len; i++) {\n            const j = i + len - 1;\n            if (s[i] === s[j]) dp[i][j] = dp[i + 1][j - 1] + 2;\n            else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);\n        }\n    }\n    return dp[0][n - 1];\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "We fill an n×n DP table with O(1) work per cell, giving O(n^2) total where n is the string length.",
+    "space_complexity_explanation": "The DP table is n×n.",
+    "key_insight": "When both endpoints match, we can include them and recurse on the inner substring — this is the key recurrence that makes interval DP work here.",
+    "related": [
+      106,
+      97,
+      98
+    ]
+  },
+  {
+    "id": 155,
+    "title": "Palindrome Partitioning II",
+    "slug": "palindrome-partitioning-ii",
+    "category": "2-D Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/palindrome-partitioning-ii/",
+    "patterns": [
+      "Dynamic Programming",
+      "Precomputation"
+    ],
+    "hints": [
+      "Precompute a 2D palindrome table so you can check any substring in O(1).",
+      "Define cuts[j] = minimum number of cuts for s[0..j-1].",
+      "For each j, try every start i: if s[i..j-1] is a palindrome, cuts[j] = min(cuts[j], cuts[i] + 1)."
+    ],
+    "approach": "First build a 2D boolean table is_pal[i][j] using DP (s[i]==s[j] and inner is palindrome). Then compute cuts[j] = minimum cuts for the first j characters by trying all palindromic endings. The answer is cuts[n] where -1 means the whole string is already a palindrome.",
+    "solution_python": "class Solution:\n    def minCut(self, s: str) -> int:\n        n = len(s)\n        is_pal = [[False] * n for _ in range(n)]\n        for i in range(n - 1, -1, -1):\n            for j in range(i, n):\n                if s[i] == s[j] and (j - i <= 2 or is_pal[i + 1][j - 1]):\n                    is_pal[i][j] = True\n        cuts = list(range(-1, n))\n        for j in range(1, n):\n            for i in range(j + 1):\n                if is_pal[i][j]:\n                    cuts[j + 1] = min(cuts[j + 1], cuts[i] + 1)\n        return cuts[n]",
+    "solution_js": "var minCut = function(s) {\n    const n = s.length;\n    const isPal = Array.from({length: n}, () => new Array(n).fill(false));\n    for (let i = n - 1; i >= 0; i--) {\n        for (let j = i; j < n; j++) {\n            if (s[i] === s[j] && (j - i <= 2 || isPal[i + 1][j - 1])) {\n                isPal[i][j] = true;\n            }\n        }\n    }\n    const cuts = Array.from({length: n + 1}, (_, k) => k - 1);\n    for (let j = 1; j < n; j++) {\n        for (let i = 0; i <= j; i++) {\n            if (isPal[i][j]) {\n                cuts[j + 1] = Math.min(cuts[j + 1], cuts[i] + 1);\n            }\n        }\n    }\n    return cuts[n];\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "Building the palindrome table takes O(n^2). The cuts DP is also O(n^2). n is the string length.",
+    "space_complexity_explanation": "The palindrome table requires O(n^2) space.",
+    "key_insight": "Precomputing palindrome substrings in O(n^2) transforms the cut DP into a clean linear recurrence lookup.",
+    "related": [
+      77,
+      97,
+      106
+    ]
+  },
+  {
+    "id": 156,
+    "title": "Populating Next Right Pointers in Each Node",
+    "slug": "populating-next-right-pointers-in-each-node",
+    "category": "Trees",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
+    "patterns": [
+      "BFS",
+      "Tree Traversal"
+    ],
+    "hints": [
+      "For a perfect binary tree, every node has exactly two children — use this property.",
+      "Once you set the next pointers at level k, you can use them to traverse level k and set level k+1 pointers.",
+      "For each node with a next pointer set: node.left.next = node.right, and node.right.next = node.next.left (if node.next exists)."
+    ],
+    "approach": "Start at the leftmost node of each level. For each node at the current level, connect its left child's next to its right child, and its right child's next to the left child of its next sibling. Move to the next level by following the leftmost path.",
+    "solution_python": "class Solution:\n    def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':\n        if not root:\n            return root\n        leftmost = root\n        while leftmost.left:\n            head = leftmost\n            while head:\n                head.left.next = head.right\n                if head.next:\n                    head.right.next = head.next.left\n                head = head.next\n            leftmost = leftmost.left\n        return root",
+    "solution_js": "var connect = function(root) {\n    if (!root) return root;\n    let leftmost = root;\n    while (leftmost.left) {\n        let head = leftmost;\n        while (head) {\n            head.left.next = head.right;\n            if (head.next) head.right.next = head.next.left;\n            head = head.next;\n        }\n        leftmost = leftmost.left;\n    }\n    return root;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We visit every node exactly once to set its children's next pointers. n is the number of nodes.",
+    "space_complexity_explanation": "We only use a constant number of pointer variables — no queue or recursion stack needed.",
+    "key_insight": "Once the next pointers at level k are set, you can traverse level k using those pointers to wire up level k+1 — making this an O(1) space solution.",
+    "related": [
+      53,
+      54,
+      46
+    ]
+  },
+  {
+    "id": 157,
+    "title": "Flatten Binary Tree to Linked List",
+    "slug": "flatten-binary-tree-to-linked-list",
+    "category": "Trees",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/",
+    "patterns": [
+      "DFS",
+      "In-place Manipulation"
+    ],
+    "hints": [
+      "The flattened list follows pre-order traversal (root, left, right).",
+      "Process nodes in reverse pre-order: right subtree first, then left, then root.",
+      "Keep a 'prev' pointer; set node.right = prev and node.left = None at each step."
+    ],
+    "approach": "Process nodes in reverse pre-order (right, left, root) with a global prev pointer. At each node, set node.right = prev, node.left = None, then update prev = node. This builds the linked list from right to left in one pass without extra space.",
+    "solution_python": "class Solution:\n    def flatten(self, root: Optional[TreeNode]) -> None:\n        self.prev = None\n        def dfs(node):\n            if not node:\n                return\n            dfs(node.right)\n            dfs(node.left)\n            node.right = self.prev\n            node.left = None\n            self.prev = node\n        dfs(root)",
+    "solution_js": "var flatten = function(root) {\n    let prev = null;\n    function dfs(node) {\n        if (!node) return;\n        dfs(node.right);\n        dfs(node.left);\n        node.right = prev;\n        node.left = null;\n        prev = node;\n    }\n    dfs(root);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "time_complexity_explanation": "Every node is visited exactly once in the DFS traversal.",
+    "space_complexity_explanation": "The recursion stack uses O(h) space where h is the height of the tree (O(log n) for balanced, O(n) for skewed).",
+    "key_insight": "By traversing in reverse pre-order (right, left, root), each node can be wired to the already-processed 'prev' node, building the list in correct pre-order without needing extra memory.",
+    "related": [
+      35,
+      46,
+      58
+    ]
+  },
+  {
+    "id": 158,
+    "title": "Count Complete Tree Nodes",
+    "slug": "count-complete-tree-nodes",
+    "category": "Trees",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/count-complete-tree-nodes/",
+    "patterns": [
+      "Binary Search",
+      "Tree Traversal"
+    ],
+    "hints": [
+      "A naive DFS is O(n) — can you do better by exploiting the complete tree property?",
+      "Compare the height of the leftmost path versus the rightmost path.",
+      "If the heights are equal, the left subtree is a perfect binary tree — its count is 2^h - 1. Recurse on the right subtree."
+    ],
+    "approach": "At each node, compute left height (following left pointers) and right height (following right pointers). If equal, the subtree is a perfect binary tree with 2^h - 1 nodes. Otherwise, recurse on both children. This achieves O(log^2 n) by reducing tree height each recursion level.",
+    "solution_python": "class Solution:\n    def countNodes(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        left, right = root, root\n        left_height = right_height = 0\n        while left:\n            left_height += 1\n            left = left.left\n        while right:\n            right_height += 1\n            right = right.right\n        if left_height == right_height:\n            return (1 << left_height) - 1\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+    "solution_js": "var countNodes = function(root) {\n    if (!root) return 0;\n    let left = root, right = root;\n    let leftH = 0, rightH = 0;\n    while (left) { leftH++; left = left.left; }\n    while (right) { rightH++; right = right.right; }\n    if (leftH === rightH) return (1 << leftH) - 1;\n    return 1 + countNodes(root.left) + countNodes(root.right);\n};",
+    "time_complexity": "O(log^2 n)",
+    "space_complexity": "O(log n)",
+    "time_complexity_explanation": "At each level we do O(log n) work to compute heights, and we recurse O(log n) levels deep, giving O(log^2 n).",
+    "space_complexity_explanation": "The recursion stack is O(log n) deep since we always eliminate at least half the tree.",
+    "key_insight": "In a complete binary tree, comparing the leftmost and rightmost heights tells you whether the subtree is perfect (and thus countable in O(1)) — this is the key to beating O(n).",
+    "related": [
+      47,
+      53,
+      28
+    ]
+  },
+  {
+    "id": 159,
+    "title": "Binary Tree Zigzag Level Order Traversal",
+    "slug": "binary-tree-zigzag-level-order-traversal",
+    "category": "Trees",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
+    "patterns": [
+      "BFS",
+      "Queue"
+    ],
+    "hints": [
+      "Standard level-order BFS collects nodes in left-to-right order per level.",
+      "For odd levels (0-indexed), keep left-to-right; for even levels, reverse the collected level.",
+      "A toggle flag alternating each level is sufficient — no need to change the BFS order itself."
+    ],
+    "approach": "Perform standard BFS with a queue. After collecting all nodes at each level, check the direction flag: append the level as-is for left-to-right, or reversed for right-to-left. Toggle the direction flag after each level.",
+    "solution_python": "class Solution:\n    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        result = []\n        queue = deque([root])\n        left_to_right = True\n        while queue:\n            level = []\n            for _ in range(len(queue)):\n                node = queue.popleft()\n                level.append(node.val)\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            result.append(level if left_to_right else level[::-1])\n            left_to_right = not left_to_right\n        return result",
+    "solution_js": "var zigzagLevelOrder = function(root) {\n    if (!root) return [];\n    const result = [];\n    const queue = [root];\n    let leftToRight = true;\n    while (queue.length) {\n        const level = [];\n        const size = queue.length;\n        for (let i = 0; i < size; i++) {\n            const node = queue.shift();\n            level.push(node.val);\n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        result.push(leftToRight ? level : level.reverse());\n        leftToRight = !leftToRight;\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Every node is visited exactly once during BFS.",
+    "space_complexity_explanation": "The queue holds at most O(n/2) nodes at the widest level, and the result stores all n values.",
+    "key_insight": "BFS naturally gives you left-to-right order — simply reversing alternate levels gives the zigzag effect without any change to the traversal.",
+    "related": [
+      53,
+      54,
+      46
+    ]
+  },
+  {
+    "id": 160,
+    "title": "All Paths From Source to Target",
+    "slug": "all-paths-source-target",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/all-paths-source-target/",
+    "patterns": [
+      "DFS",
+      "Backtracking"
+    ],
+    "hints": [
+      "Use DFS from node 0 and collect paths that reach the last node.",
+      "Since the graph is a DAG, no cycle detection is needed.",
+      "Backtrack by appending a neighbor, recursing, then removing it from the path."
+    ],
+    "approach": "Run DFS from node 0, maintaining the current path. When the current node equals n-1 (the target), add a copy of the path to results. For each neighbor, push it to the path, recurse, then pop it (backtrack). The DAG structure guarantees termination.",
+    "solution_python": "class Solution:\n    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:\n        result = []\n        def dfs(node, path):\n            if node == len(graph) - 1:\n                result.append(list(path))\n                return\n            for neighbor in graph[node]:\n                path.append(neighbor)\n                dfs(neighbor, path)\n                path.pop()\n        dfs(0, [0])\n        return result",
+    "solution_js": "var allPathsSourceTarget = function(graph) {\n    const result = [];\n    function dfs(node, path) {\n        if (node === graph.length - 1) {\n            result.push([...path]);\n            return;\n        }\n        for (const neighbor of graph[node]) {\n            path.push(neighbor);\n            dfs(neighbor, path);\n            path.pop();\n        }\n    }\n    dfs(0, [0]);\n    return result;\n};",
+    "time_complexity": "O(2^n * n)",
+    "space_complexity": "O(2^n * n)",
+    "time_complexity_explanation": "In the worst case there are 2^n paths, each of length O(n). n is the number of nodes.",
+    "space_complexity_explanation": "Storing all paths requires O(2^n * n) space in the worst case; the recursion stack is O(n).",
+    "key_insight": "Because the graph is a DAG (directed, acyclic), simple DFS with backtracking finds all paths without needing a visited set.",
+    "related": [
+      80,
+      87,
+      81
+    ]
+  },
+  {
+    "id": 161,
+    "title": "Find the Celebrity",
+    "slug": "find-the-celebrity",
+    "category": "Graphs",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-the-celebrity/",
+    "patterns": [
+      "Two Pointers",
+      "Candidate Elimination"
+    ],
+    "hints": [
+      "A celebrity knows nobody but is known by everybody — use this asymmetry to eliminate candidates.",
+      "If person A knows person B, A is not the celebrity. If A does not know B, B is not the celebrity.",
+      "One pass to find a candidate, then verify the candidate with a second pass."
+    ],
+    "approach": "Start with candidate 0. For each subsequent person i, if the candidate knows i, update candidate to i (the old candidate is eliminated). After one pass, verify the surviving candidate: check that they know nobody and that everyone knows them using two more linear scans.",
+    "solution_python": "class Solution:\n    def findCelebrity(self, n: int) -> int:\n        candidate = 0\n        for i in range(1, n):\n            if knows(candidate, i):\n                candidate = i\n        for i in range(n):\n            if i != candidate:\n                if knows(candidate, i) or not knows(i, candidate):\n                    return -1\n        return candidate",
+    "solution_js": "var solution = function(knows) {\n    return function(n) {\n        let candidate = 0;\n        for (let i = 1; i < n; i++) {\n            if (knows(candidate, i)) candidate = i;\n        }\n        for (let i = 0; i < n; i++) {\n            if (i !== candidate) {\n                if (knows(candidate, i) || !knows(i, candidate)) return -1;\n            }\n        }\n        return candidate;\n    };\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The elimination pass makes n-1 calls to knows(), and the verification pass makes at most 2*(n-1) calls — O(n) total.",
+    "space_complexity_explanation": "Only a single candidate variable is maintained.",
+    "key_insight": "Every call to knows() eliminates exactly one person from candidacy — either the current candidate (if they know i) or i (if the candidate doesn't know them) — making O(n) elimination possible.",
+    "related": [
+      80,
+      90,
+      89
+    ]
+  },
+  {
+    "id": 162,
+    "title": "LFU Cache",
+    "slug": "lfu-cache",
+    "category": "Heap / Priority Queue",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/lfu-cache/",
+    "patterns": [
+      "Hash Map",
+      "Doubly Linked List"
+    ],
+    "hints": [
+      "You need O(1) get and put — a heap would give O(log n) for updates, so use hash maps instead.",
+      "Maintain three structures: key→value, key→frequency, and frequency→ordered set of keys.",
+      "Track the minimum frequency so eviction is O(1): remove the LRU key from the min-frequency bucket."
+    ],
+    "approach": "Use three hash maps: key_val (key→value), key_freq (key→frequency), and freq_keys (frequency→OrderedDict of keys in insertion order). Track min_freq. On get/put, update frequency counts, move the key to the correct frequency bucket, and update min_freq accordingly. Evict the LRU item from the min_freq bucket when capacity is exceeded.",
+    "solution_python": "class LFUCache:\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.key_val = {}\n        self.key_freq = {}\n        self.freq_keys = defaultdict(OrderedDict)\n        self.min_freq = 0\n\n    def _update(self, key):\n        freq = self.key_freq[key]\n        del self.freq_keys[freq][key]\n        if not self.freq_keys[freq] and freq == self.min_freq:\n            self.min_freq += 1\n        self.key_freq[key] = freq + 1\n        self.freq_keys[freq + 1][key] = None\n\n    def get(self, key: int) -> int:\n        if key not in self.key_val:\n            return -1\n        self._update(key)\n        return self.key_val[key]\n\n    def put(self, key: int, value: int) -> None:\n        if self.capacity <= 0:\n            return\n        if key in self.key_val:\n            self.key_val[key] = value\n            self._update(key)\n        else:\n            if len(self.key_val) >= self.capacity:\n                evict_key, _ = self.freq_keys[self.min_freq].popitem(last=False)\n                del self.key_val[evict_key]\n                del self.key_freq[evict_key]\n            self.key_val[key] = value\n            self.key_freq[key] = 1\n            self.freq_keys[1][key] = None\n            self.min_freq = 1",
+    "solution_js": "class LFUCache {\n    constructor(capacity) {\n        this.capacity = capacity;\n        this.keyVal = new Map();\n        this.keyFreq = new Map();\n        this.freqKeys = new Map();\n        this.minFreq = 0;\n    }\n    _update(key) {\n        const freq = this.keyFreq.get(key);\n        this.freqKeys.get(freq).delete(key);\n        if (this.freqKeys.get(freq).size === 0 && freq === this.minFreq) this.minFreq++;\n        this.keyFreq.set(key, freq + 1);\n        if (!this.freqKeys.has(freq + 1)) this.freqKeys.set(freq + 1, new Map());\n        this.freqKeys.get(freq + 1).set(key, null);\n    }\n    get(key) {\n        if (!this.keyVal.has(key)) return -1;\n        this._update(key);\n        return this.keyVal.get(key);\n    }\n    put(key, value) {\n        if (this.capacity <= 0) return;\n        if (this.keyVal.has(key)) {\n            this.keyVal.set(key, value);\n            this._update(key);\n        } else {\n            if (this.keyVal.size >= this.capacity) {\n                const evictMap = this.freqKeys.get(this.minFreq);\n                const evictKey = evictMap.keys().next().value;\n                evictMap.delete(evictKey);\n                this.keyVal.delete(evictKey);\n                this.keyFreq.delete(evictKey);\n            }\n            this.keyVal.set(key, value);\n            this.keyFreq.set(key, 1);\n            if (!this.freqKeys.has(1)) this.freqKeys.set(1, new Map());\n            this.freqKeys.get(1).set(key, null);\n            this.minFreq = 1;\n        }\n    }\n}",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(capacity)",
+    "time_complexity_explanation": "All operations — get, put, and the internal _update — perform only O(1) hash map and ordered dictionary operations.",
+    "space_complexity_explanation": "We store at most 'capacity' keys across the three hash map structures.",
+    "key_insight": "Using an OrderedDict (insertion-ordered map) per frequency bucket gives O(1) LRU eviction within a frequency group, and tracking min_freq explicitly avoids any O(log n) heap operations.",
+    "related": [
+      43,
+      70,
+      69
+    ]
+  },
+  {
+    "id": 163,
+    "title": "Sort Colors",
+    "slug": "sort-colors",
+    "category": "Two Pointers",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/sort-colors/",
+    "patterns": [
+      "Two Pointers",
+      "Dutch National Flag"
+    ],
+    "hints": [
+      "Count 0s, 1s, and 2s then overwrite — but can you do it in one pass?",
+      "Use three pointers: lo (boundary of 0s), mid (current), hi (boundary of 2s).",
+      "When nums[mid] is 0, swap with lo and advance both; when 2, swap with hi and only advance hi; when 1, just advance mid."
+    ],
+    "approach": "Apply Dijkstra's Dutch National Flag algorithm with three pointers. lo and mid start at 0; hi starts at n-1. When nums[mid] is 0, swap with lo and advance both pointers. When 2, swap with hi and only decrease hi (don't advance mid since the swapped value is unknown). When 1, just advance mid.",
+    "solution_python": "class Solution:\n    def sortColors(self, nums: List[int]) -> None:\n        lo, mid, hi = 0, 0, len(nums) - 1\n        while mid <= hi:\n            if nums[mid] == 0:\n                nums[lo], nums[mid] = nums[mid], nums[lo]\n                lo += 1\n                mid += 1\n            elif nums[mid] == 1:\n                mid += 1\n            else:\n                nums[mid], nums[hi] = nums[hi], nums[mid]\n                hi -= 1",
+    "solution_js": "var sortColors = function(nums) {\n    let lo = 0, mid = 0, hi = nums.length - 1;\n    while (mid <= hi) {\n        if (nums[mid] === 0) {\n            [nums[lo], nums[mid]] = [nums[mid], nums[lo]];\n            lo++; mid++;\n        } else if (nums[mid] === 1) {\n            mid++;\n        } else {\n            [nums[mid], nums[hi]] = [nums[hi], nums[mid]];\n            hi--;\n        }\n    }\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Single pass with three pointers — mid and hi together span the array exactly once.",
+    "space_complexity_explanation": "Only three pointer variables are used; sorting is done in-place.",
+    "key_insight": "When swapping a 2 from mid with hi, you don't advance mid because the newly placed value at mid (from hi) hasn't been examined yet — this is the subtle but crucial detail of the Dutch National Flag algorithm.",
+    "related": [
+      10,
+      11,
+      12
+    ]
+  },
+  {
+    "id": 164,
+    "title": "Rotate Array",
+    "slug": "rotate-array",
+    "category": "Two Pointers",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotate-array/",
+    "patterns": [
+      "Two Pointers",
+      "Reversal"
+    ],
+    "hints": [
+      "Think about what a k-step right rotation looks like: the last k elements move to the front.",
+      "One approach: reverse the entire array, then reverse the first k elements, then reverse the rest.",
+      "Don't forget to handle k > n by taking k % n."
+    ],
+    "approach": "Use the three-reversal trick: (1) reverse the entire array, (2) reverse the first k elements, (3) reverse the remaining n-k elements. This runs in O(n) time and O(1) space. Handle k > n with k %= n.",
+    "solution_python": "class Solution:\n    def rotate(self, nums: List[int], k: int) -> None:\n        n = len(nums)\n        k %= n\n        def reverse(left, right):\n            while left < right:\n                nums[left], nums[right] = nums[right], nums[left]\n                left += 1\n                right -= 1\n        reverse(0, n - 1)\n        reverse(0, k - 1)\n        reverse(k, n - 1)",
+    "solution_js": "var rotate = function(nums, k) {\n    const n = nums.length;\n    k = k % n;\n    function reverse(l, r) {\n        while (l < r) {\n            [nums[l], nums[r]] = [nums[r], nums[l]];\n            l++; r--;\n        }\n    }\n    reverse(0, n - 1);\n    reverse(0, k - 1);\n    reverse(k, n - 1);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Three reversal passes each touch at most n elements in total.",
+    "space_complexity_explanation": "All operations are in-place with only index variables.",
+    "key_insight": "Reversing the whole array and then reversing two halves is equivalent to a rotation — this triple-reversal trick achieves O(1) space vs. the intuitive O(n) extra array approach.",
+    "related": [
+      130,
+      131,
+      35
+    ]
+  },
+  {
+    "id": 165,
+    "title": "Spiral Matrix II",
+    "slug": "spiral-matrix-ii",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/spiral-matrix-ii/",
+    "patterns": [
+      "Matrix Simulation",
+      "Boundary Tracking"
+    ],
+    "hints": [
+      "Fill the matrix layer by layer, starting from the outermost ring moving inward.",
+      "Track four boundaries: top, bottom, left, right — shrink them after filling each edge.",
+      "Fill right along top, down along right, left along bottom, up along left, then tighten boundaries."
+    ],
+    "approach": "Maintain four boundaries (top, bottom, left, right) and a counter num starting at 1. Fill the top row left-to-right, right column top-to-bottom, bottom row right-to-left, and left column bottom-to-top. After each direction, shrink the corresponding boundary. Repeat until all n^2 cells are filled.",
+    "solution_python": "class Solution:\n    def generateMatrix(self, n: int) -> List[List[int]]:\n        matrix = [[0] * n for _ in range(n)]\n        top, bottom, left, right = 0, n - 1, 0, n - 1\n        num = 1\n        while top <= bottom and left <= right:\n            for col in range(left, right + 1):\n                matrix[top][col] = num\n                num += 1\n            top += 1\n            for row in range(top, bottom + 1):\n                matrix[row][right] = num\n                num += 1\n            right -= 1\n            for col in range(right, left - 1, -1):\n                matrix[bottom][col] = num\n                num += 1\n            bottom -= 1\n            for row in range(bottom, top - 1, -1):\n                matrix[row][left] = num\n                num += 1\n            left += 1\n        return matrix",
+    "solution_js": "var generateMatrix = function(n) {\n    const matrix = Array.from({length: n}, () => new Array(n).fill(0));\n    let top = 0, bottom = n - 1, left = 0, right = n - 1, num = 1;\n    while (top <= bottom && left <= right) {\n        for (let col = left; col <= right; col++) matrix[top][col] = num++;\n        top++;\n        for (let row = top; row <= bottom; row++) matrix[row][right] = num++;\n        right--;\n        for (let col = right; col >= left; col--) matrix[bottom][col] = num++;\n        bottom--;\n        for (let row = bottom; row >= top; row--) matrix[row][left] = num++;\n        left++;\n    }\n    return matrix;\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Every cell in the n×n matrix is filled exactly once.",
+    "space_complexity_explanation": "The output matrix is not counted as extra space; only four boundary variables are needed.",
+    "key_insight": "Maintaining four shrinking boundaries elegantly handles all edge cases including the center cell of odd-sized matrices.",
+    "related": [
+      131,
+      132,
+      130
+    ]
+  },
+  {
+    "id": 166,
+    "title": "Power of Two",
+    "slug": "power-of-two",
+    "category": "Math & Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/power-of-two/",
+    "patterns": [
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "Powers of two have exactly one bit set in their binary representation.",
+      "Subtracting 1 from a power of two flips the set bit and sets all lower bits.",
+      "n & (n-1) clears the lowest set bit — for powers of two this yields 0."
+    ],
+    "approach": "A number n is a power of two if and only if n > 0 and n & (n-1) == 0. The expression n & (n-1) clears the lowest set bit; for powers of two (which have exactly one set bit), this always produces 0.",
+    "solution_python": "class Solution:\n    def isPowerOfTwo(self, n: int) -> bool:\n        return n > 0 and (n & (n - 1)) == 0",
+    "solution_js": "var isPowerOfTwo = function(n) {\n    return n > 0 && (n & (n - 1)) === 0;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single bitwise AND operation and comparison — constant time regardless of input.",
+    "space_complexity_explanation": "No extra space is used.",
+    "key_insight": "Powers of two have exactly one set bit, so n & (n-1) always removes that lone bit, giving 0 — an elegant O(1) bitwise check.",
+    "related": [
+      133,
+      134,
+      135
+    ]
+  },
+  {
+    "id": 167,
+    "title": "Longest Turbulent Subarray",
+    "slug": "longest-turbulent-subarray",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/longest-turbulent-subarray/",
+    "patterns": [
+      "Sliding Window",
+      "Two Pointers"
+    ],
+    "hints": [
+      "A turbulent subarray alternates strictly between increasing and decreasing comparisons.",
+      "Use a sliding window: expand right and shrink left when the turbulence condition breaks.",
+      "The window breaks when two consecutive comparisons have the same sign or a comparison is equal."
+    ],
+    "approach": "Use a sliding window with a left pointer. For each right >= 1, compute c = sign(arr[right] - arr[right-1]). If right >= 2, compare with the previous comparison sign: if c == 0 reset left to right; if c equals the previous sign, the last valid window starts at right-1. Update result each iteration.",
+    "solution_python": "class Solution:\n    def maxTurbulenceSize(self, arr: List[int]) -> int:\n        n = len(arr)\n        result = 1\n        left = 0\n        for right in range(1, n):\n            c = (arr[right] > arr[right - 1]) - (arr[right] < arr[right - 1])\n            if right >= 2:\n                prev_c = (arr[right - 1] > arr[right - 2]) - (arr[right - 1] < arr[right - 2])\n                if c == 0:\n                    left = right\n                elif c == prev_c:\n                    left = right - 1\n            elif c == 0:\n                left = right\n            result = max(result, right - left + 1)\n        return result",
+    "solution_js": "var maxTurbulenceSize = function(arr) {\n    const n = arr.length;\n    let result = 1, left = 0;\n    for (let right = 1; right < n; right++) {\n        const c = Math.sign(arr[right] - arr[right - 1]);\n        if (right >= 2) {\n            const prevC = Math.sign(arr[right - 1] - arr[right - 2]);\n            if (c === 0) left = right;\n            else if (c === prevC) left = right - 1;\n        } else if (c === 0) {\n            left = right;\n        }\n        result = Math.max(result, right - left + 1);\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Single pass through the array with O(1) work per element.",
+    "space_complexity_explanation": "Only a constant number of pointer and comparison variables are used.",
+    "key_insight": "When the turbulence breaks due to two consecutive same-direction comparisons, the new window must start from the previous element (right-1), not right — because (right-1, right) still forms a valid 2-element turbulent window.",
+    "related": [
+      15,
+      16,
+      20
+    ]
+  },
+  {
+    "id": 168,
+    "title": "Maximum Points You Can Obtain from Cards",
+    "slug": "maximum-points-you-can-obtain-from-cards",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/",
+    "patterns": [
+      "Sliding Window",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "You take k cards from either end — equivalently, you leave n-k consecutive cards in the middle.",
+      "Instead of maximizing the cards you take, minimize the sum of the n-k cards you leave.",
+      "Slide a window of size n-k across the array to find the minimum subarray sum."
+    ],
+    "approach": "Reframe: picking k cards from either end leaves a contiguous subarray of size n-k in the middle. Use a sliding window of fixed size n-k to find the minimum subarray sum. The answer is the total sum minus this minimum window sum.",
+    "solution_python": "class Solution:\n    def maxScore(self, cardPoints: List[int], k: int) -> int:\n        n = len(cardPoints)\n        total = sum(cardPoints)\n        if k == n:\n            return total\n        window_size = n - k\n        window_sum = sum(cardPoints[:window_size])\n        min_window = window_sum\n        for i in range(window_size, n):\n            window_sum += cardPoints[i] - cardPoints[i - window_size]\n            min_window = min(min_window, window_sum)\n        return total - min_window",
+    "solution_js": "var maxScore = function(cardPoints, k) {\n    const n = cardPoints.length;\n    const total = cardPoints.reduce((a, b) => a + b, 0);\n    if (k === n) return total;\n    const windowSize = n - k;\n    let windowSum = cardPoints.slice(0, windowSize).reduce((a, b) => a + b, 0);\n    let minWindow = windowSum;\n    for (let i = windowSize; i < n; i++) {\n        windowSum += cardPoints[i] - cardPoints[i - windowSize];\n        minWindow = Math.min(minWindow, windowSum);\n    }\n    return total - minWindow;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "One pass to compute total, one pass for the sliding window — both O(n) where n is the number of cards.",
+    "space_complexity_explanation": "Only a constant number of sum variables are maintained.",
+    "key_insight": "Picking k cards from either end is equivalent to NOT picking a contiguous window of n-k cards — minimizing the middle window maximizes the score.",
+    "related": [
+      15,
+      19,
+      16
+    ]
   }
 ]
