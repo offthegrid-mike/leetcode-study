@@ -17,15 +17,15 @@ describe('calculateNextReview', () => {
     expect(result.repetitions).toBe(1);
   });
 
-  it('second successful review → interval 6, repetitions 2', () => {
+  it('second successful review → interval 10, repetitions 2', () => {
     const result = calculateNextReview({ easeFactor: 2.5, interval: 1, repetitions: 1 }, 4);
-    expect(result.interval).toBe(6);
+    expect(result.interval).toBe(10);
     expect(result.repetitions).toBe(2);
   });
 
   it('third+ successful review → interval = prev * easeFactor', () => {
-    const result = calculateNextReview({ easeFactor: 2.5, interval: 6, repetitions: 2 }, 4);
-    expect(result.interval).toBe(Math.round(6 * 2.5));
+    const result = calculateNextReview({ easeFactor: 2.5, interval: 10, repetitions: 2 }, 4);
+    expect(result.interval).toBe(Math.round(10 * 2.5));
     expect(result.repetitions).toBe(3);
   });
 

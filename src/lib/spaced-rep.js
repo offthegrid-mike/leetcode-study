@@ -61,7 +61,7 @@ export function calculateNextReview(currentProgress, quality) {
     if (repetitions === 0) {
       interval = 1;
     } else if (repetitions === 1) {
-      interval = 6;
+      interval = 10;
     } else {
       interval = Math.round(interval * easeFactor);
     }

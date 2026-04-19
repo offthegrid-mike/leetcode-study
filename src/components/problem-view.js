@@ -1,5 +1,5 @@
 import { createElement, escapeHtml, getDifficultyColor, getCategoryColor, showToast } from '../utils/helpers.js';
-import { getProgress, setProgress } from '../lib/storage.js';
+import { getProgress, setProgress, isBookmarked, toggleBookmark } from '../lib/storage.js';
 import { calculateNextReview } from '../lib/spaced-rep.js';
 
 export async function renderProblemView(container, problem, progressData, allProblems) {
@@ -53,6 +53,19 @@ export async function renderProblemView(container, problem, progressData, allPro
     <a href="${problem.leetcode_url}" target="_blank" rel="noopener" class="leetcode-link">Open on LeetCode ↗</a>
   `;
   page.appendChild(header);
+
+  // Bookmark button
+  const bookmarked = await isBookmarked(problem.id);
+  const bookmarkBtn = createElement('button', `btn btn-secondary bookmark-btn${bookmarked ? ' bookmarked' : ''}`);
+  bookmarkBtn.textContent = bookmarked ? '★ Bookmarked' : '☆ Bookmark';
+  bookmarkBtn.addEventListener('click', async () => {
+    const newList = await toggleBookmark(problem.id);
+    const nowBookmarked = newList.includes(problem.id);
+    bookmarkBtn.textContent = nowBookmarked ? '★ Bookmarked' : '☆ Bookmark';
+    bookmarkBtn.classList.toggle('bookmarked', nowBookmarked);
+    showToast(nowBookmarked ? 'Bookmarked!' : 'Bookmark removed');
+  });
+  header.appendChild(bookmarkBtn);
 
   // Status selector
   const progress = progressData || await getProgress(problem.id) || {};
@@ -120,18 +133,38 @@ export async function renderProblemView(container, problem, progressData, allPro
   const langTabs = createElement('div', 'lang-tabs');
   const pyTab = createElement('button', 'lang-tab active', 'Python');
   const jsTab = createElement('button', 'lang-tab', 'JavaScript');
+  const sideBySideTab = createElement('button', 'lang-tab', 'Side by Side');
   langTabs.appendChild(pyTab);
   langTabs.appendChild(jsTab);
+  langTabs.appendChild(sideBySideTab);
   solutionSection.appendChild(langTabs);
 
   const solutionContainer = createElement('div', 'solution-container');
+  let currentView = 'python';
+
   const showSolution = (lang) => {
-    const code = lang === 'python' ? problem.solution_python : problem.solution_js;
-    const prismLang = lang === 'python' ? 'python' : 'javascript';
-    solutionContainer.innerHTML = `<pre class="code-block"><code class="language-${prismLang}">${escapeHtml(code)}</code></pre>`;
+    currentView = lang;
+    if (lang === 'side-by-side') {
+      solutionContainer.innerHTML = `
+        <div class="side-by-side-view">
+          <div class="side-by-side-pane">
+            <div class="side-by-side-label">Python</div>
+            <pre class="code-block"><code class="language-python">${escapeHtml(problem.solution_python)}</code></pre>
+          </div>
+          <div class="side-by-side-pane">
+            <div class="side-by-side-label">JavaScript</div>
+            <pre class="code-block"><code class="language-javascript">${escapeHtml(problem.solution_js)}</code></pre>
+          </div>
+        </div>`;
+    } else {
+      const code = lang === 'python' ? problem.solution_python : problem.solution_js;
+      const prismLang = lang === 'python' ? 'python' : 'javascript';
+      solutionContainer.innerHTML = `<pre class="code-block"><code class="language-${prismLang}">${escapeHtml(code)}</code></pre>`;
+    }
     if (window.Prism) Prism.highlightAllUnder(solutionContainer);
     pyTab.classList.toggle('active', lang === 'python');
     jsTab.classList.toggle('active', lang === 'javascript');
+    sideBySideTab.classList.toggle('active', lang === 'side-by-side');
   };
 
   let revealed = false;
@@ -149,6 +182,7 @@ export async function renderProblemView(container, problem, progressData, allPro
 
   pyTab.addEventListener('click', () => showSolution('python'));
   jsTab.addEventListener('click', () => showSolution('javascript'));
+  sideBySideTab.addEventListener('click', () => showSolution('side-by-side'));
   page.appendChild(solutionSection);
 
   // Complexity

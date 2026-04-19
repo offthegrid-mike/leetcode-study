@@ -15,6 +15,7 @@
 </head>
 <body>
   <div id="app">
+    <a href="#mainContent" class="skip-link">Skip to content</a>
     <header class="app-header">
       <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
       <h1 class="app-title">LC Study</h1>
@@ -46,6 +47,12 @@
     <main class="main-content" id="mainContent">
       <!-- Pages rendered here by router -->
     </main>
+
+    <div class="offline-banner" id="offlineBanner" role="alert">
+      🔌 You're offline — changes will sync when you reconnect
+    </div>
+
+    <div id="liveAnnouncer" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
 
     <nav class="bottom-nav" id="bottomNav">
       <a href="#/" class="bottom-nav-item active" data-page="home">

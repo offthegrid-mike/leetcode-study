@@ -1,5 +1,5 @@
 import { createElement, escapeHtml, showToast } from '../utils/helpers.js';
-import { getAllProgress, getProgress, setProgress } from '../lib/storage.js';
+import { getAllProgress, getProgress, setProgress, addStudySession } from '../lib/storage.js';
 import { calculateNextReview, isDue, sortByReviewPriority } from '../lib/spaced-rep.js';
 
 export async function renderReview(container, problems, progress) {
@@ -61,10 +61,13 @@ export async function renderReview(container, problems, progress) {
 function startReviewSession(container, queue, allProblems, progressMap) {
   let current = 0;
   let reviewed = 0;
+  const sessionStartTime = Date.now();
 
   function showCard() {
     if (current >= queue.length) {
-      showSessionSummary(container, reviewed, queue);
+      const duration = Math.round((Date.now() - sessionStartTime) / 1000);
+      addStudySession({ problemsReviewed: reviewed, duration });
+      showSessionSummary(container, reviewed, queue, duration);
       return;
     }
 
@@ -82,6 +85,9 @@ function startReviewSession(container, queue, allProblems, progressMap) {
 
     // Flashcard
     const card = createElement('div', 'review-card');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'Flashcard — press Enter or click to reveal answer');
     const front = createElement('div', 'review-card-front');
     front.innerHTML = `
       <h3 class="review-problem-title">${escapeHtml(problem.title)}</h3>
@@ -106,14 +112,23 @@ function startReviewSession(container, queue, allProblems, progressMap) {
     card.appendChild(front);
     card.appendChild(back);
 
-    card.addEventListener('click', () => {
+    const flipCard = () => {
       const isFlipped = card.classList.contains('flipped');
       if (!isFlipped) {
         card.classList.add('flipped');
         front.style.display = 'none';
         back.style.display = 'block';
         ratingSection.style.display = 'flex';
+        card.setAttribute('aria-label', 'Answer revealed — rate your recall below');
         if (window.Prism) Prism.highlightAllUnder(back);
+      }
+    };
+
+    card.addEventListener('click', flipCard);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        flipCard();
       }
     });
     page.appendChild(card);
@@ -161,13 +176,17 @@ function startReviewSession(container, queue, allProblems, progressMap) {
   showCard();
 }
 
-function showSessionSummary(container, reviewed, queue) {
+function showSessionSummary(container, reviewed, queue, duration) {
+  const mins = Math.floor(duration / 60);
+  const secs = duration % 60;
+  const durationText = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
   container.innerHTML = '';
   const page = createElement('div', 'page-review-summary');
   page.innerHTML = `
     <h2 class="page-title">Review Complete! 🎉</h2>
     <div class="summary-card">
       <div class="summary-stat"><span class="summary-num">${reviewed}</span><span class="summary-label">Cards Reviewed</span></div>
+      <div class="summary-stat"><span class="summary-num">${durationText}</span><span class="summary-label">Duration</span></div>
     </div>
     <div class="summary-actions">
       <button class="btn btn-primary" onclick="window.location.hash='#/'">Dashboard</button>

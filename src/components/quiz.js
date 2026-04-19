@@ -1,5 +1,5 @@
 import { createElement, escapeHtml, shuffleArray, showToast, getCategoryColor } from '../utils/helpers.js';
-import { getProgress, setProgress } from '../lib/storage.js';
+import { getProgress, setProgress, addStudySession } from '../lib/storage.js';
 
 const QUIZ_TYPES = [
   { id: 'pattern', label: '🗂️ Pattern Quiz', desc: 'Identify the pattern from the problem' },
@@ -48,6 +48,7 @@ function startQuiz(container, problems, progress, type, count = 10) {
   let current = 0;
   let score = 0;
   const results = [];
+  const quizStartTime = Date.now();
 
   function showQuestion() {
     container.innerHTML = '';
@@ -188,6 +189,8 @@ function startQuiz(container, problems, progress, type, count = 10) {
   }
 
   function showResults() {
+    const duration = Math.round((Date.now() - quizStartTime) / 1000);
+    addStudySession({ quizScore: score, problemsReviewed: shuffled.length, duration });
     window.app?.scheduleSync();
     container.innerHTML = '';
     const page = createElement('div', 'page-quiz-results');

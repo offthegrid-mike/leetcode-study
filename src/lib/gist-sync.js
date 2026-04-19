@@ -16,6 +16,7 @@ import {
 } from './storage.js';
 
 const GIST_FILENAME = 'leetcode-study-sync.json';
+const SYNC_MAX_RETRIES = 3;
 
 // ── GitHub API helpers ──────────────────────────────────────────────
 
@@ -36,6 +37,17 @@ async function apiRequest(endpoint, token, options = {}) {
   }
 
   return res.json();
+}
+
+async function apiRequestWithRetry(endpoint, token, options = {}) {
+  for (let attempt = 0; attempt < SYNC_MAX_RETRIES; attempt++) {
+    try {
+      return await apiRequest(endpoint, token, options);
+    } catch (err) {
+      if (attempt === SYNC_MAX_RETRIES - 1) throw err;
+      await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+    }
+  }
 }
 
 async function validateToken(token) {
@@ -63,7 +75,7 @@ async function createSyncGist(token, data) {
 }
 
 async function updateSyncGist(token, gistId, data) {
-  return apiRequest(`/gists/${gistId}`, token, {
+  return apiRequestWithRetry(`/gists/${gistId}`, token, {
     method: 'PATCH',
     body: JSON.stringify({
       files: {
@@ -76,7 +88,7 @@ async function updateSyncGist(token, gistId, data) {
 }
 
 async function fetchSyncGist(token, gistId) {
-  const gist = await apiRequest(`/gists/${gistId}`, token);
+  const gist = await apiRequestWithRetry(`/gists/${gistId}`, token);
   const content = gist.files?.[GIST_FILENAME]?.content;
   if (!content) throw new Error('Sync file not found in gist');
   return JSON.parse(content);

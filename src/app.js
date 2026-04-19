@@ -1,5 +1,6 @@
-import { initDB, getSetting, setSetting, getAllProgress, getDueReviews, getStats } from './lib/storage.js';
+import { initDB, getSetting, setSetting, getAllProgress, getDueReviews, getStats, checkStreak } from './lib/storage.js';
 import { getSyncInfo, syncNow } from './lib/gist-sync.js';
+import { showToast } from './utils/helpers.js';
 import { renderDashboard } from './components/progress.js';
 import { renderProblemList } from './components/problem-list.js';
 import { renderProblemView } from './components/problem-view.js';
@@ -28,6 +29,8 @@ class App {
     this.setupSidebar();
     this.setupRouter();
     this.registerServiceWorker();
+    this.setupOfflineIndicator();
+    await checkStreak();
     this.backgroundSync();
     this._setupAutoSync();
 
@@ -62,8 +65,9 @@ class App {
       this._syncing = true;
       await syncNow();
       await this.loadProgress();
+      showToast('✅ Synced successfully', 'success', 2000);
     } catch {
-      // Silent fail — offline or token expired
+      showToast('Sync failed — check connection', 'error', 3000);
     } finally {
       this._syncing = false;
     }
@@ -168,41 +172,50 @@ class App {
     this.mainContent.innerHTML = '';
     this.mainContent.scrollTop = 0;
 
-    await this.loadProgress();
+    try {
+      await this.loadProgress();
 
-    switch (this.currentRoute) {
-      case 'home':
-        renderDashboard(this.mainContent, this.problems, this.progress);
-        break;
-      case 'problems':
-        if (param) {
-          const problem = this.problems.find(p => p.id === parseInt(param));
-          if (problem) {
-            renderProblemView(this.mainContent, problem, this.progress[problem.id], this.problems);
+      switch (this.currentRoute) {
+        case 'home':
+          renderDashboard(this.mainContent, this.problems, this.progress);
+          break;
+        case 'problems':
+          if (param) {
+            const problem = this.problems.find(p => p.id === parseInt(param));
+            if (problem) {
+              renderProblemView(this.mainContent, problem, this.progress[problem.id], this.problems);
+            } else {
+              this.mainContent.innerHTML = '<div class="empty-state"><p>Problem not found</p></div>';
+            }
           } else {
-            this.mainContent.innerHTML = '<div class="empty-state"><p>Problem not found</p></div>';
+            renderProblemList(this.mainContent, this.problems, this.progress);
           }
-        } else {
-          renderProblemList(this.mainContent, this.problems, this.progress);
-        }
-        break;
-      case 'review':
-        renderReview(this.mainContent, this.problems, this.progress);
-        break;
-      case 'quiz':
-        renderQuiz(this.mainContent, this.problems, this.progress);
-        break;
-      case 'patterns':
-        renderPatterns(this.mainContent);
-        break;
-      case 'knowledge':
-        renderKnowledge(this.mainContent);
-        break;
-      case 'settings':
-        renderSettings(this.mainContent);
-        break;
-      default:
-        renderDashboard(this.mainContent, this.problems, this.progress);
+          break;
+        case 'review':
+          renderReview(this.mainContent, this.problems, this.progress);
+          break;
+        case 'quiz':
+          renderQuiz(this.mainContent, this.problems, this.progress);
+          break;
+        case 'patterns':
+          renderPatterns(this.mainContent);
+          break;
+        case 'knowledge':
+          renderKnowledge(this.mainContent);
+          break;
+        case 'settings':
+          renderSettings(this.mainContent);
+          break;
+        default:
+          renderDashboard(this.mainContent, this.problems, this.progress);
+      }
+    } catch (err) {
+      console.error('Navigation error:', err);
+      this.mainContent.innerHTML = `
+        <div class="empty-state">
+          <p>Something went wrong loading this page.</p>
+          <button class="btn btn-primary" onclick="window.location.hash='#/'">Go to Dashboard</button>
+        </div>`;
     }
   }
 
@@ -218,8 +231,35 @@ class App {
 
   registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker?.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                showToast('App updated — reload for latest version', 'info', 8000);
+              }
+            });
+          });
+        })
+        .catch(() => {});
     }
+  }
+
+  setupOfflineIndicator() {
+    const banner = document.getElementById('offlineBanner');
+    if (!banner) return;
+
+    const update = () => {
+      banner.classList.toggle('visible', !navigator.onLine);
+    };
+
+    window.addEventListener('online', () => {
+      update();
+      showToast('Back online', 'success', 2000);
+    });
+    window.addEventListener('offline', update);
+    update();
   }
 }
 

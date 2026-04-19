@@ -124,6 +124,10 @@ export function showToast(message, type = 'info', duration = 3000) {
   document.body.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('toast-visible'));
 
+  // Announce to screen readers via live region
+  const announcer = document.getElementById('liveAnnouncer');
+  if (announcer) announcer.textContent = message;
+
   setTimeout(() => {
     toast.classList.remove('toast-visible');
     setTimeout(() => toast.remove(), 300);
@@ -155,6 +159,24 @@ export function createModal(title, content, onConfirm, onCancel) {
     if (e.target === modal) { modal.remove(); onCancel?.(); }
   });
 
+  // Focus trap and keyboard handling
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { modal.remove(); onCancel?.(); return; }
+    if (e.key === 'Tab') {
+      const focusable = modal.querySelectorAll('button, [tabindex]:not([tabindex="-1"])');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
   document.body.appendChild(modal);
+  modal.querySelector('.modal-cancel').focus();
   return modal;
 }

@@ -253,6 +253,56 @@ export async function addStudySession(session) {
   await withTransaction(STORE_SESSIONS, "readwrite", (tx) =>
     tx.objectStore(STORE_SESSIONS).put(record)
   );
+
+  await updateStreak();
+}
+
+/**
+ * Update streak based on study activity today.
+ * Increments if last activity was yesterday, resets to 1 if gap > 1 day.
+ */
+export async function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const data = (await getSetting('streakData')) ?? { current: 0, lastDate: null };
+  const streak = typeof data === 'number'
+    ? { current: data, lastDate: null }
+    : { current: data.current ?? 0, lastDate: data.lastDate ?? null };
+
+  if (streak.lastDate === today) return streak.current;
+
+  if (streak.lastDate) {
+    const last = new Date(streak.lastDate);
+    const now = new Date(today);
+    const diffDays = Math.round((now - last) / 86400000);
+    streak.current = diffDays === 1 ? streak.current + 1 : 1;
+  } else {
+    streak.current = 1;
+  }
+
+  streak.lastDate = today;
+  await setSetting('streakData', streak);
+  return streak.current;
+}
+
+/**
+ * Check streak integrity on app startup — reset if user missed more than 1 day.
+ */
+export async function checkStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const data = (await getSetting('streakData')) ?? { current: 0, lastDate: null };
+  const streak = typeof data === 'number'
+    ? { current: data, lastDate: null }
+    : { current: data.current ?? 0, lastDate: data.lastDate ?? null };
+
+  if (!streak.lastDate) return;
+
+  const last = new Date(streak.lastDate);
+  const now = new Date(today);
+  const diffDays = Math.round((now - last) / 86400000);
+
+  if (diffDays > 1) {
+    await setSetting('streakData', { current: 0, lastDate: streak.lastDate });
+  }
 }
 
 /**
@@ -301,6 +351,33 @@ export async function getStats() {
     streak: typeof streakData === "number" ? streakData : (streakData?.current ?? 0),
     totalReviews,
   };
+}
+
+// ── Import / Export ─────────────────────────────────────────────────
+
+// ── Bookmarks ───────────────────────────────────────────────────────
+
+const BOOKMARKS_KEY = 'bookmarks';
+
+export async function getBookmarks() {
+  return (await getSetting(BOOKMARKS_KEY)) ?? [];
+}
+
+export async function toggleBookmark(problemId) {
+  const bookmarks = await getBookmarks();
+  const idx = bookmarks.indexOf(problemId);
+  if (idx >= 0) {
+    bookmarks.splice(idx, 1);
+  } else {
+    bookmarks.push(problemId);
+  }
+  await setSetting(BOOKMARKS_KEY, bookmarks);
+  return bookmarks;
+}
+
+export async function isBookmarked(problemId) {
+  const bookmarks = await getBookmarks();
+  return bookmarks.includes(problemId);
 }
 
 // ── Import / Export ─────────────────────────────────────────────────
