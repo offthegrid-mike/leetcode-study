@@ -441,6 +441,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: var(--space-md);
   max-width: calc(var(--content-max-width) + var(--space-md) * 2);
   margin-inline: auto;
+  overflow-x: hidden;
   transition: padding var(--transition-base);
 }
 
@@ -729,12 +730,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .filter-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-xs);
   margin-bottom: var(--space-sm);
 }
 
 .filter-select {
-  flex: 1;
+  flex: 1 1 calc(50% - var(--space-xs));
+  min-width: 0;;
   min-height: 38px;
   padding: var(--space-2xs) var(--space-sm);
   background-color: var(--color-surface);
@@ -2599,6 +2602,15 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: var(--sidebar-width);
     padding-bottom: var(--space-xl);
     padding-inline: var(--space-lg);
+  }
+
+  /* Single-row filter layout on desktop */
+  .filter-row {
+    flex-wrap: nowrap;
+  }
+
+  .filter-select {
+    flex: 1 1 0%;
   }
 
   /* Two-column grids */
