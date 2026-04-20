@@ -9494,5 +9494,674 @@
     "companies": [
       "microsoft"
     ]
+  },
+  {
+    "id": 528,
+    "title": "Subarray Sum Equals K",
+    "slug": "subarray-sum-equals-k",
+    "category": "Arrays & Hashing",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+    "patterns": [
+      "Prefix Sum",
+      "Hash Map"
+    ],
+    "hints": [
+      "Think about prefix sums: if prefix[j] - prefix[i] == k, then subarray i..j sums to k.",
+      "Store prefix sums in a hash map as you iterate. At each index, check if (current_prefix - k) exists in the map.",
+      "Initialize the map with {0: 1} to handle subarrays that start from index 0."
+    ],
+    "approach": "Compute prefix sums on the fly. For each index j, if prefix[j] - k equals some earlier prefix[i], then the subarray from i+1 to j sums to k. Use a hash map to store the count of each prefix sum seen so far, allowing O(1) lookup.",
+    "solution_python": "class Solution:\n    def subarraySum(self, nums: List[int], k: int) -> int:\n        count = 0\n        prefix = 0\n        seen = {0: 1}\n        for num in nums:\n            prefix += num\n            count += seen.get(prefix - k, 0)\n            seen[prefix] = seen.get(prefix, 0) + 1\n        return count",
+    "solution_js": "var subarraySum = function(nums, k) {\n    let count = 0, prefix = 0;\n    const seen = new Map([[0, 1]]);\n    for (const num of nums) {\n        prefix += num;\n        count += seen.get(prefix - k) || 0;\n        seen.set(prefix, (seen.get(prefix) || 0) + 1);\n    }\n    return count;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate through the array once. Each hash map lookup and insert is O(1) on average.",
+    "space_complexity_explanation": "The hash map stores at most n+1 distinct prefix sums in the worst case.",
+    "key_insight": "prefix[j] - prefix[i] == k means subarray (i, j] sums to k. Store prefix sum frequencies to count all valid (i, j) pairs in one pass.",
+    "related": [
+      3,
+      7,
+      9
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 529,
+    "title": "Majority Element",
+    "slug": "majority-element",
+    "category": "Arrays & Hashing",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/majority-element/",
+    "patterns": [
+      "Boyer-Moore Voting",
+      "Hash Map"
+    ],
+    "hints": [
+      "A simple O(n) space solution: use a hash map to count occurrences of each element.",
+      "For O(1) space, think about what happens when two different elements cancel each other out.",
+      "Boyer-Moore Voting: maintain a candidate and a count. Increment count if current element matches candidate, otherwise decrement. Reset candidate when count hits 0."
+    ],
+    "approach": "Boyer-Moore Voting Algorithm: since the majority element appears more than n/2 times, it will always 'survive' the cancellation process. Maintain a candidate and a count. When count drops to 0, the current element becomes the new candidate. The majority element is guaranteed to be the final candidate.",
+    "solution_python": "class Solution:\n    def majorityElement(self, nums: List[int]) -> int:\n        candidate, count = nums[0], 1\n        for num in nums[1:]:\n            if count == 0:\n                candidate = num\n            count += 1 if num == candidate else -1\n        return candidate",
+    "solution_js": "var majorityElement = function(nums) {\n    let candidate = nums[0], count = 1;\n    for (let i = 1; i < nums.length; i++) {\n        if (count === 0) candidate = nums[i];\n        count += nums[i] === candidate ? 1 : -1;\n    }\n    return candidate;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We iterate through the array exactly once.",
+    "space_complexity_explanation": "Only two variables (candidate and count) are used regardless of input size.",
+    "key_insight": "The majority element has more occurrences than all other elements combined, so it can never be fully cancelled out by non-majority elements.",
+    "related": [
+      3,
+      5,
+      163
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 530,
+    "title": "Move Zeroes",
+    "slug": "move-zeroes",
+    "category": "Arrays & Hashing",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/move-zeroes/",
+    "patterns": [
+      "Two Pointers"
+    ],
+    "hints": [
+      "Use a slow pointer to track the position where the next non-zero element should go.",
+      "Iterate with a fast pointer. Whenever you find a non-zero element, place it at the slow pointer and advance the slow pointer.",
+      "After placing all non-zero elements, fill the rest of the array with zeroes."
+    ],
+    "approach": "Two-pointer approach: keep a 'write' pointer that tracks where the next non-zero value should be placed. Iterate through the array with a 'read' pointer; whenever a non-zero is found, write it at the write pointer index and advance the write pointer. Finally, fill positions from the write pointer to the end with zeros.",
+    "solution_python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        write = 0\n        for read in range(len(nums)):\n            if nums[read] != 0:\n                nums[write] = nums[read]\n                write += 1\n        for i in range(write, len(nums)):\n            nums[i] = 0",
+    "solution_js": "var moveZeroes = function(nums) {\n    let write = 0;\n    for (let read = 0; read < nums.length; read++) {\n        if (nums[read] !== 0) {\n            nums[write++] = nums[read];\n        }\n    }\n    while (write < nums.length) nums[write++] = 0;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "One pass with the read pointer plus a final fill pass — both O(n). Total is O(n).",
+    "space_complexity_explanation": "In-place modification using only two index variables.",
+    "key_insight": "Separate the problem into two steps: compact non-zero elements to the front, then zero-fill the tail — both achievable in a single conceptual pass.",
+    "related": [
+      163,
+      131
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 531,
+    "title": "Lowest Common Ancestor of a Binary Tree",
+    "slug": "lowest-common-ancestor-of-a-binary-tree",
+    "category": "Trees",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/",
+    "patterns": [
+      "DFS",
+      "Recursion"
+    ],
+    "hints": [
+      "Think recursively: for each node, check whether p or q lives in its left subtree, right subtree, or is the node itself.",
+      "If p is found in one subtree and q in the other, the current node is the LCA.",
+      "If both are in the same subtree, recurse deeper into that subtree."
+    ],
+    "approach": "Recursive DFS: for each node, recursively search the left and right subtrees. If a node equals p or q, return it. If both left and right recursive calls return non-null results, the current node is the LCA (p and q are split across subtrees). Otherwise, return whichever side returned a non-null result.",
+    "solution_python": "class Solution:\n    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:\n        if not root or root == p or root == q:\n            return root\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n        if left and right:\n            return root\n        return left if left else right",
+    "solution_js": "var lowestCommonAncestor = function(root, p, q) {\n    if (!root || root === p || root === q) return root;\n    const left = lowestCommonAncestor(root.left, p, q);\n    const right = lowestCommonAncestor(root.right, p, q);\n    if (left && right) return root;\n    return left || right;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "time_complexity_explanation": "We visit every node at most once in the worst case (when LCA is the root).",
+    "space_complexity_explanation": "The recursion stack depth equals the height h of the tree. O(n) in the worst case for a skewed tree, O(log n) for a balanced tree.",
+    "key_insight": "When the recursive search finds p in one subtree and q in the other, the current node must be their lowest common ancestor.",
+    "related": [
+      48,
+      53
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 532,
+    "title": "Decode String",
+    "slug": "decode-string",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/decode-string/",
+    "patterns": [
+      "Stack"
+    ],
+    "hints": [
+      "Use a stack to handle nested brackets. Push the current string and count when you see '[', pop and repeat when you see ']'.",
+      "Build the current number digit-by-digit before pushing it. Build the current string character-by-character.",
+      "When you hit ']', pop the previous string and repeat count, then concatenate with the previous string."
+    ],
+    "approach": "Use a stack that stores pairs of (current_string, repeat_count). When seeing a digit, build the number. When seeing '[', push (current_string, current_k) and reset both. When seeing ']', pop the last (prev_str, k) and set current_string = prev_str + current_string * k. When seeing a letter, append to current_string.",
+    "solution_python": "class Solution:\n    def decodeString(self, s: str) -> str:\n        stack = []\n        current_str = ''\n        current_num = 0\n        for ch in s:\n            if ch.isdigit():\n                current_num = current_num * 10 + int(ch)\n            elif ch == '[':\n                stack.append((current_str, current_num))\n                current_str, current_num = '', 0\n            elif ch == ']':\n                prev_str, k = stack.pop()\n                current_str = prev_str + current_str * k\n            else:\n                current_str += ch\n        return current_str",
+    "solution_js": "var decodeString = function(s) {\n    const stack = [];\n    let currentStr = '', currentNum = 0;\n    for (const ch of s) {\n        if (ch >= '0' && ch <= '9') {\n            currentNum = currentNum * 10 + Number(ch);\n        } else if (ch === '[') {\n            stack.push([currentStr, currentNum]);\n            currentStr = ''; currentNum = 0;\n        } else if (ch === ']') {\n            const [prevStr, k] = stack.pop();\n            currentStr = prevStr + currentStr.repeat(k);\n        } else {\n            currentStr += ch;\n        }\n    }\n    return currentStr;\n};",
+    "time_complexity": "O(n * max_k)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each character is processed once, but string repetitions can expand the result. The total output length (and thus work) can be O(n * max_k) where max_k is the largest repeat count.",
+    "space_complexity_explanation": "The stack holds at most O(n) elements in the worst case (deeply nested brackets).",
+    "key_insight": "A stack naturally models nested bracket structure — push context on '[', pop and repeat on ']'.",
+    "related": [
+      22,
+      184
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 533,
+    "title": "Merge Strings Alternately",
+    "slug": "merge-strings-alternately",
+    "category": "Strings",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/merge-strings-alternately/",
+    "patterns": [
+      "Two Pointers"
+    ],
+    "hints": [
+      "Use a single index to step through both strings simultaneously.",
+      "At each step, append the character from word1 if available, then the character from word2 if available.",
+      "Once one string is exhausted, simply append the remainder of the other."
+    ],
+    "approach": "Use a single index i. While i is within either string's bounds, append word1[i] (if in range) then word2[i] (if in range). This naturally interleaves characters and handles strings of different lengths.",
+    "solution_python": "class Solution:\n    def mergeAlternately(self, word1: str, word2: str) -> str:\n        result = []\n        i = 0\n        while i < len(word1) or i < len(word2):\n            if i < len(word1):\n                result.append(word1[i])\n            if i < len(word2):\n                result.append(word2[i])\n            i += 1\n        return ''.join(result)",
+    "solution_js": "var mergeAlternately = function(word1, word2) {\n    let result = '', i = 0;\n    while (i < word1.length || i < word2.length) {\n        if (i < word1.length) result += word1[i];\n        if (i < word2.length) result += word2[i];\n        i++;\n    }\n    return result;\n};",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "We iterate once through both strings with a single index, touching each character exactly once.",
+    "space_complexity_explanation": "The result string has length m + n where m and n are the lengths of the two input strings.",
+    "key_insight": "A single index stepping through both strings simultaneously handles different lengths gracefully without needing separate pointers.",
+    "related": [],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 534,
+    "title": "Next Greater Element I",
+    "slug": "next-greater-element-i",
+    "category": "Stack",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/next-greater-element-i/",
+    "patterns": [
+      "Monotonic Stack",
+      "Hash Map"
+    ],
+    "hints": [
+      "A brute-force approach compares each element in nums1 against elements to its right in nums2 — O(m*n).",
+      "For a faster approach, pre-compute the next greater element for every number in nums2 using a monotonic stack.",
+      "Maintain a decreasing stack. When you find a larger element, it's the next greater for everything popped from the stack."
+    ],
+    "approach": "Pre-process nums2 with a monotonic decreasing stack to build a map from each number to its next greater element. Iterate nums2: for each element, pop stack elements that are smaller (the current element is their next greater), then push the current element. Finally, look up each nums1 element in the map.",
+    "solution_python": "class Solution:\n    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        next_greater = {}\n        stack = []\n        for num in nums2:\n            while stack and stack[-1] < num:\n                next_greater[stack.pop()] = num\n            stack.append(num)\n        return [next_greater.get(n, -1) for n in nums1]",
+    "solution_js": "var nextGreaterElement = function(nums1, nums2) {\n    const nextGreater = new Map();\n    const stack = [];\n    for (const num of nums2) {\n        while (stack.length && stack[stack.length - 1] < num) {\n            nextGreater.set(stack.pop(), num);\n        }\n        stack.push(num);\n    }\n    return nums1.map(n => nextGreater.get(n) ?? -1);\n};",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We process nums2 once with the stack in O(n), then query each of the m elements in nums1 in O(1) via the hash map.",
+    "space_complexity_explanation": "The stack and hash map together store at most n entries (one per element in nums2).",
+    "key_insight": "A monotonic decreasing stack efficiently finds the next greater element for all elements in a single pass — each element is pushed and popped at most once.",
+    "related": [
+      185,
+      22
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 535,
+    "title": "Single Element in a Sorted Array",
+    "slug": "single-element-in-a-sorted-array",
+    "category": "Binary Search",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/single-element-in-a-sorted-array/",
+    "patterns": [
+      "Binary Search"
+    ],
+    "hints": [
+      "In a sorted array where all pairs appear together, pairs before the single element appear at (even, odd) indices; pairs after appear at (odd, even) indices.",
+      "Use binary search on even indices. If nums[mid] == nums[mid+1], the single element is to the right; otherwise it's at mid or to the left.",
+      "Always check mid at an even index to reason about pair alignment cleanly."
+    ],
+    "approach": "Binary search on even indices only. Before the single element, each pair starts at an even index (nums[even] == nums[even+1]). After it, pairs start at odd indices (nums[odd] == nums[odd-1]). Midpoint mid should always be even (round down if odd). If nums[mid] == nums[mid+1], the single element is to the right of mid+1; otherwise, it's at mid or to the left.",
+    "solution_python": "class Solution:\n    def singleNonDuplicate(self, nums: List[int]) -> int:\n        lo, hi = 0, len(nums) - 1\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if mid % 2 == 1:\n                mid -= 1\n            if nums[mid] == nums[mid + 1]:\n                lo = mid + 2\n            else:\n                hi = mid\n        return nums[lo]",
+    "solution_js": "var singleNonDuplicate = function(nums) {\n    let lo = 0, hi = nums.length - 1;\n    while (lo < hi) {\n        let mid = Math.floor((lo + hi) / 2);\n        if (mid % 2 === 1) mid--;\n        if (nums[mid] === nums[mid + 1]) lo = mid + 2;\n        else hi = mid;\n    }\n    return nums[lo];\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search halves the search space on each step, giving O(log n) iterations.",
+    "space_complexity_explanation": "Only two pointers (lo, hi) are used — constant space.",
+    "key_insight": "The pair-index parity flips at the position of the single element: pairs before it start at even indices, pairs after start at odd indices.",
+    "related": [
+      28,
+      31,
+      32
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 536,
+    "title": "Diagonal Traverse",
+    "slug": "diagonal-traverse",
+    "category": "Arrays & Hashing",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/diagonal-traverse/",
+    "patterns": [
+      "Matrix Traversal",
+      "Simulation"
+    ],
+    "hints": [
+      "An m×n matrix has m+n-1 diagonals. Elements on the same diagonal share the same sum of their indices (row + col).",
+      "For diagonal d (where d = row + col), traverse elements where row+col == d. Alternate the direction on each diagonal.",
+      "Collect each diagonal into a list, reverse alternate diagonals, then flatten."
+    ],
+    "approach": "Group elements by their diagonal index d = row + col. For each diagonal, collect its elements in order. Reverse alternate diagonals (even-indexed diagonals go up-right, odd go down-left). Flatten the results into the output array.",
+    "solution_python": "class Solution:\n    def findDiagonalOrder(self, mat: List[List[int]]) -> List[int]:\n        if not mat or not mat[0]:\n            return []\n        m, n = len(mat), len(mat[0])\n        diagonals = [[] for _ in range(m + n - 1)]\n        for r in range(m):\n            for c in range(n):\n                diagonals[r + c].append(mat[r][c])\n        result = []\n        for i, diag in enumerate(diagonals):\n            result.extend(reversed(diag) if i % 2 == 0 else diag)\n        return result",
+    "solution_js": "var findDiagonalOrder = function(mat) {\n    if (!mat.length || !mat[0].length) return [];\n    const m = mat.length, n = mat[0].length;\n    const diagonals = Array.from({length: m + n - 1}, () => []);\n    for (let r = 0; r < m; r++)\n        for (let c = 0; c < n; c++)\n            diagonals[r + c].push(mat[r][c]);\n    const result = [];\n    for (let i = 0; i < diagonals.length; i++) {\n        if (i % 2 === 0) diagonals[i].reverse();\n        result.push(...diagonals[i]);\n    }\n    return result;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "We visit every cell exactly once to group them, then produce the output array — both O(m*n).",
+    "space_complexity_explanation": "The diagonal arrays together hold all m*n elements, plus the output array of the same size.",
+    "key_insight": "Elements on the same anti-diagonal share the same row+col sum. Alternating reversal of diagonals produces the zigzag traversal pattern.",
+    "related": [
+      131,
+      130
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 537,
+    "title": "Palindrome Linked List",
+    "slug": "palindrome-linked-list",
+    "category": "Linked Lists",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/palindrome-linked-list/",
+    "patterns": [
+      "Fast/Slow Pointers",
+      "Two Pointers"
+    ],
+    "hints": [
+      "Find the middle of the linked list using fast/slow pointers.",
+      "Reverse the second half of the list in-place.",
+      "Compare the first half and the reversed second half node by node."
+    ],
+    "approach": "1) Find the middle using slow/fast pointers. 2) Reverse the second half of the list. 3) Compare the first half with the reversed second half — if all values match, it's a palindrome. Optionally restore the list afterward.",
+    "solution_python": "class Solution:\n    def isPalindrome(self, head: Optional[ListNode]) -> bool:\n        slow, fast = head, head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n        # Reverse second half\n        prev = None\n        curr = slow\n        while curr:\n            curr.next, prev, curr = prev, curr, curr.next\n        # Compare\n        left, right = head, prev\n        while right:\n            if left.val != right.val:\n                return False\n            left = left.next\n            right = right.next\n        return True",
+    "solution_js": "var isPalindrome = function(head) {\n    let slow = head, fast = head;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    let prev = null, curr = slow;\n    while (curr) {\n        [curr.next, prev, curr] = [prev, curr, curr.next];\n    }\n    let left = head, right = prev;\n    while (right) {\n        if (left.val !== right.val) return false;\n        left = left.next;\n        right = right.next;\n    }\n    return true;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Finding the middle, reversing the second half, and comparing each take O(n) time.",
+    "space_complexity_explanation": "In-place reversal uses only a constant number of pointers.",
+    "key_insight": "Reversing the second half in-place enables O(1)-space palindrome checking without copying values to an array.",
+    "related": [
+      35,
+      36,
+      41,
+      179
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 538,
+    "title": "Middle of the Linked List",
+    "slug": "middle-of-the-linked-list",
+    "category": "Linked Lists",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/middle-of-the-linked-list/",
+    "patterns": [
+      "Fast/Slow Pointers"
+    ],
+    "hints": [
+      "A naive approach counts the list length, then traverses again to n/2 — O(n) but two passes.",
+      "Use two pointers: a slow pointer moving one step at a time and a fast pointer moving two steps.",
+      "When the fast pointer reaches the end, the slow pointer is at the middle."
+    ],
+    "approach": "Fast/slow pointer technique: slow moves one node at a time, fast moves two nodes. When fast reaches the end (null or last node), slow is pointing at the middle. For even-length lists, this returns the second middle node (per the problem requirement).",
+    "solution_python": "class Solution:\n    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        slow, fast = head, head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n        return slow",
+    "solution_js": "var middleNode = function(head) {\n    let slow = head, fast = head;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    return slow;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Both pointers traverse the list at most once.",
+    "space_complexity_explanation": "Only two pointer variables are used, independent of list size.",
+    "key_insight": "Fast pointer moves at 2x speed, so when it finishes the list, the slow pointer has covered exactly half the distance.",
+    "related": [
+      36,
+      41,
+      178
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 539,
+    "title": "Fibonacci Number",
+    "slug": "fibonacci-number",
+    "category": "Dynamic Programming",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/fibonacci-number/",
+    "patterns": [
+      "Dynamic Programming",
+      "Memoization"
+    ],
+    "hints": [
+      "The recursive definition is F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2). Naive recursion is O(2^n).",
+      "Use memoization (top-down DP) to cache sub-results, reducing to O(n) time.",
+      "An iterative bottom-up approach with just two variables achieves O(n) time and O(1) space."
+    ],
+    "approach": "Iterative bottom-up: start with a=0 (F(0)) and b=1 (F(1)). In each step, compute a+b, then slide the window: a becomes b and b becomes the new sum. After n iterations, a holds F(n).",
+    "solution_python": "class Solution:\n    def fib(self, n: int) -> int:\n        if n <= 1:\n            return n\n        a, b = 0, 1\n        for _ in range(2, n + 1):\n            a, b = b, a + b\n        return b",
+    "solution_js": "var fib = function(n) {\n    if (n <= 1) return n;\n    let a = 0, b = 1;\n    for (let i = 2; i <= n; i++) {\n        [a, b] = [b, a + b];\n    }\n    return b;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The loop runs n-1 times, each doing constant work.",
+    "space_complexity_explanation": "Only two variables are maintained regardless of n.",
+    "key_insight": "You only ever need the two most recent Fibonacci numbers to compute the next one, so the entire DP table reduces to two variables.",
+    "related": [
+      93
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 540,
+    "title": "Max Consecutive Ones",
+    "slug": "max-consecutive-ones",
+    "category": "Arrays & Hashing",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/max-consecutive-ones/",
+    "patterns": [
+      "Linear Scan"
+    ],
+    "hints": [
+      "Track the current streak of consecutive ones as you scan.",
+      "Reset the current count to 0 whenever you hit a 0.",
+      "Update the global maximum at each step."
+    ],
+    "approach": "Single-pass scan: maintain current_count and max_count. Increment current_count on 1, reset to 0 on 0. Update max_count at each step.",
+    "solution_python": "class Solution:\n    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:\n        max_count = 0\n        current = 0\n        for num in nums:\n            if num == 1:\n                current += 1\n                max_count = max(max_count, current)\n            else:\n                current = 0\n        return max_count",
+    "solution_js": "var findMaxConsecutiveOnes = function(nums) {\n    let maxCount = 0, current = 0;\n    for (const num of nums) {\n        current = num === 1 ? current + 1 : 0;\n        maxCount = Math.max(maxCount, current);\n    }\n    return maxCount;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single linear scan through the array.",
+    "space_complexity_explanation": "Only two counter variables are used.",
+    "key_insight": "Reset the current streak to 0 on any 0 encountered; track the running maximum.",
+    "related": [
+      169,
+      171
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 541,
+    "title": "Find K Closest Elements",
+    "slug": "find-k-closest-elements",
+    "category": "Binary Search",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-k-closest-elements/",
+    "patterns": [
+      "Binary Search",
+      "Sliding Window"
+    ],
+    "hints": [
+      "The answer is a contiguous window of k elements in the sorted array. Binary search for the optimal left boundary of that window.",
+      "Compare the distance of the left boundary element vs. the element k positions to its right. Choose the side that keeps the closer elements.",
+      "Binary search on the left pointer: if x - arr[mid] > arr[mid + k] - x, move left boundary right."
+    ],
+    "approach": "Binary search for the left boundary of the result window. The window always has k elements. Compare arr[mid] (left candidate) and arr[mid+k] (right candidate) against x. If arr[mid+k] is closer, shift the window right (lo = mid + 1). Otherwise keep or shift left (hi = mid). The final window [lo, lo+k) is the answer.",
+    "solution_python": "class Solution:\n    def findClosestElements(self, arr: List[int], k: int, x: int) -> List[int]:\n        lo, hi = 0, len(arr) - k\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if x - arr[mid] > arr[mid + k] - x:\n                lo = mid + 1\n            else:\n                hi = mid\n        return arr[lo:lo + k]",
+    "solution_js": "var findClosestElements = function(arr, k, x) {\n    let lo = 0, hi = arr.length - k;\n    while (lo < hi) {\n        const mid = Math.floor((lo + hi) / 2);\n        if (x - arr[mid] > arr[mid + k] - x) lo = mid + 1;\n        else hi = mid;\n    }\n    return arr.slice(lo, lo + k);\n};",
+    "time_complexity": "O(log(n - k) + k)",
+    "space_complexity": "O(k)",
+    "time_complexity_explanation": "Binary search runs in O(log(n-k)) to find the window start, then O(k) to extract the result slice.",
+    "space_complexity_explanation": "The output array of k elements is the only non-constant space used.",
+    "key_insight": "Binary search on the left boundary of a fixed-size window — compare the two endpoints' distance to x to decide which direction to move.",
+    "related": [
+      28,
+      31,
+      67
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 542,
+    "title": "Intersection of Two Arrays",
+    "slug": "intersection-of-two-arrays",
+    "category": "Arrays & Hashing",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/intersection-of-two-arrays/",
+    "patterns": [
+      "Hash Set"
+    ],
+    "hints": [
+      "Convert one array to a set for O(1) lookup.",
+      "Iterate the other array and collect elements that exist in the set.",
+      "Use a second set to avoid duplicates in the result."
+    ],
+    "approach": "Convert nums1 to a set. Iterate nums2; if an element is in the set, add it to a result set. Return the result set as a list. Using sets on both sides ensures uniqueness without sorting.",
+    "solution_python": "class Solution:\n    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        set1 = set(nums1)\n        return list(set(n for n in nums2 if n in set1))",
+    "solution_js": "var intersection = function(nums1, nums2) {\n    const set1 = new Set(nums1);\n    return [...new Set(nums2.filter(n => set1.has(n)))];\n};",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "Building set1 is O(m). Filtering nums2 is O(n). Both operations are linear.",
+    "space_complexity_explanation": "The set of nums1 takes O(m) space and the result set takes at most O(min(m,n)) space.",
+    "key_insight": "Converting one array to a set reduces the membership check from O(n) to O(1), turning the naive O(m*n) approach into O(m+n).",
+    "related": [
+      3,
+      9
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 543,
+    "title": "Asteroid Collision",
+    "slug": "asteroid-collision",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/asteroid-collision/",
+    "patterns": [
+      "Stack",
+      "Simulation"
+    ],
+    "hints": [
+      "A collision only happens when a positive asteroid is followed by a negative asteroid (they move toward each other).",
+      "Use a stack. Push positive asteroids. When a negative asteroid arrives, compare with the top of the stack.",
+      "The negative asteroid destroys smaller positives, is destroyed by a larger positive, and both are destroyed if equal."
+    ],
+    "approach": "Iterate through asteroids. Push positive asteroids onto the stack. For a negative asteroid, compare its magnitude with the top of the stack: if the top is smaller, pop it (destroyed) and continue; if equal, pop the top and skip the current; if the top is larger, skip the current. If the stack is empty or the top is negative, push the current asteroid.",
+    "solution_python": "class Solution:\n    def asteroidCollision(self, asteroids: List[int]) -> List[int]:\n        stack = []\n        for a in asteroids:\n            while stack and a < 0 < stack[-1]:\n                if stack[-1] < -a:\n                    stack.pop()\n                    continue\n                elif stack[-1] == -a:\n                    stack.pop()\n                break\n            else:\n                stack.append(a)\n        return stack",
+    "solution_js": "var asteroidCollision = function(asteroids) {\n    const stack = [];\n    for (const a of asteroids) {\n        let destroyed = false;\n        while (stack.length && a < 0 && stack[stack.length - 1] > 0) {\n            const top = stack[stack.length - 1];\n            if (top < -a) { stack.pop(); continue; }\n            if (top === -a) stack.pop();\n            destroyed = true;\n            break;\n        }\n        if (!destroyed) stack.push(a);\n    }\n    return stack;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each asteroid is pushed and popped at most once, giving amortized O(1) per asteroid.",
+    "space_complexity_explanation": "The stack holds at most n asteroids in the worst case (no collisions).",
+    "key_insight": "Only right-moving (positive) followed by left-moving (negative) asteroids collide. A stack naturally represents the active right-moving asteroids waiting to collide.",
+    "related": [
+      22,
+      173,
+      175
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 544,
+    "title": "Next Greater Element II",
+    "slug": "next-greater-element-ii",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/next-greater-element-ii/",
+    "patterns": [
+      "Monotonic Stack",
+      "Circular Array"
+    ],
+    "hints": [
+      "The array is circular, so elements can wrap around. Simulate this by iterating 2n times using modulo indexing.",
+      "Use a monotonic decreasing stack of indices. For each element, pop indices whose values are smaller than the current element — they've found their next greater.",
+      "On the second pass (indices n to 2n-1), don't push to the stack — just resolve remaining unresolved elements."
+    ],
+    "approach": "Iterate indices 0 to 2n-1 using index % n. Use a monotonic decreasing stack (stores indices). For each position, pop stack entries whose values are less than the current value and record the answer. Push current index (only if i < n to avoid duplicate pushes on the second pass). Initialize result array with -1.",
+    "solution_python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        stack = []\n        for i in range(2 * n):\n            while stack and nums[stack[-1]] < nums[i % n]:\n                result[stack.pop()] = nums[i % n]\n            if i < n:\n                stack.append(i)\n        return result",
+    "solution_js": "var nextGreaterElements = function(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    const stack = [];\n    for (let i = 0; i < 2 * n; i++) {\n        while (stack.length && nums[stack[stack.length - 1]] < nums[i % n]) {\n            result[stack.pop()] = nums[i % n];\n        }\n        if (i < n) stack.push(i);\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate 2n times. Each element is pushed and popped from the stack at most once, so total stack operations are O(n).",
+    "space_complexity_explanation": "The stack holds at most n indices; the result array is n.",
+    "key_insight": "Simulating circularity by iterating twice (using i % n) lets the standard monotonic stack technique handle the wrap-around case.",
+    "related": [
+      175,
+      22
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 545,
+    "title": "Search a 2D Matrix II",
+    "slug": "search-a-2d-matrix-ii",
+    "category": "Binary Search",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/search-a-2d-matrix-ii/",
+    "patterns": [
+      "Binary Search",
+      "Staircase Search"
+    ],
+    "hints": [
+      "Binary search each row independently — O(m log n) — but we can do better.",
+      "Start at the top-right corner. If the target is smaller, move left; if larger, move down.",
+      "This eliminates one row or column per step, giving O(m + n) total steps."
+    ],
+    "approach": "Staircase search: start at the top-right corner (row=0, col=n-1). At each step: if matrix[row][col] equals target, return true. If it's greater than target, move left (col--). If less, move down (row++). Continue until row or col goes out of bounds.",
+    "solution_python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        if not matrix or not matrix[0]:\n            return False\n        row, col = 0, len(matrix[0]) - 1\n        while row < len(matrix) and col >= 0:\n            val = matrix[row][col]\n            if val == target:\n                return True\n            elif val > target:\n                col -= 1\n            else:\n                row += 1\n        return False",
+    "solution_js": "var searchMatrix = function(matrix, target) {\n    if (!matrix.length || !matrix[0].length) return false;\n    let row = 0, col = matrix[0].length - 1;\n    while (row < matrix.length && col >= 0) {\n        if (matrix[row][col] === target) return true;\n        else if (matrix[row][col] > target) col--;\n        else row++;\n    }\n    return false;\n};",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each step eliminates one row or one column. Starting with m rows and n columns, we take at most m+n steps.",
+    "space_complexity_explanation": "Only row and col pointer variables are used.",
+    "key_insight": "The top-right corner is uniquely positioned: it's the maximum of its row (allowing left elimination) and the minimum of its column (allowing downward search). This gives a deterministic elimination strategy.",
+    "related": [
+      28,
+      32,
+      131
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 546,
+    "title": "Split Array Largest Sum",
+    "slug": "split-array-largest-sum",
+    "category": "Binary Search",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/split-array-largest-sum/",
+    "patterns": [
+      "Binary Search",
+      "Greedy"
+    ],
+    "hints": [
+      "Binary search on the answer: the minimum possible largest sum lies between max(nums) and sum(nums).",
+      "For a given mid value, greedily check if the array can be split into at most k subarrays each with sum ≤ mid.",
+      "If the greedy check passes (feasible), search lower; otherwise search higher."
+    ],
+    "approach": "Binary search on the answer space [max(nums), sum(nums)]. For a candidate maximum sum 'mid', use a greedy check: iterate through nums, accumulating a running sum. If adding the next element would exceed mid, start a new subarray. Count the number of subarrays needed. If the count exceeds k, mid is too small; otherwise it may be achievable.",
+    "solution_python": "class Solution:\n    def splitArray(self, nums: List[int], k: int) -> int:\n        def feasible(max_sum):\n            count, current = 1, 0\n            for num in nums:\n                if current + num > max_sum:\n                    count += 1\n                    current = 0\n                current += num\n            return count <= k\n\n        lo, hi = max(nums), sum(nums)\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if feasible(mid):\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo",
+    "solution_js": "var splitArray = function(nums, k) {\n    const feasible = (maxSum) => {\n        let count = 1, current = 0;\n        for (const num of nums) {\n            if (current + num > maxSum) { count++; current = 0; }\n            current += num;\n        }\n        return count <= k;\n    };\n    let lo = Math.max(...nums), hi = nums.reduce((a, b) => a + b, 0);\n    while (lo < hi) {\n        const mid = Math.floor((lo + hi) / 2);\n        if (feasible(mid)) hi = mid;\n        else lo = mid + 1;\n    }\n    return lo;\n};",
+    "time_complexity": "O(n log(sum))",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search runs O(log(sum - max)) iterations. Each iteration does an O(n) greedy feasibility check.",
+    "space_complexity_explanation": "The feasibility check uses only a constant number of variables.",
+    "key_insight": "Binary search on the answer (not the index) transforms an NP-hard-looking optimization problem into a feasibility check that's solvable greedily.",
+    "related": [
+      28,
+      32,
+      116
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 547,
+    "title": "Implement Stack using Queues",
+    "slug": "implement-stack-using-queues",
+    "category": "Stack",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/implement-stack-using-queues/",
+    "patterns": [
+      "Stack",
+      "Queue",
+      "Design"
+    ],
+    "hints": [
+      "A stack is LIFO; a queue is FIFO. To simulate a stack pop (get the last-pushed element), you need to rearrange the queue.",
+      "One-queue approach: after each push, rotate the queue so the new element is at the front.",
+      "Rotate by dequeuing all n-1 elements and re-enqueuing them — the newly pushed element stays at the front."
+    ],
+    "approach": "Single-queue approach: on push(x), enqueue x, then rotate the queue by dequeuing and re-enqueuing all elements that were there before x. This brings x to the front. Pop and top then simply dequeue from the front.",
+    "solution_python": "from collections import deque\n\nclass MyStack:\n    def __init__(self):\n        self.queue = deque()\n\n    def push(self, x: int) -> None:\n        self.queue.append(x)\n        for _ in range(len(self.queue) - 1):\n            self.queue.append(self.queue.popleft())\n\n    def pop(self) -> int:\n        return self.queue.popleft()\n\n    def top(self) -> int:\n        return self.queue[0]\n\n    def empty(self) -> bool:\n        return not self.queue",
+    "solution_js": "class MyStack {\n    constructor() { this.queue = []; }\n\n    push(x) {\n        this.queue.push(x);\n        for (let i = 0; i < this.queue.length - 1; i++) {\n            this.queue.push(this.queue.shift());\n        }\n    }\n\n    pop() { return this.queue.shift(); }\n\n    top() { return this.queue[0]; }\n\n    empty() { return this.queue.length === 0; }\n}",
+    "time_complexity": "O(n) push, O(1) pop/top",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each push rotates all n-1 existing elements, taking O(n). Pop and top are O(1) since the top-of-stack is always at the front of the queue.",
+    "space_complexity_explanation": "The queue holds all n pushed elements.",
+    "key_insight": "Rotating the queue after each push maintains the invariant that the most recently pushed element is always at the front — making pop and top O(1) at the cost of an O(n) push.",
+    "related": [
+      22,
+      173
+    ],
+    "companies": [
+      "microsoft"
+    ]
+  },
+  {
+    "id": 548,
+    "title": "Classes With at Least 5 Students",
+    "slug": "classes-with-at-least-5-students",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/classes-with-at-least-5-students/",
+    "patterns": [
+      "GROUP BY",
+      "HAVING"
+    ],
+    "hints": [
+      "Group rows by the class column to aggregate enrollment counts per class.",
+      "Use COUNT(*) to count the number of students in each class after grouping.",
+      "Use a HAVING clause (not WHERE) to filter groups — HAVING COUNT(*) >= 5 keeps only classes with at least 5 students."
+    ],
+    "approach": "Group all rows by the 'class' column using GROUP BY. Since (student, class) is the primary key, each row is a unique enrollment, so COUNT(*) gives the exact number of students per class. Apply a HAVING clause to filter out any class with fewer than 5 students. SELECT only the 'class' column in the output.",
+    "solution_python": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(*) >= 5;",
+    "solution_js": "-- SQL problem, see solution_python",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(k)",
+    "time_complexity_explanation": "The database must scan all n rows of the Courses table once to build the group aggregates.",
+    "space_complexity_explanation": "O(k) where k is the number of distinct classes, since the engine stores one aggregate entry per group during the GROUP BY phase.",
+    "key_insight": "HAVING filters on aggregated group results, whereas WHERE filters individual rows before grouping. Because the primary key guarantees no duplicate (student, class) pairs, COUNT(*) directly equals the enrollment count per class.",
+    "related": [],
+    "companies": [
+      "microsoft"
+    ]
   }
 ]
