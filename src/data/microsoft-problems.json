@@ -155,36 +155,6 @@
     ]
   },
   {
-    "id": 194,
-    "title": "Count Primes",
-    "slug": "count-primes",
-    "category": "Math",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/count-primes/",
-    "patterns": [
-      "Sieve of Eratosthenes"
-    ],
-    "hints": [
-      "A brute-force check for each number up to n is too slow. Think about a sieve approach.",
-      "Sieve of Eratosthenes: mark all multiples of each prime as composite.",
-      "You only need to sieve up to √n — all composites ≤ n have a factor ≤ √n."
-    ],
-    "approach": "Use the Sieve of Eratosthenes. Create a boolean array of size n initialized to True. For each number i starting from 2, if it's still marked True (prime), mark all its multiples as False. Count the remaining True values.",
-    "solution_python": "class Solution:\n    def countPrimes(self, n: int) -> int:\n        if n < 2:\n            return 0\n        is_prime = [True] * n\n        is_prime[0] = is_prime[1] = False\n        for i in range(2, int(n**0.5) + 1):\n            if is_prime[i]:\n                for j in range(i*i, n, i):\n                    is_prime[j] = False\n        return sum(is_prime)",
-    "solution_js": "var countPrimes = function(n) {\n    if (n < 2) return 0;\n    const isPrime = new Array(n).fill(true);\n    isPrime[0] = isPrime[1] = false;\n    for (let i = 2; i * i < n; i++) {\n        if (isPrime[i]) {\n            for (let j = i * i; j < n; j += i) {\n                isPrime[j] = false;\n            }\n        }\n    }\n    return isPrime.filter(Boolean).length;\n};",
-    "time_complexity": "O(n log log n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "The Sieve of Eratosthenes runs in O(n log log n) due to the harmonic series of primes.",
-    "space_complexity_explanation": "A boolean array of size n is needed to track which numbers are prime.",
-    "key_insight": "Start marking multiples from i² (not 2i) because smaller multiples were already marked by smaller primes.",
-    "related": [
-      192
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 195,
     "title": "Add Binary",
     "slug": "add-binary",
@@ -211,34 +181,6 @@
     "related": [
       192
     ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 196,
-    "title": "Number of 1 Bits",
-    "slug": "number-of-1-bits",
-    "category": "Bit Manipulation",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/number-of-1-bits/",
-    "patterns": [
-      "Bit Manipulation"
-    ],
-    "hints": [
-      "The operation n & (n - 1) clears the lowest set bit of n.",
-      "Count how many times you can do this before n becomes 0.",
-      "Alternatively, check the last bit with n & 1 and right-shift n repeatedly."
-    ],
-    "approach": "Use the Brian Kernighan trick: n & (n - 1) removes the lowest set bit. Count iterations until n becomes 0. This runs in O(k) where k is the number of set bits.",
-    "solution_python": "class Solution:\n    def hammingWeight(self, n: int) -> int:\n        count = 0\n        while n:\n            n &= n - 1\n            count += 1\n        return count",
-    "solution_js": "var hammingWeight = function(n) {\n    let count = 0;\n    while (n) {\n        n &= n - 1;\n        count++;\n    }\n    return count;\n};",
-    "time_complexity": "O(k)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "k is the number of set bits (at most 32). Each iteration removes exactly one set bit.",
-    "space_complexity_explanation": "Only a counter variable is used.",
-    "key_insight": "n & (n - 1) drops the lowest set bit — this lets us count set bits in O(k) instead of checking all 32 positions.",
-    "related": [],
     "companies": [
       "microsoft"
     ]
@@ -555,38 +497,6 @@
     ]
   },
   {
-    "id": 207,
-    "title": "Sum Root to Leaf Numbers",
-    "slug": "sum-root-to-leaf-numbers",
-    "category": "Trees",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/sum-root-to-leaf-numbers/",
-    "patterns": [
-      "DFS",
-      "Tree Recursion"
-    ],
-    "hints": [
-      "As you traverse from root to leaf, build the number by: current_num = current_num * 10 + node.val.",
-      "At a leaf node, add the accumulated number to the total sum.",
-      "Use DFS and pass the running number as a parameter."
-    ],
-    "approach": "DFS from root, carrying the number formed so far. At each node, update: num = num * 10 + node.val. At leaf nodes, add the number to the result. Sum all root-to-leaf numbers.",
-    "solution_python": "class Solution:\n    def sumNumbers(self, root: Optional[TreeNode]) -> int:\n        def dfs(node, num):\n            if not node:\n                return 0\n            num = num * 10 + node.val\n            if not node.left and not node.right:\n                return num\n            return dfs(node.left, num) + dfs(node.right, num)\n        return dfs(root, 0)",
-    "solution_js": "var sumNumbers = function(root) {\n    const dfs = (node, num) => {\n        if (!node) return 0;\n        num = num * 10 + node.val;\n        if (!node.left && !node.right) return num;\n        return dfs(node.left, num) + dfs(node.right, num);\n    };\n    return dfs(root, 0);\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(h)",
-    "time_complexity_explanation": "Each node is visited exactly once.",
-    "space_complexity_explanation": "Recursion stack depth equals the tree height h — O(log n) balanced, O(n) skewed.",
-    "key_insight": "Build the number incrementally (num * 10 + val) while descending — this avoids storing full paths.",
-    "related": [
-      197,
-      198
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 208,
     "title": "Accounts Merge",
     "slug": "accounts-merge",
@@ -672,69 +582,6 @@
     "key_insight": "Simulate the zigzag with a direction toggle — no need to compute index formulas.",
     "related": [
       191
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 211,
-    "title": "String Compression",
-    "slug": "string-compression",
-    "category": "Strings",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/string-compression/",
-    "patterns": [
-      "Two Pointers",
-      "In-Place"
-    ],
-    "hints": [
-      "Use a read pointer and a write pointer. Group consecutive identical characters.",
-      "Write the character, then write the count digits if count > 1.",
-      "Be careful to convert multi-digit counts to individual characters."
-    ],
-    "approach": "Two-pointer in-place compression. Read groups of consecutive characters. For each group, write the character at the write pointer. If the group length > 1, write each digit of the count. Return the write pointer as the new length.",
-    "solution_python": "class Solution:\n    def compress(self, chars: List[str]) -> int:\n        write = 0\n        read = 0\n        while read < len(chars):\n            char = chars[read]\n            count = 0\n            while read < len(chars) and chars[read] == char:\n                read += 1\n                count += 1\n            chars[write] = char\n            write += 1\n            if count > 1:\n                for d in str(count):\n                    chars[write] = d\n                    write += 1\n        return write",
-    "solution_js": "var compress = function(chars) {\n    let write = 0, read = 0;\n    while (read < chars.length) {\n        const char = chars[read];\n        let count = 0;\n        while (read < chars.length && chars[read] === char) {\n            read++;\n            count++;\n        }\n        chars[write++] = char;\n        if (count > 1) {\n            for (const d of count.toString()) {\n                chars[write++] = d;\n            }\n        }\n    }\n    return write;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Each character is read exactly once. Writing count digits is bounded by O(log n) total.",
-    "space_complexity_explanation": "Compression is done in-place — only pointer variables are used.",
-    "key_insight": "The write pointer always stays at or behind the read pointer, so in-place modification is safe.",
-    "related": [
-      189,
-      191
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 212,
-    "title": "Sign of the Product of an Array",
-    "slug": "sign-of-the-product-of-an-array",
-    "category": "Arrays & Hashing",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/sign-of-the-product-of-an-array/",
-    "patterns": [
-      "Math",
-      "Counting"
-    ],
-    "hints": [
-      "You don't need to compute the actual product — just track the sign.",
-      "If any element is 0, the product is 0.",
-      "Count negative numbers: odd count → negative product, even count → positive product."
-    ],
-    "approach": "If any element is zero, return 0. Otherwise, count the number of negative elements. If the count is odd, the product is negative (-1); if even, it's positive (1).",
-    "solution_python": "class Solution:\n    def arraySign(self, nums: List[int]) -> int:\n        sign = 1\n        for num in nums:\n            if num == 0:\n                return 0\n            if num < 0:\n                sign *= -1\n        return sign",
-    "solution_js": "var arraySign = function(nums) {\n    let sign = 1;\n    for (const num of nums) {\n        if (num === 0) return 0;\n        if (num < 0) sign *= -1;\n    }\n    return sign;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Single pass through the array.",
-    "space_complexity_explanation": "Only one variable to track the sign.",
-    "key_insight": "Tracking sign flips avoids overflow — multiply signs instead of actual values.",
-    "related": [
-      170
     ],
     "companies": [
       "microsoft"
@@ -834,66 +681,6 @@
     ]
   },
   {
-    "id": 216,
-    "title": "Flatten Nested List Iterator",
-    "slug": "flatten-nested-list-iterator",
-    "category": "Stack",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/flatten-nested-list-iterator/",
-    "patterns": [
-      "Stack",
-      "Iterator Design"
-    ],
-    "hints": [
-      "Use a stack to lazily flatten the nested structure.",
-      "Push elements in reverse order so the first element is on top of the stack.",
-      "In hasNext(), keep unpacking the top element if it's a list until you find an integer."
-    ],
-    "approach": "Use a stack initialized with the nested list in reverse order. In hasNext(), peek at the top — if it's a list, pop it and push its children in reverse. Repeat until the top is an integer or the stack is empty.",
-    "solution_python": "class NestedIterator:\n    def __init__(self, nestedList):\n        self.stack = nestedList[::-1]\n\n    def next(self) -> int:\n        return self.stack.pop().getInteger()\n\n    def hasNext(self) -> bool:\n        while self.stack:\n            top = self.stack[-1]\n            if top.isInteger():\n                return True\n            self.stack.pop()\n            self.stack.extend(top.getList()[::-1])\n        return False",
-    "solution_js": "var NestedIterator = function(nestedList) {\n    this.stack = [...nestedList].reverse();\n};\nNestedIterator.prototype.hasNext = function() {\n    while (this.stack.length) {\n        const top = this.stack[this.stack.length - 1];\n        if (top.isInteger()) return true;\n        this.stack.pop();\n        const list = top.getList();\n        for (let i = list.length - 1; i >= 0; i--) this.stack.push(list[i]);\n    }\n    return false;\n};\nNestedIterator.prototype.next = function() {\n    return this.stack.pop().getInteger();\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "Across all calls to next(), each element is pushed and popped from the stack at most once. Total work is O(n) for n integers.",
-    "space_complexity_explanation": "The stack holds up to all elements in the worst case (deeply nested).",
-    "key_insight": "Lazy flattening with a stack — only unpack the top list when hasNext() is called, keeping it efficient.",
-    "related": [],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 217,
-    "title": "Basic Calculator II",
-    "slug": "basic-calculator-ii",
-    "category": "Stack",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/basic-calculator-ii/",
-    "patterns": [
-      "Stack",
-      "Expression Parsing"
-    ],
-    "hints": [
-      "Handle operator precedence: * and / before + and -.",
-      "Use a stack. For + and -, push the number (with sign). For * and /, pop and compute immediately.",
-      "At the end, sum all values in the stack."
-    ],
-    "approach": "Scan left to right, building multi-digit numbers. Track the previous operator. For + or -, push the number onto the stack. For * or /, pop the top, compute, and push the result. Finally, sum the stack.",
-    "solution_python": "class Solution:\n    def calculate(self, s: str) -> int:\n        stack = []\n        num = 0\n        op = '+'\n        for i, c in enumerate(s):\n            if c.isdigit():\n                num = num * 10 + int(c)\n            if c in '+-*/' or i == len(s) - 1:\n                if op == '+':\n                    stack.append(num)\n                elif op == '-':\n                    stack.append(-num)\n                elif op == '*':\n                    stack.append(stack.pop() * num)\n                elif op == '/':\n                    stack.append(int(stack.pop() / num))\n                op = c\n                num = 0\n        return sum(stack)",
-    "solution_js": "var calculate = function(s) {\n    const stack = [];\n    let num = 0, op = '+';\n    for (let i = 0; i < s.length; i++) {\n        const c = s[i];\n        if (c >= '0' && c <= '9') num = num * 10 + parseInt(c);\n        if ('+-*/'.includes(c) || i === s.length - 1) {\n            if (op === '+') stack.push(num);\n            else if (op === '-') stack.push(-num);\n            else if (op === '*') stack.push(stack.pop() * num);\n            else if (op === '/') stack.push(Math.trunc(stack.pop() / num));\n            op = c;\n            num = 0;\n        }\n    }\n    return stack.reduce((a, b) => a + b, 0);\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "We scan the string once. Each stack operation is O(1).",
-    "space_complexity_explanation": "The stack can hold up to O(n) values in the worst case (all additions).",
-    "key_insight": "Deferred evaluation: push values for +/-, compute immediately for */. This naturally handles operator precedence.",
-    "related": [
-      216
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 218,
     "title": "Binary Tree Inorder Traversal",
     "slug": "binary-tree-inorder-traversal",
@@ -953,70 +740,6 @@
     "key_insight": "Upper bound recursion: each call consumes elements that fit within the current bound, naturally partitioning left and right subtrees.",
     "related": [
       218
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 220,
-    "title": "Vertical Order Traversal of a Binary Tree",
-    "slug": "vertical-order-traversal-of-a-binary-tree",
-    "category": "Trees",
-    "difficulty": "Hard",
-    "leetcode_url": "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/",
-    "patterns": [
-      "BFS",
-      "DFS",
-      "Sorting"
-    ],
-    "hints": [
-      "Assign each node a (column, row) coordinate. Root is (0, 0).",
-      "Left child: (col - 1, row + 1). Right child: (col + 1, row + 1).",
-      "Sort all nodes by column, then row, then value. Group by column."
-    ],
-    "approach": "DFS or BFS to assign (col, row) to each node. Collect all (col, row, val) triples. Sort by col, then row, then val. Group by column to produce the output.",
-    "solution_python": "class Solution:\n    def verticalTraversal(self, root: Optional[TreeNode]) -> List[List[int]]:\n        nodes = []\n        def dfs(node, row, col):\n            if not node:\n                return\n            nodes.append((col, row, node.val))\n            dfs(node.left, row + 1, col - 1)\n            dfs(node.right, row + 1, col + 1)\n        dfs(root, 0, 0)\n        nodes.sort()\n        result = []\n        prev_col = None\n        for col, row, val in nodes:\n            if col != prev_col:\n                result.append([])\n                prev_col = col\n            result[-1].append(val)\n        return result",
-    "solution_js": "var verticalTraversal = function(root) {\n    const nodes = [];\n    const dfs = (node, row, col) => {\n        if (!node) return;\n        nodes.push([col, row, node.val]);\n        dfs(node.left, row + 1, col - 1);\n        dfs(node.right, row + 1, col + 1);\n    };\n    dfs(root, 0, 0);\n    nodes.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);\n    const result = [];\n    let prevCol = null;\n    for (const [col, row, val] of nodes) {\n        if (col !== prevCol) { result.push([]); prevCol = col; }\n        result[result.length - 1].push(val);\n    }\n    return result;\n};",
-    "time_complexity": "O(n log n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "DFS is O(n), and sorting the n triples is O(n log n).",
-    "space_complexity_explanation": "Storing all n triples and the result takes O(n) space.",
-    "key_insight": "Sorting by (column, row, value) simultaneously handles vertical ordering, top-to-bottom ordering, and tie-breaking.",
-    "related": [
-      205,
-      218
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 221,
-    "title": "Populating Next Right Pointers in Each Node II",
-    "slug": "populating-next-right-pointers-in-each-node-ii",
-    "category": "Trees",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/",
-    "patterns": [
-      "BFS",
-      "Linked List on Tree"
-    ],
-    "hints": [
-      "Process the tree level by level. Use the next pointers you've already set to traverse each level.",
-      "Use a dummy node to track the start of the next level's linked list.",
-      "For each node on the current level, connect its children to the next-level chain."
-    ],
-    "approach": "Use previously established next pointers to traverse each level (like a linked list). For each node, attach its children to a 'next level' chain using a dummy head. After processing a level, move down to the next level via the dummy's next pointer.",
-    "solution_python": "class Solution:\n    def connect(self, root: 'Node') -> 'Node':\n        head = root\n        while head:\n            dummy = Node(0)\n            tail = dummy\n            curr = head\n            while curr:\n                if curr.left:\n                    tail.next = curr.left\n                    tail = tail.next\n                if curr.right:\n                    tail.next = curr.right\n                    tail = tail.next\n                curr = curr.next\n            head = dummy.next\n        return root",
-    "solution_js": "var connect = function(root) {\n    let head = root;\n    while (head) {\n        const dummy = {next: null};\n        let tail = dummy, curr = head;\n        while (curr) {\n            if (curr.left) { tail.next = curr.left; tail = tail.next; }\n            if (curr.right) { tail.next = curr.right; tail = tail.next; }\n            curr = curr.next;\n        }\n        head = dummy.next;\n    }\n    return root;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Each node is visited exactly once across all levels.",
-    "space_complexity_explanation": "Only a few pointer variables are used — no queue or recursion stack needed.",
-    "key_insight": "Use the next pointers from the current level as a linked list to traverse and build the next level's chain — achieving O(1) space BFS.",
-    "related": [
-      205
     ],
     "companies": [
       "microsoft"
@@ -1270,160 +993,6 @@
     ]
   },
   {
-    "id": 230,
-    "title": "Count and Say",
-    "slug": "count-and-say",
-    "category": "Strings",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/count-and-say/",
-    "patterns": [
-      "String Manipulation",
-      "Simulation"
-    ],
-    "hints": [
-      "Start with '1'. Each subsequent term describes the previous term using run-length encoding.",
-      "Group consecutive identical digits and encode as (count)(digit).",
-      "Iterate n-1 times, building each new string from the previous one."
-    ],
-    "approach": "Starting from '1', iteratively generate each term by run-length encoding the previous term. For each group of consecutive identical characters, append the count followed by the character.",
-    "solution_python": "class Solution:\n    def countAndSay(self, n: int) -> str:\n        s = '1'\n        for _ in range(n - 1):\n            result = []\n            i = 0\n            while i < len(s):\n                char = s[i]\n                count = 0\n                while i < len(s) and s[i] == char:\n                    i += 1\n                    count += 1\n                result.append(str(count) + char)\n            s = ''.join(result)\n        return s",
-    "solution_js": "var countAndSay = function(n) {\n    let s = '1';\n    for (let k = 1; k < n; k++) {\n        let result = '', i = 0;\n        while (i < s.length) {\n            const char = s[i];\n            let count = 0;\n            while (i < s.length && s[i] === char) { i++; count++; }\n            result += count + char;\n        }\n        s = result;\n    }\n    return s;\n};",
-    "time_complexity": "O(n × L)",
-    "space_complexity": "O(L)",
-    "time_complexity_explanation": "We iterate n times. Each iteration scans the current string of length L (which grows exponentially but is bounded in practice).",
-    "space_complexity_explanation": "Each iteration builds a new string of length proportional to L.",
-    "key_insight": "Run-length encoding is the core operation — group consecutive identical chars and describe each group.",
-    "related": [
-      211
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 231,
-    "title": "Bulls and Cows",
-    "slug": "bulls-and-cows",
-    "category": "Arrays & Hashing",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/bulls-and-cows/",
-    "patterns": [
-      "Hash Map",
-      "Counting"
-    ],
-    "hints": [
-      "Bulls are exact matches (same position and digit). Count those first.",
-      "For cows, count digit frequencies in secret and guess for non-bull positions.",
-      "Cows = sum of min(secret_count[d], guess_count[d]) for each digit d."
-    ],
-    "approach": "First pass: count bulls (exact position matches). Second: for non-bull positions, count digit frequencies in both strings. Cows are the sum of min(freq_secret[d], freq_guess[d]) for each digit.",
-    "solution_python": "class Solution:\n    def getHint(self, secret: str, guess: str) -> str:\n        bulls = 0\n        s_count = [0] * 10\n        g_count = [0] * 10\n        for s, g in zip(secret, guess):\n            if s == g:\n                bulls += 1\n            else:\n                s_count[int(s)] += 1\n                g_count[int(g)] += 1\n        cows = sum(min(s_count[i], g_count[i]) for i in range(10))\n        return f'{bulls}A{cows}B'",
-    "solution_js": "var getHint = function(secret, guess) {\n    let bulls = 0;\n    const sCount = new Array(10).fill(0);\n    const gCount = new Array(10).fill(0);\n    for (let i = 0; i < secret.length; i++) {\n        if (secret[i] === guess[i]) bulls++;\n        else {\n            sCount[+secret[i]]++;\n            gCount[+guess[i]]++;\n        }\n    }\n    let cows = 0;\n    for (let i = 0; i < 10; i++) cows += Math.min(sCount[i], gCount[i]);\n    return `${bulls}A${cows}B`;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "One pass through both strings of length n, plus a constant loop over 10 digits.",
-    "space_complexity_explanation": "Two arrays of fixed size 10 — constant space.",
-    "key_insight": "Separate exact matches (bulls) from misplaced matches (cows) by counting non-bull digit frequencies independently.",
-    "related": [
-      193
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 232,
-    "title": "Range Sum Query - Immutable",
-    "slug": "range-sum-query-immutable",
-    "category": "Arrays & Hashing",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/range-sum-query-immutable/",
-    "patterns": [
-      "Prefix Sum"
-    ],
-    "hints": [
-      "Precompute a prefix sum array where prefix[i] = sum of nums[0..i-1].",
-      "sumRange(left, right) = prefix[right+1] - prefix[left].",
-      "This gives O(1) range sum queries after O(n) preprocessing."
-    ],
-    "approach": "Build a prefix sum array during initialization. For each query sumRange(left, right), return prefix[right+1] - prefix[left]. This avoids recomputing the sum each time.",
-    "solution_python": "class NumArray:\n    def __init__(self, nums: List[int]):\n        self.prefix = [0]\n        for num in nums:\n            self.prefix.append(self.prefix[-1] + num)\n\n    def sumRange(self, left: int, right: int) -> int:\n        return self.prefix[right + 1] - self.prefix[left]",
-    "solution_js": "var NumArray = function(nums) {\n    this.prefix = [0];\n    for (const num of nums) this.prefix.push(this.prefix[this.prefix.length - 1] + num);\n};\nNumArray.prototype.sumRange = function(left, right) {\n    return this.prefix[right + 1] - this.prefix[left];\n};",
-    "time_complexity": "O(n) init, O(1) query",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "Building the prefix sum is O(n). Each sumRange query is a constant-time subtraction.",
-    "space_complexity_explanation": "The prefix sum array has n+1 elements.",
-    "key_insight": "prefix[right+1] - prefix[left] computes any subarray sum in O(1) — the fundamental prefix sum trick.",
-    "related": [
-      169
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 233,
-    "title": "Range Sum Query 2D - Immutable",
-    "slug": "range-sum-query-2d-immutable",
-    "category": "Arrays & Hashing",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/range-sum-query-2d-immutable/",
-    "patterns": [
-      "Prefix Sum",
-      "Matrix"
-    ],
-    "hints": [
-      "Extend 1D prefix sums to 2D. prefix[i][j] = sum of all elements in the rectangle (0,0) to (i-1,j-1).",
-      "Use inclusion-exclusion: sum(r1,c1,r2,c2) = prefix[r2+1][c2+1] - prefix[r1][c2+1] - prefix[r2+1][c1] + prefix[r1][c1].",
-      "Build the 2D prefix sum using: prefix[i][j] = matrix[i-1][j-1] + prefix[i-1][j] + prefix[i][j-1] - prefix[i-1][j-1]."
-    ],
-    "approach": "Build a 2D prefix sum matrix. For any rectangle query, use inclusion-exclusion on the four corners of the prefix sum to get the answer in O(1).",
-    "solution_python": "class NumMatrix:\n    def __init__(self, matrix: List[List[int]]):\n        m, n = len(matrix), len(matrix[0])\n        self.prefix = [[0] * (n + 1) for _ in range(m + 1)]\n        for i in range(1, m + 1):\n            for j in range(1, n + 1):\n                self.prefix[i][j] = (matrix[i-1][j-1] + self.prefix[i-1][j]\n                    + self.prefix[i][j-1] - self.prefix[i-1][j-1])\n\n    def sumRegion(self, r1: int, c1: int, r2: int, c2: int) -> int:\n        return (self.prefix[r2+1][c2+1] - self.prefix[r1][c2+1]\n                - self.prefix[r2+1][c1] + self.prefix[r1][c1])",
-    "solution_js": "var NumMatrix = function(matrix) {\n    const m = matrix.length, n = matrix[0].length;\n    this.p = Array.from({length: m+1}, () => new Array(n+1).fill(0));\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++)\n            this.p[i][j] = matrix[i-1][j-1] + this.p[i-1][j] + this.p[i][j-1] - this.p[i-1][j-1];\n};\nNumMatrix.prototype.sumRegion = function(r1, c1, r2, c2) {\n    return this.p[r2+1][c2+1] - this.p[r1][c2+1] - this.p[r2+1][c1] + this.p[r1][c1];\n};",
-    "time_complexity": "O(m×n) init, O(1) query",
-    "space_complexity": "O(m×n)",
-    "time_complexity_explanation": "Building the 2D prefix sum visits each cell once. Each query is O(1) using four lookups.",
-    "space_complexity_explanation": "The prefix sum matrix has (m+1)×(n+1) entries.",
-    "key_insight": "2D prefix sums with inclusion-exclusion: add the whole rectangle, subtract the two overlapping strips, add back the double-subtracted corner.",
-    "related": [
-      232,
-      169
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 234,
-    "title": "Snakes and Ladders",
-    "slug": "snakes-and-ladders",
-    "category": "Graphs",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/snakes-and-ladders/",
-    "patterns": [
-      "BFS"
-    ],
-    "hints": [
-      "Model the board as a graph where each cell can reach cells 1-6 steps ahead.",
-      "BFS from cell 1 finds the minimum number of dice rolls to reach cell n².",
-      "The tricky part is converting the Boustrophedon (zigzag) board indices to (row, col) coordinates."
-    ],
-    "approach": "BFS from square 1. For each square, try all 6 possible dice rolls. Convert the square number to board coordinates (handling the alternating row direction). If the destination has a snake/ladder, follow it. Track visited squares to avoid cycles.",
-    "solution_python": "class Solution:\n    def snakesAndLadders(self, board: List[List[int]]) -> int:\n        n = len(board)\n        def get_pos(s):\n            r, c = divmod(s - 1, n)\n            if r % 2 == 1:\n                c = n - 1 - c\n            return n - 1 - r, c\n        visited = set()\n        queue = [(1, 0)]\n        visited.add(1)\n        for sq, moves in queue:\n            if sq == n * n:\n                return moves\n            for dice in range(1, 7):\n                nxt = sq + dice\n                if nxt > n * n:\n                    continue\n                r, c = get_pos(nxt)\n                if board[r][c] != -1:\n                    nxt = board[r][c]\n                if nxt not in visited:\n                    visited.add(nxt)\n                    queue.append((nxt, moves + 1))\n        return -1",
-    "solution_js": "var snakesAndLadders = function(board) {\n    const n = board.length;\n    const getPos = (s) => {\n        let r = Math.floor((s - 1) / n);\n        let c = (s - 1) % n;\n        if (r % 2 === 1) c = n - 1 - c;\n        return [n - 1 - r, c];\n    };\n    const visited = new Set([1]);\n    const queue = [[1, 0]];\n    for (const [sq, moves] of queue) {\n        if (sq === n * n) return moves;\n        for (let dice = 1; dice <= 6; dice++) {\n            let nxt = sq + dice;\n            if (nxt > n * n) continue;\n            const [r, c] = getPos(nxt);\n            if (board[r][c] !== -1) nxt = board[r][c];\n            if (!visited.has(nxt)) {\n                visited.add(nxt);\n                queue.push([nxt, moves + 1]);\n            }\n        }\n    }\n    return -1;\n};",
-    "time_complexity": "O(n²)",
-    "space_complexity": "O(n²)",
-    "time_complexity_explanation": "BFS visits each of the n² squares at most once, with up to 6 edges per square.",
-    "space_complexity_explanation": "The visited set and queue store up to n² entries.",
-    "key_insight": "The Boustrophedon index conversion is the main implementation challenge — once solved, it's a standard BFS shortest-path problem.",
-    "related": [
-      214
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 235,
     "title": "Open the Lock",
     "slug": "open-the-lock",
@@ -1511,37 +1080,6 @@
     "key_insight": "With only 3 colors, the DP transition is simple: each color takes the min of the other two from the previous house.",
     "related": [
       227
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 238,
-    "title": "Rectangle Area",
-    "slug": "rectangle-area",
-    "category": "Math",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/rectangle-area/",
-    "patterns": [
-      "Math",
-      "Geometry"
-    ],
-    "hints": [
-      "Total area = area of rect1 + area of rect2 - overlap area.",
-      "The overlap region (if any) has: left = max(x1, x3), right = min(x2, x4), bottom = max(y1, y3), top = min(y2, y4).",
-      "If left < right AND bottom < top, there's an overlap. Otherwise, overlap is 0."
-    ],
-    "approach": "Compute both rectangle areas. Calculate the overlap rectangle's boundaries. If the overlap has positive width and height, subtract its area. Return area1 + area2 - overlap.",
-    "solution_python": "class Solution:\n    def computeArea(self, ax1, ay1, ax2, ay2, bx1, by1, bx2, by2) -> int:\n        area1 = (ax2 - ax1) * (ay2 - ay1)\n        area2 = (bx2 - bx1) * (by2 - by1)\n        overlap_w = max(0, min(ax2, bx2) - max(ax1, bx1))\n        overlap_h = max(0, min(ay2, by2) - max(ay1, by1))\n        return area1 + area2 - overlap_w * overlap_h",
-    "solution_js": "var computeArea = function(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2) {\n    const area1 = (ax2 - ax1) * (ay2 - ay1);\n    const area2 = (bx2 - bx1) * (by2 - by1);\n    const overlapW = Math.max(0, Math.min(ax2, bx2) - Math.max(ax1, bx1));\n    const overlapH = Math.max(0, Math.min(ay2, by2) - Math.max(ay1, by1));\n    return area1 + area2 - overlapW * overlapH;\n};",
-    "time_complexity": "O(1)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "All operations are constant-time arithmetic.",
-    "space_complexity_explanation": "Only a few variables are used.",
-    "key_insight": "Inclusion-exclusion with max(0, ...) for overlap dimensions elegantly handles both overlapping and non-overlapping cases.",
-    "related": [
-      233
     ],
     "companies": [
       "microsoft"
@@ -1644,69 +1182,6 @@
     ]
   },
   {
-    "id": 242,
-    "title": "Group Shifted Strings",
-    "slug": "group-shifted-strings",
-    "category": "Arrays & Hashing",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/group-shifted-strings/",
-    "patterns": [
-      "Hash Map",
-      "String Manipulation"
-    ],
-    "hints": [
-      "Two strings are in the same shift group if the differences between consecutive characters are the same.",
-      "Normalize each string by computing (char[i+1] - char[i]) % 26 for each pair.",
-      "Use this difference tuple as a hash map key to group strings."
-    ],
-    "approach": "For each string, compute a key based on the differences between consecutive characters (mod 26). Strings with identical difference patterns belong to the same shift group. Group by this key using a hash map.",
-    "solution_python": "class Solution:\n    def groupStrings(self, strings: List[str]) -> List[List[str]]:\n        groups = {}\n        for s in strings:\n            key = tuple((ord(s[i]) - ord(s[i-1])) % 26 for i in range(1, len(s)))\n            groups.setdefault(key, []).append(s)\n        return list(groups.values())",
-    "solution_js": "var groupStrings = function(strings) {\n    const groups = new Map();\n    for (const s of strings) {\n        const key = [];\n        for (let i = 1; i < s.length; i++)\n            key.push((s.charCodeAt(i) - s.charCodeAt(i-1) + 26) % 26);\n        const k = key.join(',');\n        if (!groups.has(k)) groups.set(k, []);\n        groups.get(k).push(s);\n    }\n    return [...groups.values()];\n};",
-    "time_complexity": "O(n × k)",
-    "space_complexity": "O(n × k)",
-    "time_complexity_explanation": "n strings of average length k. Computing the key for each string is O(k).",
-    "space_complexity_explanation": "The hash map stores all n strings and their keys.",
-    "key_insight": "The shift-invariant signature of a string is its sequence of consecutive character differences mod 26.",
-    "related": [
-      193,
-      231
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 243,
-    "title": "Prison Cells After N Days",
-    "slug": "prison-cells-after-n-days",
-    "category": "Bit Manipulation",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/prison-cells-after-n-days/",
-    "patterns": [
-      "Simulation",
-      "Cycle Detection"
-    ],
-    "hints": [
-      "There are only 2⁶ = 64 possible states (cells 0 and 7 are always 0 after day 1).",
-      "The state must cycle within at most 64 steps. Find the cycle length.",
-      "Once you find the cycle, compute N % cycle_length to skip ahead."
-    ],
-    "approach": "Simulate day by day. Since there are at most 64 distinct states, a cycle must appear within 64 steps. Track seen states and their day numbers. When a repeated state is found, compute the remaining days modulo the cycle length and simulate that many more steps.",
-    "solution_python": "class Solution:\n    def prisonAfterNDays(self, cells: List[int], n: int) -> List[int]:\n        def next_day(c):\n            return [0] + [1 if c[i-1] == c[i+1] else 0 for i in range(1, 7)] + [0]\n        seen = {}\n        day = 0\n        while day < n:\n            state = tuple(cells)\n            if state in seen:\n                cycle = day - seen[state]\n                remaining = (n - day) % cycle\n                for _ in range(remaining):\n                    cells = next_day(cells)\n                return cells\n            seen[state] = day\n            cells = next_day(cells)\n            day += 1\n        return cells",
-    "solution_js": "var prisonAfterNDays = function(cells, n) {\n    const nextDay = (c) => {\n        const res = [0,0,0,0,0,0,0,0];\n        for (let i = 1; i < 7; i++) res[i] = c[i-1] === c[i+1] ? 1 : 0;\n        return res;\n    };\n    const seen = new Map();\n    let day = 0;\n    while (day < n) {\n        const key = cells.join('');\n        if (seen.has(key)) {\n            const cycle = day - seen.get(key);\n            const remaining = (n - day) % cycle;\n            for (let i = 0; i < remaining; i++) cells = nextDay(cells);\n            return cells;\n        }\n        seen.set(key, day);\n        cells = nextDay(cells);\n        day++;\n    }\n    return cells;\n};",
-    "time_complexity": "O(2⁶ × 8)",
-    "space_complexity": "O(2⁶ × 8)",
-    "time_complexity_explanation": "At most 64 states before a cycle is found. Each state transition processes 8 cells.",
-    "space_complexity_explanation": "The seen map stores at most 64 state tuples of length 8.",
-    "key_insight": "With only 64 possible states, a cycle is guaranteed. Detect the cycle and use modular arithmetic to skip billions of days.",
-    "related": [
-      228
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 244,
     "title": "Trapping Rain Water II",
     "slug": "trapping-rain-water-ii",
@@ -1731,39 +1206,6 @@
     "space_complexity_explanation": "The heap and visited matrix each use O(m×n) space.",
     "key_insight": "Process boundary cells from lowest to highest (min-heap). Each cell's water level is constrained by the minimum boundary path to reach it.",
     "related": [],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 245,
-    "title": "Word Ladder II",
-    "slug": "word-ladder-ii",
-    "category": "Graphs",
-    "difficulty": "Hard",
-    "leetcode_url": "https://leetcode.com/problems/word-ladder-ii/",
-    "patterns": [
-      "BFS",
-      "DFS",
-      "Backtracking"
-    ],
-    "hints": [
-      "First, BFS from beginWord to find the shortest distance to each word.",
-      "Then, DFS/backtracking from endWord back to beginWord, only following edges that decrease distance by 1.",
-      "This two-phase approach avoids exploring exponentially many paths."
-    ],
-    "approach": "Phase 1: BFS from beginWord to build a distance map (word → shortest distance from start). Phase 2: DFS backtrack from endWord to beginWord, only moving to neighbors with distance exactly 1 less. Collect all shortest paths.",
-    "solution_python": "class Solution:\n    def findLadders(self, beginWord, endWord, wordList):\n        word_set = set(wordList)\n        if endWord not in word_set:\n            return []\n        dist = {beginWord: 0}\n        queue = [beginWord]\n        for word in queue:\n            d = dist[word]\n            for i in range(len(word)):\n                for c in 'abcdefghijklmnopqrstuvwxyz':\n                    nxt = word[:i] + c + word[i+1:]\n                    if nxt in word_set and nxt not in dist:\n                        dist[nxt] = d + 1\n                        queue.append(nxt)\n        if endWord not in dist:\n            return []\n        result = []\n        def dfs(word, path):\n            if word == beginWord:\n                result.append(path[::-1])\n                return\n            for i in range(len(word)):\n                for c in 'abcdefghijklmnopqrstuvwxyz':\n                    prev = word[:i] + c + word[i+1:]\n                    if prev in dist and dist[prev] == dist[word] - 1:\n                        dfs(prev, path + [prev])\n        dfs(endWord, [endWord])\n        return result",
-    "solution_js": "var findLadders = function(beginWord, endWord, wordList) {\n    const wordSet = new Set(wordList);\n    if (!wordSet.has(endWord)) return [];\n    const dist = new Map([[beginWord, 0]]);\n    const queue = [beginWord];\n    for (const word of queue) {\n        const d = dist.get(word);\n        for (let i = 0; i < word.length; i++) {\n            for (let c = 97; c <= 122; c++) {\n                const nxt = word.slice(0,i) + String.fromCharCode(c) + word.slice(i+1);\n                if (wordSet.has(nxt) && !dist.has(nxt)) {\n                    dist.set(nxt, d+1);\n                    queue.push(nxt);\n                }\n            }\n        }\n    }\n    if (!dist.has(endWord)) return [];\n    const result = [];\n    const dfs = (word, path) => {\n        if (word === beginWord) { result.push([...path].reverse()); return; }\n        for (let i = 0; i < word.length; i++) {\n            for (let c = 97; c <= 122; c++) {\n                const prev = word.slice(0,i) + String.fromCharCode(c) + word.slice(i+1);\n                if (dist.has(prev) && dist.get(prev) === dist.get(word) - 1)\n                    dfs(prev, [...path, prev]);\n            }\n        }\n    };\n    dfs(endWord, [endWord]);\n    return result;\n};",
-    "time_complexity": "O(n × L × 26 + P)",
-    "space_complexity": "O(n × L + P)",
-    "time_complexity_explanation": "BFS: n words × L length × 26 chars. DFS: proportional to the total length of all shortest paths P.",
-    "space_complexity_explanation": "Distance map stores n words. Output stores all P path entries.",
-    "key_insight": "BFS first builds a distance DAG; DFS backtracks along this DAG to enumerate only shortest paths — avoiding exponential blowup.",
-    "related": [
-      235,
-      234
-    ],
     "companies": [
       "microsoft"
     ]
@@ -1831,37 +1273,6 @@
     ]
   },
   {
-    "id": 248,
-    "title": "Lowest Common Ancestor of a Binary Tree III",
-    "slug": "lowest-common-ancestor-of-a-binary-tree-iii",
-    "category": "Trees",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iii/",
-    "patterns": [
-      "Two Pointers",
-      "Linked List Intersection"
-    ],
-    "hints": [
-      "Each node has a parent pointer — this makes the path from any node to root a linked list.",
-      "Finding LCA is equivalent to finding the intersection of two linked lists.",
-      "Use the two-pointer technique: when one pointer reaches root (null), redirect it to the other node's start."
-    ],
-    "approach": "Treat paths to root as two linked lists. Use two pointers starting at p and q. When a pointer reaches null (root's parent), redirect it to the other starting node. They will meet at the LCA after at most two traversals.",
-    "solution_python": "class Solution:\n    def lowestCommonAncestor(self, p: 'Node', q: 'Node') -> 'Node':\n        a, b = p, q\n        while a != b:\n            a = a.parent if a else q\n            b = b.parent if b else p\n        return a",
-    "solution_js": "var lowestCommonAncestor = function(p, q) {\n    let a = p, b = q;\n    while (a !== b) {\n        a = a ? a.parent : q;\n        b = b ? b.parent : p;\n    }\n    return a;\n};",
-    "time_complexity": "O(h)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Each pointer traverses at most 2h nodes (h = tree height) before they meet.",
-    "space_complexity_explanation": "Only two pointer variables are used — no extra data structures.",
-    "key_insight": "The two-pointer linked-list intersection trick works perfectly here — parent pointers make each node-to-root path a singly linked list.",
-    "related": [
-      175
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 249,
     "title": "Remove Duplicates from Sorted Array",
     "slug": "remove-duplicates-from-sorted-array",
@@ -1894,67 +1305,6 @@
     ]
   },
   {
-    "id": 250,
-    "title": "Remove Duplicates from Sorted Array II",
-    "slug": "remove-duplicates-from-sorted-array-ii",
-    "category": "Two Pointers",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/",
-    "patterns": [
-      "Two Pointers",
-      "In-Place"
-    ],
-    "hints": [
-      "Allow at most 2 duplicates. Compare each element to the one two positions back in the write area.",
-      "If nums[read] != nums[write - 2], it's safe to write.",
-      "This generalizes: for at most k duplicates, compare to nums[write - k]."
-    ],
-    "approach": "Write pointer starts at 2 (first two elements always stay). For each element from index 2 onward, write it only if it differs from nums[write - 2]. This ensures at most 2 copies of any value.",
-    "solution_python": "class Solution:\n    def removeDuplicates(self, nums: List[int]) -> int:\n        if len(nums) <= 2:\n            return len(nums)\n        w = 2\n        for r in range(2, len(nums)):\n            if nums[r] != nums[w - 2]:\n                nums[w] = nums[r]\n                w += 1\n        return w",
-    "solution_js": "var removeDuplicates = function(nums) {\n    if (nums.length <= 2) return nums.length;\n    let w = 2;\n    for (let r = 2; r < nums.length; r++) {\n        if (nums[r] !== nums[w - 2]) {\n            nums[w++] = nums[r];\n        }\n    }\n    return w;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Single pass through the array.",
-    "space_complexity_explanation": "In-place with only a write pointer.",
-    "key_insight": "Compare to nums[write - k] to allow at most k duplicates — a beautifully generalizable pattern.",
-    "related": [
-      249
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 251,
-    "title": "First Bad Version",
-    "slug": "first-bad-version",
-    "category": "Binary Search",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/first-bad-version/",
-    "patterns": [
-      "Binary Search"
-    ],
-    "hints": [
-      "Classic binary search for the leftmost True in a boolean array.",
-      "If mid is bad, the answer is mid or earlier: hi = mid.",
-      "If mid is good, the answer is after mid: lo = mid + 1."
-    ],
-    "approach": "Binary search on [1, n]. If isBadVersion(mid) is true, search left (hi = mid). Otherwise search right (lo = mid + 1). When lo == hi, that's the first bad version.",
-    "solution_python": "class Solution:\n    def firstBadVersion(self, n: int) -> int:\n        lo, hi = 1, n\n        while lo < hi:\n            mid = lo + (hi - lo) // 2\n            if isBadVersion(mid):\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo",
-    "solution_js": "var solution = function(isBadVersion) {\n    return function(n) {\n        let lo = 1, hi = n;\n        while (lo < hi) {\n            const mid = lo + ((hi - lo) >> 1);\n            if (isBadVersion(mid)) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    };\n};",
-    "time_complexity": "O(log n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Binary search halves the range each iteration.",
-    "space_complexity_explanation": "Only two pointer variables are used.",
-    "key_insight": "Use lo + (hi - lo) / 2 instead of (lo + hi) / 2 to avoid integer overflow — a critical binary search detail.",
-    "related": [
-      224
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 252,
     "title": "Search Insert Position",
     "slug": "search-insert-position",
@@ -1980,37 +1330,6 @@
     "related": [
       251,
       224
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 253,
-    "title": "Intersection of Two Linked Lists",
-    "slug": "intersection-of-two-linked-lists",
-    "category": "Linked Lists",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/intersection-of-two-linked-lists/",
-    "patterns": [
-      "Two Pointers",
-      "Linked List"
-    ],
-    "hints": [
-      "Two pointers starting at headA and headB. When one reaches the end, redirect to the other list's head.",
-      "Both pointers will have traversed the same total distance when they meet.",
-      "If no intersection, both pointers reach null at the same time."
-    ],
-    "approach": "Two-pointer technique. Pointer A starts at headA and pointer B at headB. When A reaches the end, redirect to headB; when B reaches the end, redirect to headA. They will meet at the intersection (or both reach null if no intersection).",
-    "solution_python": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:\n        a, b = headA, headB\n        while a != b:\n            a = a.next if a else headB\n            b = b.next if b else headA\n        return a",
-    "solution_js": "var getIntersectionNode = function(headA, headB) {\n    let a = headA, b = headB;\n    while (a !== b) {\n        a = a ? a.next : headB;\n        b = b ? b.next : headA;\n    }\n    return a;\n};",
-    "time_complexity": "O(m + n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Each pointer traverses at most m + n nodes before they meet or both reach null.",
-    "space_complexity_explanation": "Only two pointer variables are used.",
-    "key_insight": "By redirecting to the other list's head, both pointers travel the same total distance (lenA + lenB), equalizing their paths to the intersection.",
-    "related": [
-      248
     ],
     "companies": [
       "microsoft"
@@ -2269,36 +1588,6 @@
     ]
   },
   {
-    "id": 262,
-    "title": "Word Pattern",
-    "slug": "word-pattern",
-    "category": "Arrays & Hashing",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/word-pattern/",
-    "patterns": [
-      "Hash Map"
-    ],
-    "hints": [
-      "Same as Isomorphic Strings but mapping pattern characters to words.",
-      "Split the string into words. Check bijection: pattern[i]↔words[i].",
-      "If the number of words doesn't match the pattern length, return false."
-    ],
-    "approach": "Split s into words. If lengths differ, return false. Use two maps (char→word and word→char) to verify a consistent bijection at every position.",
-    "solution_python": "class Solution:\n    def wordPattern(self, pattern: str, s: str) -> bool:\n        words = s.split()\n        if len(pattern) != len(words):\n            return False\n        p_to_w = {}\n        w_to_p = {}\n        for c, w in zip(pattern, words):\n            if c in p_to_w and p_to_w[c] != w:\n                return False\n            if w in w_to_p and w_to_p[w] != c:\n                return False\n            p_to_w[c] = w\n            w_to_p[w] = c\n        return True",
-    "solution_js": "var wordPattern = function(pattern, s) {\n    const words = s.split(' ');\n    if (pattern.length !== words.length) return false;\n    const pToW = new Map(), wToP = new Map();\n    for (let i = 0; i < pattern.length; i++) {\n        const c = pattern[i], w = words[i];\n        if (pToW.has(c) && pToW.get(c) !== w) return false;\n        if (wToP.has(w) && wToP.get(w) !== c) return false;\n        pToW.set(c, w);\n        wToP.set(w, c);\n    }\n    return true;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "One pass through the pattern and words.",
-    "space_complexity_explanation": "Maps store up to n entries (n = number of words).",
-    "key_insight": "Identical approach to Isomorphic Strings — bijection check with dual maps, just operating on chars↔words instead of chars↔chars.",
-    "related": [
-      261
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 263,
     "title": "Pascal's Triangle",
     "slug": "pascals-triangle",
@@ -2360,69 +1649,6 @@
     ]
   },
   {
-    "id": 265,
-    "title": "Top K Frequent Words",
-    "slug": "top-k-frequent-words",
-    "category": "Heap / Priority Queue",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/top-k-frequent-words/",
-    "patterns": [
-      "Hash Map",
-      "Heap",
-      "Sorting"
-    ],
-    "hints": [
-      "Count word frequencies using a hash map.",
-      "Use a min-heap of size k — push (frequency, word) pairs.",
-      "For ties in frequency, words should be in alphabetical order. Invert comparison logic in the heap."
-    ],
-    "approach": "Count frequencies with a hash map. Sort unique words by (-frequency, word) to handle both frequency (descending) and alphabetical (ascending) ordering. Return the first k words.",
-    "solution_python": "class Solution:\n    def topKFrequent(self, words: List[str], k: int) -> List[str]:\n        from collections import Counter\n        count = Counter(words)\n        return sorted(count.keys(), key=lambda w: (-count[w], w))[:k]",
-    "solution_js": "var topKFrequent = function(words, k) {\n    const count = new Map();\n    for (const w of words) count.set(w, (count.get(w) || 0) + 1);\n    return [...count.keys()]\n        .sort((a, b) => count.get(b) - count.get(a) || a.localeCompare(b))\n        .slice(0, k);\n};",
-    "time_complexity": "O(n log n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "Counting is O(n). Sorting unique words is O(m log m) where m ≤ n. Can be optimized to O(n log k) with a heap.",
-    "space_complexity_explanation": "The frequency map stores up to n entries.",
-    "key_insight": "Sort by (-frequency, word) handles both criteria in one sort — descending frequency, ascending alphabetical for ties.",
-    "related": [
-      193
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 266,
-    "title": "Shortest Unsorted Continuous Subarray",
-    "slug": "shortest-unsorted-continuous-subarray",
-    "category": "Arrays & Hashing",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/",
-    "patterns": [
-      "Two Pointers",
-      "Stack"
-    ],
-    "hints": [
-      "Find the leftmost and rightmost positions that are 'out of place' in the sorted order.",
-      "Scan left to right: track the max seen. If current < max, this position needs sorting (update right boundary).",
-      "Scan right to left: track the min seen. If current > min, this position needs sorting (update left boundary)."
-    ],
-    "approach": "Two passes. Left-to-right: track running maximum. Whenever an element is less than the running max, update the right boundary. Right-to-left: track running minimum. Whenever an element is greater than the running min, update the left boundary. The answer is right - left + 1.",
-    "solution_python": "class Solution:\n    def findUnsortedSubarray(self, nums: List[int]) -> int:\n        n = len(nums)\n        left, right = n, 0\n        max_val = float('-inf')\n        for i in range(n):\n            if nums[i] < max_val:\n                right = i\n            max_val = max(max_val, nums[i])\n        min_val = float('inf')\n        for i in range(n - 1, -1, -1):\n            if nums[i] > min_val:\n                left = i\n            min_val = min(min_val, nums[i])\n        return right - left + 1 if right > left else 0",
-    "solution_js": "var findUnsortedSubarray = function(nums) {\n    const n = nums.length;\n    let left = n, right = 0;\n    let maxVal = -Infinity;\n    for (let i = 0; i < n; i++) {\n        if (nums[i] < maxVal) right = i;\n        maxVal = Math.max(maxVal, nums[i]);\n    }\n    let minVal = Infinity;\n    for (let i = n - 1; i >= 0; i--) {\n        if (nums[i] > minVal) left = i;\n        minVal = Math.min(minVal, nums[i]);\n    }\n    return right > left ? right - left + 1 : 0;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Two linear passes through the array.",
-    "space_complexity_explanation": "Only a few tracking variables are used.",
-    "key_insight": "An element is 'out of place' if a larger element exists to its left or a smaller element exists to its right — two passes detect the boundaries.",
-    "related": [
-      249
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
     "id": 267,
     "title": "Delete and Earn",
     "slug": "delete-and-earn",
@@ -2448,37 +1674,6 @@
     "related": [
       237,
       259
-    ],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 268,
-    "title": "Minimum Cost For Tickets",
-    "slug": "minimum-cost-for-tickets",
-    "category": "Dynamic Programming",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/minimum-cost-for-tickets/",
-    "patterns": [
-      "Dynamic Programming"
-    ],
-    "hints": [
-      "dp[i] = minimum cost to cover all travel days up to day i.",
-      "If day i is not a travel day, dp[i] = dp[i-1].",
-      "If day i is a travel day, dp[i] = min(dp[i-1] + cost[0], dp[max(0,i-7)] + cost[1], dp[max(0,i-30)] + cost[2])."
-    ],
-    "approach": "DP over the calendar. For each day from 1 to last travel day: if not a travel day, dp[i] = dp[i-1]. If a travel day, take the minimum of buying a 1-day, 7-day, or 30-day pass.",
-    "solution_python": "class Solution:\n    def mincostTickets(self, days: List[int], costs: List[int]) -> int:\n        travel = set(days)\n        last = days[-1]\n        dp = [0] * (last + 1)\n        for i in range(1, last + 1):\n            if i not in travel:\n                dp[i] = dp[i - 1]\n            else:\n                dp[i] = min(\n                    dp[i - 1] + costs[0],\n                    dp[max(0, i - 7)] + costs[1],\n                    dp[max(0, i - 30)] + costs[2]\n                )\n        return dp[last]",
-    "solution_js": "var mincostTickets = function(days, costs) {\n    const travel = new Set(days);\n    const last = days[days.length - 1];\n    const dp = new Array(last + 1).fill(0);\n    for (let i = 1; i <= last; i++) {\n        if (!travel.has(i)) dp[i] = dp[i - 1];\n        else dp[i] = Math.min(\n            dp[i - 1] + costs[0],\n            dp[Math.max(0, i - 7)] + costs[1],\n            dp[Math.max(0, i - 30)] + costs[2]\n        );\n    }\n    return dp[last];\n};",
-    "time_complexity": "O(D)",
-    "space_complexity": "O(D)",
-    "time_complexity_explanation": "D = last travel day. We compute dp for each day from 1 to D.",
-    "space_complexity_explanation": "DP array of size D + 1.",
-    "key_insight": "On travel days, compare all pass durations. On non-travel days, the cost carries forward unchanged — elegantly sparse DP.",
-    "related": [
-      267,
-      237
     ],
     "companies": [
       "microsoft"
@@ -3999,36 +3194,6 @@
     "time_complexity_explanation": "We iterate n times, and each digit removal from the list costs O(n), giving O(n^2) total.",
     "space_complexity_explanation": "We store the list of available digits and the result string, both of size n.",
     "key_insight": "The factorial number system lets you directly compute the k-th permutation digit by digit without generating all permutations.",
-    "related": [],
-    "companies": [
-      "microsoft"
-    ]
-  },
-  {
-    "id": 322,
-    "title": "Classes With at Least 5 Students",
-    "slug": "classes-more-than-5-students",
-    "category": "SQL",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/classes-more-than-5-students/",
-    "patterns": [
-      "SQL Aggregation",
-      "GROUP BY",
-      "HAVING"
-    ],
-    "hints": [
-      "Group the rows by class to count students in each class.",
-      "Use HAVING to filter groups after aggregation.",
-      "The HAVING clause filters on aggregate results, unlike WHERE which filters individual rows."
-    ],
-    "approach": "Group the Courses table by class, count the students in each group, and use HAVING to return only classes with 5 or more students.",
-    "solution_python": "SELECT class FROM Courses GROUP BY class HAVING COUNT(student) >= 5;",
-    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "The query scans all n rows once for grouping and counting.",
-    "space_complexity_explanation": "Space is proportional to the number of distinct classes for the grouping operation.",
-    "key_insight": "GROUP BY with HAVING is the standard pattern for filtering based on aggregate conditions like counts or sums.",
     "related": [],
     "companies": [
       "microsoft"
