@@ -31,21 +31,23 @@ const CHAPTERS = [
 const BASE_URL = 'https://raw.githubusercontent.com/liquidslr/system-design-notes/main';
 const cache = new Map();
 
-function chapterUrl(folder) {
-  return `${BASE_URL}/${encodeURIComponent(folder)}/Readme.md`;
-}
-
 function githubUrl(folder) {
   return `https://github.com/liquidslr/system-design-notes/tree/main/${encodeURIComponent(folder)}`;
 }
 
 async function fetchChapter(folder) {
   if (cache.has(folder)) return cache.get(folder);
-  const res = await fetch(chapterUrl(folder));
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
-  cache.set(folder, text);
-  return text;
+  // Some chapters use Readme.md, others use README.md — try both
+  const base = `${BASE_URL}/${encodeURIComponent(folder)}`;
+  for (const name of ['Readme.md', 'README.md']) {
+    const res = await fetch(`${base}/${name}`);
+    if (res.ok) {
+      const text = await res.text();
+      cache.set(folder, text);
+      return text;
+    }
+  }
+  throw new Error('README not found');
 }
 
 /** Minimal inline markdown → HTML renderer */
