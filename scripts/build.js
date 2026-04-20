@@ -10,7 +10,7 @@ const ROOT = path.join(__dirname, '..');
 const SRC_DATA = path.join(ROOT, 'src', 'data');
 
 function mergeProblems() {
-  const files = ['problems-part1.json', 'problems-part2.json', 'problems-part3.json', 'problems-companies.json'];
+  const files = ['problems-part1.json', 'problems-part2.json', 'problems-part3.json', 'problems-companies.json', 'microsoft-problems.json'];
   let allProblems = [];
 
   for (const file of files) {

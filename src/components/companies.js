@@ -1,14 +1,5 @@
 import { createElement, getDifficultyColor, escapeHtml } from '../utils/helpers.js';
 
-const COMPANIES = [
-  { slug: 'google',    name: 'Google',    emoji: '🔵' },
-  { slug: 'amazon',   name: 'Amazon',    emoji: '🟠' },
-  { slug: 'apple',    name: 'Apple',     emoji: '⚫' },
-  { slug: 'netflix',  name: 'Netflix',   emoji: '🔴' },
-  { slug: 'meta',     name: 'Meta',      emoji: '🟣' },
-  { slug: 'microsoft',name: 'Microsoft', emoji: '🟩' },
-];
-
 const PERIODS = [
   { key: 'all',           label: 'All Time',     file: 'all.csv' },
   { key: 'six-months',    label: '6 Months',     file: 'six-months.csv' },
@@ -75,20 +66,15 @@ export async function renderCompanies(container, problems, progress) {
   // Header
   const header = createElement('div', 'companies-header');
   header.innerHTML = `
-    <h2>Company Interview Problems</h2>
-    <p class="companies-subtitle">Top LeetCode problems asked by major tech companies, with full study experience.</p>
+    <div class="ms-header-brand">
+      <span class="ms-logo">🪟</span>
+      <div>
+        <h2>Microsoft Interview Problems</h2>
+        <p class="companies-subtitle">Top LeetCode problems asked at Microsoft, sorted by interview frequency.</p>
+      </div>
+    </div>
   `;
   page.appendChild(header);
-
-  // Company tabs
-  const companyTabs = createElement('div', 'company-tabs');
-  COMPANIES.forEach(c => {
-    const tab = createElement('button', 'company-tab');
-    tab.dataset.slug = c.slug;
-    tab.innerHTML = `<span class="company-emoji">${c.emoji}</span>${c.name}`;
-    companyTabs.appendChild(tab);
-  });
-  page.appendChild(companyTabs);
 
   // Period tabs
   const periodTabs = createElement('div', 'period-tabs');
@@ -108,16 +94,7 @@ export async function renderCompanies(container, problems, progress) {
   container.appendChild(page);
 
   // State
-  let currentCompany = COMPANIES[0];
   let currentPeriod = PERIODS[0];
-
-  function setActiveCompany(slug) {
-    currentCompany = COMPANIES.find(c => c.slug === slug);
-    companyTabs.querySelectorAll('.company-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.slug === slug);
-    });
-    loadTable();
-  }
 
   function setActivePeriod(key) {
     currentPeriod = PERIODS.find(p => p.key === key);
@@ -127,19 +104,15 @@ export async function renderCompanies(container, problems, progress) {
     loadTable();
   }
 
-  companyTabs.addEventListener('click', e => {
-    const tab = e.target.closest('.company-tab');
-    if (tab) setActiveCompany(tab.dataset.slug);
-  });
   periodTabs.addEventListener('click', e => {
     const tab = e.target.closest('.period-tab');
     if (tab) setActivePeriod(tab.dataset.key);
   });
 
   async function loadTable() {
-    resultsArea.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><p>Loading ${currentCompany.name} problems…</p></div>`;
+    resultsArea.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><p>Loading Microsoft problems…</p></div>`;
     try {
-      const rows = await fetchCSV(currentCompany.slug, currentPeriod.file);
+      const rows = await fetchCSV('microsoft', currentPeriod.file);
       renderTable(rows);
     } catch (err) {
       resultsArea.innerHTML = `
@@ -243,6 +216,5 @@ export async function renderCompanies(container, problems, progress) {
   }
 
   // Initialize
-  setActiveCompany(COMPANIES[0].slug);
   setActivePeriod(PERIODS[0].key);
 }

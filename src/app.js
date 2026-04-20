@@ -216,7 +216,7 @@ class App {
           renderCompanies(this.mainContent, this.problems, this.progress);
           break;
         case 'system-design':
-          renderSystemDesign(this.mainContent);
+          renderSystemDesign(this.mainContent, param ? parseInt(param) || 1 : 1);
           break;
         default:
           renderDashboard(this.mainContent, this.problems, this.progress);

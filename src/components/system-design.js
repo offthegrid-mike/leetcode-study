@@ -49,7 +49,7 @@ async function fetchChapter(folder) {
 }
 
 /** Minimal inline markdown → HTML renderer */
-function renderMarkdown(md) {
+function renderMarkdown(md, baseImageUrl = '') {
   const lines = md.split('\n');
   const html = [];
   let inCodeBlock = false;
@@ -67,10 +67,25 @@ function renderMarkdown(md) {
     if (inParagraph) { html.push('</p>'); inParagraph = false; }
   }
 
+  function resolveImageSrc(src) {
+    if (!src || src.startsWith('http')) return src;
+    // Strip leading ./ and combine with base URL
+    const relative = src.replace(/^\.\//, '');
+    return baseImageUrl ? `${baseImageUrl}/${relative}` : src;
+  }
+
+  function rewriteImgTag(tag) {
+    // Rewrite src to absolute URL, preserve alt, strip width/height/style for responsive CSS
+    return tag.replace(/\bsrc=["']([^"']*)["']/i, (_, src) => {
+      const abs = resolveImageSrc(src);
+      return `src="${abs}"`;
+    }).replace(/\s*(width|height|style)=["'][^"']*["']/gi, '');
+  }
+
   function inlineFormat(text) {
-    // Strip <div ...> and <img ...> tags; replace <img> with placeholder preserving alt
-    text = text.replace(/<img[^>]*alt=["']([^"']*)["'][^>]*>/gi, '📷 [image not available in app — view on GitHub] ($1)');
-    text = text.replace(/<img[^>]*>/gi, '📷 [image not available in app — view on GitHub]');
+    // Rewrite <img> src to absolute URLs (render as actual images)
+    text = text.replace(/<img([^>]*)>/gi, (_, attrs) => rewriteImgTag(`<img${attrs}>`));
+    // Strip <div> wrapper tags (keep content, discard styling)
     text = text.replace(/<div[^>]*>/gi, '').replace(/<\/div>/gi, '');
 
     // Links: [text](url)
@@ -194,10 +209,10 @@ function renderMarkdown(md) {
   return html.join('\n');
 }
 
-export async function renderSystemDesign(container) {
+export async function renderSystemDesign(container, initialChapterId = 1) {
   container.innerHTML = '';
 
-  let currentChapterId = 1;
+  let currentChapterId = initialChapterId;
   let readProgress = {};
   try {
     readProgress = (await getSetting('sdProgress')) || {};
@@ -209,27 +224,46 @@ export async function renderSystemDesign(container) {
   // Sidebar
   const sidebar = createElement('div', 'sd-sidebar');
   const sidebarTitle = createElement('h2', '', '🏗️ System Design');
+
+  // Search bar
+  const searchInput = createElement('input', 'sd-search-input');
+  searchInput.type = 'search';
+  searchInput.placeholder = '🔍 Search chapters…';
+  searchInput.setAttribute('aria-label', 'Search chapters');
+
   const chapterList = createElement('ul', 'sd-chapter-list');
 
-  CHAPTERS.forEach(ch => {
-    const item = createElement('li', 'sd-chapter-item');
-    if (readProgress[ch.folder]) item.classList.add('sd-read');
-    const link = createElement('a', 'sd-chapter-link', `${ch.id}. ${ch.title}`);
-    link.href = '#';
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      loadChapter(ch.id);
+  function renderChapterList(filter = '') {
+    chapterList.innerHTML = '';
+    const q = filter.toLowerCase().trim();
+    CHAPTERS.forEach(ch => {
+      if (q && !ch.title.toLowerCase().includes(q)) return;
+      const item = createElement('li', 'sd-chapter-item');
+      if (readProgress[ch.folder]) item.classList.add('sd-read');
+      if (parseInt(item.dataset.chapterId) === currentChapterId) item.classList.add('active');
+      const link = createElement('a', 'sd-chapter-link', `${ch.id}. ${ch.title}`);
+      link.href = `#/system-design/${ch.id}`;
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        loadChapter(ch.id);
+      });
+      item.appendChild(link);
+      if (readProgress[ch.folder]) {
+        const check = createElement('span', 'sd-read-badge', '✓');
+        item.appendChild(check);
+      }
+      item.dataset.chapterId = ch.id;
+      chapterList.appendChild(item);
     });
-    item.appendChild(link);
-    if (readProgress[ch.folder]) {
-      const check = createElement('span', 'sd-read-badge', '✓');
-      item.appendChild(check);
+    if (q && chapterList.children.length === 0) {
+      chapterList.innerHTML = '<li class="sd-no-results">No chapters match</li>';
     }
-    item.dataset.chapterId = ch.id;
-    chapterList.appendChild(item);
-  });
+  }
+
+  searchInput.addEventListener('input', () => renderChapterList(searchInput.value));
 
   sidebar.appendChild(sidebarTitle);
+  sidebar.appendChild(searchInput);
   sidebar.appendChild(chapterList);
 
   // Content area
@@ -324,6 +358,12 @@ export async function renderSystemDesign(container) {
     if (!ch) return;
     currentChapterId = id;
 
+    // Update URL hash without triggering a full navigation
+    const newHash = `#/system-design/${id}`;
+    if (window.location.hash !== newHash) {
+      history.replaceState(null, '', newHash);
+    }
+
     updateActiveChapter(id);
     renderContentHeader(ch);
     renderNavFooter(id);
@@ -334,7 +374,8 @@ export async function renderSystemDesign(container) {
 
     try {
       const md = await fetchChapter(ch.folder);
-      markdownBody.innerHTML = renderMarkdown(md);
+      const baseImageUrl = `${BASE_URL}/${encodeURIComponent(ch.folder)}`;
+      markdownBody.innerHTML = renderMarkdown(md, baseImageUrl);
     } catch {
       markdownBody.innerHTML = `
         <div class="sd-error">
@@ -346,6 +387,7 @@ export async function renderSystemDesign(container) {
     }
   }
 
-  // Load first chapter
-  loadChapter(1);
+  // Render initial chapter list and load first chapter
+  renderChapterList();
+  loadChapter(initialChapterId);
 }
