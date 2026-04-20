@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mergeProgress, mergeSessions } from '../src/lib/gist-sync.js';
+import { mergeProgress, mergeSessions, mergeSettings } from '../src/lib/gist-sync.js';
 
 describe('mergeProgress', () => {
   it('merges disjoint records', () => {
@@ -117,5 +117,68 @@ describe('mergeSessions', () => {
 
   it('both empty', () => {
     expect(mergeSessions([], [])).toEqual([]);
+  });
+});
+
+describe('mergeSettings', () => {
+  it('unions sdProgress from both devices', () => {
+    const local = [{ key: 'sdProgress', value: { 'ch1': true, 'ch2': false } }];
+    const remote = [{ key: 'sdProgress', value: { 'ch2': true, 'ch3': true } }];
+    const result = mergeSettings(local, remote);
+    expect(result.sdProgress).toEqual({ ch1: true, ch2: true, ch3: true });
+  });
+
+  it('sdProgress: false on both stays false', () => {
+    const local = [{ key: 'sdProgress', value: { 'ch1': false } }];
+    const remote = [{ key: 'sdProgress', value: { 'ch1': false } }];
+    const result = mergeSettings(local, remote);
+    expect(result.sdProgress.ch1).toBe(false);
+  });
+
+  it('sdProgress: missing local treated as empty object', () => {
+    const local = [];
+    const remote = [{ key: 'sdProgress', value: { 'ch1': true } }];
+    const result = mergeSettings(local, remote);
+    expect(result.sdProgress).toEqual({ ch1: true });
+  });
+
+  it('unions bookmarks from both devices', () => {
+    const local = [{ key: 'bookmarks', value: [1, 2] }];
+    const remote = [{ key: 'bookmarks', value: [2, 3] }];
+    const result = mergeSettings(local, remote);
+    expect(result.bookmarks.sort()).toEqual([1, 2, 3]);
+  });
+
+  it('fills in missing keys from remote', () => {
+    const local = [];
+    const remote = [{ key: 'theme', value: 'dark' }];
+    const result = mergeSettings(local, remote);
+    expect(result.theme).toBe('dark');
+  });
+
+  it('does not overwrite existing local keys with remote', () => {
+    const local = [{ key: 'theme', value: 'light' }];
+    const remote = [{ key: 'theme', value: 'dark' }];
+    const result = mergeSettings(local, remote);
+    expect(result.theme).toBeUndefined(); // local already had it, no update
+  });
+
+  it('never touches secret keys', () => {
+    const local = [];
+    const remote = [
+      { key: 'githubToken', value: 'secret' },
+      { key: 'syncGistId', value: 'gist123' },
+      { key: 'lastSyncedAt', value: '2025-01-01' },
+    ];
+    const result = mergeSettings(local, remote);
+    expect(result.githubToken).toBeUndefined();
+    expect(result.syncGistId).toBeUndefined();
+    expect(result.lastSyncedAt).toBeUndefined();
+  });
+
+  it('returns empty object when remote is empty', () => {
+    const local = [{ key: 'sdProgress', value: { ch1: true } }];
+    const result = mergeSettings(local, []);
+    expect(result).toEqual({});
   });
 });

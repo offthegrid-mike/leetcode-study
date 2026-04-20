@@ -15,6 +15,9 @@ import {
   addStudySession,
 } from './storage.js';
 
+// Keys that must never be overwritten from remote
+const SETTINGS_SECRET_KEYS = ['githubToken', 'syncGistId', 'lastSyncedAt'];
+
 const GIST_FILENAME = 'leetcode-study-sync.json';
 const SYNC_MAX_RETRIES = 3;
 
@@ -141,6 +144,45 @@ export function mergeSessions(localSessions, remoteSessions) {
   return merged;
 }
 
+/**
+ * Merge settings from two devices.
+ * - Secret/auth keys are never touched.
+ * - `sdProgress` and `bookmarks`: union (additive — a chapter read or problem
+ *   bookmarked on either device stays that way on both).
+ * - Everything else: remote value fills in only if the key is absent locally.
+ *
+ * Returns a plain object of { key → value } for the keys that need updating.
+ */
+export function mergeSettings(localSettings, remoteSettings) {
+  const localMap = new Map(localSettings.map(s => [s.key, s.value]));
+  const updates = {};
+
+  for (const { key, value } of remoteSettings) {
+    if (SETTINGS_SECRET_KEYS.includes(key)) continue;
+
+    if (key === 'sdProgress') {
+      const local = localMap.get('sdProgress') || {};
+      const merged = {};
+      const allKeys = new Set([...Object.keys(local), ...Object.keys(value || {})]);
+      for (const k of allKeys) {
+        merged[k] = !!(local[k] || (value && value[k]));
+      }
+      updates[key] = merged;
+    } else if (key === 'bookmarks') {
+      const local = localMap.get('bookmarks') || [];
+      const remote = value || [];
+      updates[key] = [...new Set([...local, ...remote])];
+    } else {
+      // Remote fills in values that are absent locally
+      if (!localMap.has(key)) {
+        updates[key] = value;
+      }
+    }
+  }
+
+  return updates;
+}
+
 // ── Public API ──────────────────────────────────────────────────────
 
 /**
@@ -200,6 +242,12 @@ export async function syncNow() {
     if (session.uuid && !localUuids.has(session.uuid)) {
       await addStudySession(session);
     }
+  }
+
+  // Merge settings (sdProgress, bookmarks unioned; missing keys filled from remote)
+  const settingsUpdates = mergeSettings(local.settings, remote.settings || []);
+  for (const [key, value] of Object.entries(settingsUpdates)) {
+    await setSetting(key, value);
   }
 
   // Re-export merged local state and push to gist
