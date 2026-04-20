@@ -191,9 +191,12 @@ export async function renderCompanies(container, problems, progress) {
     });
 
     table.appendChild(tbody);
+    const tableWrapper = document.createElement('div');
+    tableWrapper.className = 'table-scroll-wrapper';
+    tableWrapper.appendChild(table);
     resultsArea.innerHTML = '';
     resultsArea.appendChild(summaryDiv);
-    resultsArea.appendChild(table);
+    resultsArea.appendChild(tableWrapper);
 
     // Mock interview button
     mockBtn.addEventListener('click', () => {
