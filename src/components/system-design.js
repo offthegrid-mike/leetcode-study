@@ -71,8 +71,8 @@ function renderMarkdown(md, baseImageUrl = '') {
 
   function resolveImageSrc(src) {
     if (!src || src.startsWith('http')) return src;
-    // Strip leading ./ and combine with base URL
-    const relative = src.replace(/^\.\//, '');
+    // Strip leading ./ and normalize consecutive slashes before combining with base URL
+    const relative = src.replace(/^\.\//, '').replace(/\/+/g, '/');
     return baseImageUrl ? `${baseImageUrl}/${relative}` : src;
   }
 
@@ -90,6 +90,11 @@ function renderMarkdown(md, baseImageUrl = '') {
     // Strip <div> wrapper tags (keep content, discard styling)
     text = text.replace(/<div[^>]*>/gi, '').replace(/<\/div>/gi, '');
 
+    // Images: ![alt](url) — must come before link handler
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+      const abs = resolveImageSrc(src);
+      return `<img src="${abs}" alt="${alt}">`;
+    });
     // Links: [text](url)
     text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) =>
       `<a href="${u}" target="_blank" rel="noopener">${t}</a>`
