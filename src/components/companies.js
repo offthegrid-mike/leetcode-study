@@ -7,6 +7,11 @@ const PERIODS = [
   { key: 'thirty-days',   label: '30 Days',      file: 'thirty-days.csv' },
 ];
 
+const COMPANIES = [
+  { key: 'microsoft', label: 'Microsoft', emoji: '🪟', description: 'Top LeetCode problems asked at Microsoft, sorted by interview frequency.' },
+  { key: 'google',    label: 'Google',    emoji: '🔍', description: 'Top LeetCode problems asked at Google, sorted by interview frequency.' },
+];
+
 const BASE_URL = 'https://raw.githubusercontent.com/snehasishroy/leetcode-companywise-interview-questions/master/';
 
 // sessionStorage cache key
@@ -63,17 +68,18 @@ export async function renderCompanies(container, problems, progress) {
 
   const page = createElement('div', 'page-companies');
 
-  // Header
+  // Company tabs
+  const companyTabs = createElement('div', 'company-tabs');
+  COMPANIES.forEach(c => {
+    const tab = createElement('button', 'company-tab');
+    tab.dataset.key = c.key;
+    tab.innerHTML = `<span class="company-emoji">${c.emoji}</span>${c.label}`;
+    companyTabs.appendChild(tab);
+  });
+  page.appendChild(companyTabs);
+
+  // Header (updated dynamically)
   const header = createElement('div', 'companies-header');
-  header.innerHTML = `
-    <div class="ms-header-brand">
-      <span class="ms-logo">🪟</span>
-      <div>
-        <h2>Microsoft Interview Problems</h2>
-        <p class="companies-subtitle">Top LeetCode problems asked at Microsoft, sorted by interview frequency.</p>
-      </div>
-    </div>
-  `;
   page.appendChild(header);
 
   // Period tabs
@@ -94,7 +100,25 @@ export async function renderCompanies(container, problems, progress) {
   container.appendChild(page);
 
   // State
+  let currentCompany = COMPANIES[0];
   let currentPeriod = PERIODS[0];
+
+  function setActiveCompany(key) {
+    currentCompany = COMPANIES.find(c => c.key === key);
+    companyTabs.querySelectorAll('.company-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.key === key);
+    });
+    header.innerHTML = `
+      <div class="ms-header-brand">
+        <span class="ms-logo">${currentCompany.emoji}</span>
+        <div>
+          <h2>${currentCompany.label} Interview Problems</h2>
+          <p class="companies-subtitle">${currentCompany.description}</p>
+        </div>
+      </div>
+    `;
+    loadTable();
+  }
 
   function setActivePeriod(key) {
     currentPeriod = PERIODS.find(p => p.key === key);
@@ -104,15 +128,20 @@ export async function renderCompanies(container, problems, progress) {
     loadTable();
   }
 
+  companyTabs.addEventListener('click', e => {
+    const tab = e.target.closest('.company-tab');
+    if (tab) setActiveCompany(tab.dataset.key);
+  });
+
   periodTabs.addEventListener('click', e => {
     const tab = e.target.closest('.period-tab');
     if (tab) setActivePeriod(tab.dataset.key);
   });
 
   async function loadTable() {
-    resultsArea.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><p>Loading Microsoft problems…</p></div>`;
+    resultsArea.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><p>Loading ${currentCompany.label} problems…</p></div>`;
     try {
-      const rows = await fetchCSV('microsoft', currentPeriod.file);
+      const rows = await fetchCSV(currentCompany.key, currentPeriod.file);
       renderTable(rows);
     } catch (err) {
       resultsArea.innerHTML = `
@@ -219,5 +248,6 @@ export async function renderCompanies(container, problems, progress) {
   }
 
   // Initialize
+  setActiveCompany(COMPANIES[0].key);
   setActivePeriod(PERIODS[0].key);
 }
