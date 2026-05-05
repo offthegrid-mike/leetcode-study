@@ -87,8 +87,20 @@ export async function renderProblemList(container, problems, progress) {
   });
   page.appendChild(chipBar);
 
-  // Difficulty + Status + Sort filters
+  // NeetCode 150 toggle row
   const filterRow = createElement('div', 'filter-row');
+  const neetcodeToggle = createElement('button', `filter-toggle${filters.neetcode150 ? ' active' : ''}`, '⭐ NeetCode 150');
+  neetcodeToggle.title = 'Show only NeetCode 150 problems';
+  neetcodeToggle.addEventListener('click', () => {
+    filters.neetcode150 = !filters.neetcode150;
+    filters.page = 1;
+    renderProblemList(container, problems, progress);
+  });
+  filterRow.appendChild(neetcodeToggle);
+  page.appendChild(filterRow);
+
+  // Difficulty + Status + Sort + Complexity filters
+  const selectRow = createElement('div', 'filter-selects-row');
 
   const diffSelect = createElement('select', 'filter-select');
   ['All', 'Easy', 'Medium', 'Hard'].forEach(d => {
@@ -137,19 +149,9 @@ export async function renderProblemList(container, problems, progress) {
     renderProblemList(container, problems, progress);
   });
 
-  // NeetCode 150 toggle
-  const neetcodeToggle = createElement('button', `filter-toggle${filters.neetcode150 ? ' active' : ''}`, '⭐ NeetCode 150');
-  neetcodeToggle.title = 'Show only NeetCode 150 problems';
-  neetcodeToggle.addEventListener('click', () => {
-    filters.neetcode150 = !filters.neetcode150;
-    filters.page = 1;
-    renderProblemList(container, problems, progress);
-  });
-
-  filterRow.appendChild(neetcodeToggle);
-  filterRow.appendChild(diffSelect);
-  filterRow.appendChild(statusSelect);
-  filterRow.appendChild(sortSelect);
+  selectRow.appendChild(diffSelect);
+  selectRow.appendChild(statusSelect);
+  selectRow.appendChild(sortSelect);
 
   // Complexity filter
   const complexitySelect = createElement('select', 'filter-select');
@@ -164,8 +166,8 @@ export async function renderProblemList(container, problems, progress) {
     filters.page = 1;
     renderProblemList(container, problems, progress);
   });
-  filterRow.appendChild(complexitySelect);
-  page.appendChild(filterRow);
+  selectRow.appendChild(complexitySelect);
+  page.appendChild(selectRow);
 
   // Filter problems
   const bookmarks = filters.status === 'Bookmarked' ? await getBookmarks() : [];
