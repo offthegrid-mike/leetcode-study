@@ -15329,5 +15329,654 @@
     "companies": [
       "microsoft"
     ]
+  },
+  {
+    "id": 549,
+    "title": "Intersection of Two Linked Lists",
+    "slug": "intersection-of-two-linked-lists",
+    "category": "Linked List",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/intersection-of-two-linked-lists/",
+    "patterns": [
+      "Two Pointers",
+      "Linked List"
+    ],
+    "hints": [
+      "If both lists have the same length, they would intersect at the same step. How can you equalize the lengths?",
+      "Advance the pointer on the longer list by the difference in lengths, then walk both pointers together.",
+      "Alternatively, when a pointer reaches the end, redirect it to the head of the other list — they'll meet at the intersection after at most m+n steps."
+    ],
+    "approach": "Calculate lengths of both lists. Advance the pointer on the longer list by the length difference. Then walk both pointers together until they meet — that's the intersection node. Returns null if no intersection.",
+    "solution_python": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:\n        a, b = headA, headB\n        while a != b:\n            a = a.next if a else headB\n            b = b.next if b else headA\n        return a",
+    "solution_js": "var getIntersectionNode = function(headA, headB) {\n    let a = headA, b = headB;\n    while (a !== b) {\n        a = a ? a.next : headB;\n        b = b ? b.next : headA;\n    }\n    return a;\n};",
+    "time_complexity": "O(m+n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Both pointers traverse at most m+n nodes before meeting.",
+    "space_complexity_explanation": "Only two pointer variables are used.",
+    "key_insight": "Redirecting each pointer to the other list's head after reaching the end equalizes the total path length, guaranteeing they meet at the intersection.",
+    "related": [
+      141,
+      142
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 550,
+    "title": "Remove Duplicates from Sorted List",
+    "slug": "remove-duplicates-from-sorted-list",
+    "category": "Linked List",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/",
+    "patterns": [
+      "Linked List"
+    ],
+    "hints": [
+      "Since the list is sorted, duplicates are always adjacent — you only need to compare each node with its immediate next.",
+      "If current.val == current.next.val, skip the next node by pointing current.next to current.next.next.",
+      "Continue until you reach the end of the list — no extra data structure needed."
+    ],
+    "approach": "Traverse the sorted linked list with a single pointer. Whenever the current node's value equals the next node's value, skip the next node. Otherwise, advance the pointer. Continue until the end of the list.",
+    "solution_python": "class Solution:\n    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        cur = head\n        while cur and cur.next:\n            if cur.val == cur.next.val:\n                cur.next = cur.next.next\n            else:\n                cur = cur.next\n        return head",
+    "solution_js": "var deleteDuplicates = function(head) {\n    let cur = head;\n    while (cur && cur.next) {\n        if (cur.val === cur.next.val) {\n            cur.next = cur.next.next;\n        } else {\n            cur = cur.next;\n        }\n    }\n    return head;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each node is visited exactly once during the single traversal.",
+    "space_complexity_explanation": "Only a single pointer variable is maintained; no extra space is used.",
+    "key_insight": "Because the list is sorted, all duplicate values are contiguous, so a simple linear scan can remove them without needing a hash set.",
+    "related": [
+      82,
+      26
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 551,
+    "title": "Separate Squares I",
+    "slug": "separate-squares-i",
+    "category": "Binary Search",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/separate-squares-i/",
+    "patterns": [
+      "Binary Search",
+      "Math"
+    ],
+    "hints": [
+      "For a given horizontal line at height y, compute the total area of each square that lies above vs. below the line.",
+      "For a square with bottom-left (xi, yi) and side s: area below = min(s, max(0, y - yi)) * s; area above = max(0, yi + s - y) * s.",
+      "Binary search on y between the minimum and maximum y-coordinate values; the function is monotone so you can converge to the answer."
+    ],
+    "approach": "Binary search on the y-coordinate of the horizontal line. For each candidate y, compute total area above and below by iterating over all squares. The area-above function is monotonically decreasing in y, so binary search converges. Return the y where both halves are equal.",
+    "solution_python": "class Solution:\n    def separateSquares(self, squares: List[List[int]]) -> float:\n        def compute(y):\n            above = below = 0.0\n            for x, yi, s in squares:\n                below += min(s, max(0, y - yi)) * s\n                above += max(0, yi + s - y) * s\n            return above - below\n        lo, hi = min(s[1] for s in squares), max(s[1] + s[2] for s in squares)\n        for _ in range(100):\n            mid = (lo + hi) / 2\n            if compute(mid) > 0:\n                lo = mid\n            else:\n                hi = mid\n        return (lo + hi) / 2",
+    "solution_js": "var separateSquares = function(squares) {\n    function compute(y) {\n        let above = 0, below = 0;\n        for (const [x, yi, s] of squares) {\n            below += Math.min(s, Math.max(0, y - yi)) * s;\n            above += Math.max(0, yi + s - y) * s;\n        }\n        return above - below;\n    }\n    let lo = Math.min(...squares.map(s => s[1]));\n    let hi = Math.max(...squares.map(s => s[1] + s[2]));\n    for (let i = 0; i < 100; i++) {\n        const mid = (lo + hi) / 2;\n        if (compute(mid) > 0) lo = mid;\n        else hi = mid;\n    }\n    return (lo + hi) / 2;\n};",
+    "time_complexity": "O(n log(1/ε))",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search runs ~100 iterations; each iteration costs O(n) to evaluate all squares.",
+    "space_complexity_explanation": "Only a constant number of extra variables are used regardless of input size.",
+    "key_insight": "The total area above minus below is a monotonically decreasing function of y, enabling precise binary search to find the balancing line.",
+    "related": [
+      3454
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 552,
+    "title": "Employees Earning More Than Their Managers",
+    "slug": "employees-earning-more-than-their-managers",
+    "category": "Database",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/employees-earning-more-than-their-managers/",
+    "patterns": [
+      "SQL",
+      "Self Join"
+    ],
+    "hints": [
+      "Self-join the Employee table so you can compare an employee's salary to their manager's salary in the same row.",
+      "Join on e1.managerId = e2.id to pair each employee with their manager.",
+      "Filter where e1.salary > e2.salary to find employees who out-earn their managers."
+    ],
+    "approach": "Perform a self-join on the Employee table, matching each employee to their manager via managerId = id. Filter rows where the employee's salary exceeds the manager's salary and select the employee's name.",
+    "solution_python": "# SQL Solution:\n# SELECT e1.name AS Employee\n# FROM Employee e1\n# JOIN Employee e2 ON e1.managerId = e2.id\n# WHERE e1.salary > e2.salary",
+    "solution_js": "/* SQL Solution:\nSELECT e1.name AS Employee\nFROM Employee e1\nJOIN Employee e2 ON e1.managerId = e2.id\nWHERE e1.salary > e2.salary\n*/",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The self-join in the worst case compares every employee pair; indexes on id/managerId reduce this in practice.",
+    "space_complexity_explanation": "The result set can hold up to O(n) rows in the worst case.",
+    "key_insight": "A self-join lets you treat the same table as two separate entities — employees and managers — to directly compare salary values within a single query.",
+    "related": [
+      182,
+      183
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 553,
+    "title": "Group Shifted Strings",
+    "slug": "group-shifted-strings",
+    "category": "Hash Table",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/group-shifted-strings/",
+    "patterns": [
+      "Hash Table",
+      "String"
+    ],
+    "hints": [
+      "Two strings belong to the same shift group if one can be obtained from the other by shifting all characters by the same amount.",
+      "Normalize each string by computing the difference between consecutive characters modulo 26 — this becomes the canonical key.",
+      "Group all strings with the same canonical key together using a hash map."
+    ],
+    "approach": "For each string, compute the tuple of differences between consecutive character ASCII values modulo 26. This tuple is invariant under shifts and serves as a group key. Use a hash map to collect all strings sharing the same key, then return the grouped lists.",
+    "solution_python": "from collections import defaultdict\nclass Solution:\n    def groupStrings(self, strings: List[str]) -> List[List[str]]:\n        groups = defaultdict(list)\n        for s in strings:\n            key = tuple((ord(s[i+1]) - ord(s[i])) % 26 for i in range(len(s)-1))\n            groups[key].append(s)\n        return list(groups.values())",
+    "solution_js": "var groupStrings = function(strings) {\n    const map = new Map();\n    for (const s of strings) {\n        let key = '';\n        for (let i = 1; i < s.length; i++) {\n            key += ((s.charCodeAt(i) - s.charCodeAt(i-1) + 26) % 26) + ',';\n        }\n        if (!map.has(key)) map.set(key, []);\n        map.get(key).push(s);\n    }\n    return [...map.values()];\n};",
+    "time_complexity": "O(n * k)",
+    "space_complexity": "O(n * k)",
+    "time_complexity_explanation": "Each of the n strings of average length k is processed once to compute its key.",
+    "space_complexity_explanation": "The hash map stores all n strings along with their keys of length O(k).",
+    "key_insight": "The sequence of character differences modulo 26 is invariant under cyclic shifts, providing a canonical fingerprint for each equivalence class.",
+    "related": [
+      49
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 554,
+    "title": "Minimize Maximum Pair Sum in Array",
+    "slug": "minimize-maximum-pair-sum-in-array",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/",
+    "patterns": [
+      "Greedy",
+      "Sorting",
+      "Two Pointers"
+    ],
+    "hints": [
+      "To minimize the maximum pair sum, you want to avoid pairing two large numbers together.",
+      "Sort the array — then pair the smallest element with the largest, the second smallest with the second largest, and so on.",
+      "After sorting, the optimal pairing is nums[i] + nums[n-1-i] for i from 0 to n/2-1; take the maximum of these."
+    ],
+    "approach": "Sort the array in ascending order. Use two pointers starting at the two ends, moving inward. Pair nums[left] with nums[right] and track the maximum pair sum. Return that maximum — this greedy strategy provably minimizes it.",
+    "solution_python": "class Solution:\n    def minPairSum(self, nums: List[int]) -> int:\n        nums.sort()\n        n = len(nums)\n        return max(nums[i] + nums[n-1-i] for i in range(n // 2))",
+    "solution_js": "var minPairSum = function(nums) {\n    nums.sort((a, b) => a - b);\n    let res = 0, n = nums.length;\n    for (let i = 0; i < n / 2; i++) {\n        res = Math.max(res, nums[i] + nums[n - 1 - i]);\n    }\n    return res;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting dominates the runtime; the subsequent linear scan is O(n).",
+    "space_complexity_explanation": "Sorting is done in place and only a constant number of extra variables are used.",
+    "key_insight": "Pairing the smallest with the largest element minimizes the worst-case pair sum; any other pairing would push two large values together, increasing the maximum.",
+    "related": [
+      561,
+      976
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 555,
+    "title": "Find And Replace in String",
+    "slug": "find-and-replace-in-string",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-and-replace-in-string/",
+    "patterns": [
+      "String",
+      "Sorting"
+    ],
+    "hints": [
+      "Processing replacements left-to-right shifts indices for later replacements. Process right-to-left to avoid index drift.",
+      "Sort the replacement operations by index in descending order, then apply each: if s[index:index+len(source)] == source, replace with target.",
+      "Alternatively, record which indices are valid replacement starts first, then build the result string in one pass."
+    ],
+    "approach": "Sort the replacement operations by index in descending order. For each operation, check if the substring at that index matches the source. If it does, splice in the target. Processing right-to-left ensures earlier replacements don't invalidate later indices.",
+    "solution_python": "class Solution:\n    def findReplaceString(self, s: str, indices: List[int], sources: List[str], targets: List[str]) -> str:\n        ops = sorted(zip(indices, sources, targets), key=lambda x: -x[0])\n        s = list(s)\n        for i, src, tgt in ops:\n            if s[i:i+len(src)] == list(src):\n                s[i:i+len(src)] = list(tgt)\n        return ''.join(s)",
+    "solution_js": "var findReplaceString = function(s, indices, sources, targets) {\n    const ops = indices.map((idx, i) => [idx, sources[i], targets[i]])\n        .sort((a, b) => b[0] - a[0]);\n    let arr = s.split('');\n    for (const [i, src, tgt] of ops) {\n        if (arr.slice(i, i + src.length).join('') === src) {\n            arr.splice(i, src.length, ...tgt.split(''));\n        }\n    }\n    return arr.join('');\n};",
+    "time_complexity": "O(n + m log m)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the m operations is O(m log m); applying them to the string of length n is O(n + total replacement length).",
+    "space_complexity_explanation": "The string is converted to a character array of size O(n) for in-place splicing.",
+    "key_insight": "Right-to-left processing of replacements keeps all previously computed indices valid, avoiding the need for offset bookkeeping.",
+    "related": [
+      68,
+      6
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 556,
+    "title": "Move Pieces to Obtain a String",
+    "slug": "move-pieces-to-obtain-a-string",
+    "category": "Two Pointers",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/move-pieces-to-obtain-a-string/",
+    "patterns": [
+      "Two Pointers",
+      "String"
+    ],
+    "hints": [
+      "L pieces can only move left; R pieces can only move right. Underscores are empty spaces.",
+      "The relative order of L and R pieces cannot change — if the sequence of non-underscore chars differs between start and target, return false.",
+      "For each matched pair of L/R characters, check movement direction validity: an L cannot move right (its index must be >= target index), an R cannot move left."
+    ],
+    "approach": "Use two pointers to iterate over start and target, skipping underscores. At each step, the non-underscore characters must match. For an L piece, its starting index must be >= its target index (it can only move left). For an R piece, its starting index must be <= its target index. Any violation returns false.",
+    "solution_python": "class Solution:\n    def canChange(self, start: str, target: str) -> bool:\n        n = len(start)\n        i = j = 0\n        while i <= n and j <= n:\n            while i < n and start[i] == '_': i += 1\n            while j < n and target[j] == '_': j += 1\n            if i == n and j == n: return True\n            if i == n or j == n: return False\n            if start[i] != target[j]: return False\n            if start[i] == 'L' and i < j: return False\n            if start[i] == 'R' and i > j: return False\n            i += 1; j += 1\n        return True",
+    "solution_js": "var canChange = function(start, target) {\n    const n = start.length;\n    let i = 0, j = 0;\n    while (i <= n && j <= n) {\n        while (i < n && start[i] === '_') i++;\n        while (j < n && target[j] === '_') j++;\n        if (i === n && j === n) return true;\n        if (i === n || j === n) return false;\n        if (start[i] !== target[j]) return false;\n        if (start[i] === 'L' && i < j) return false;\n        if (start[i] === 'R' && i > j) return false;\n        i++; j++;\n    }\n    return true;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each pointer advances at most n steps through the strings.",
+    "space_complexity_explanation": "Only two pointer indices are maintained regardless of string length.",
+    "key_insight": "Because L and R pieces cannot pass through each other, their relative order is fixed. The only question is whether each piece can reach its target position given its movement constraint.",
+    "related": [
+      777,
+      1703
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 557,
+    "title": "Minimum Cost Path with Teleportations",
+    "slug": "minimum-cost-path-with-teleportations",
+    "category": "Graph",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/minimum-cost-path-with-teleportations/",
+    "patterns": [
+      "Dijkstra",
+      "Graph",
+      "BFS"
+    ],
+    "hints": [
+      "Model each cell as a node in a weighted graph. Adjacent cells have edge weight 1.",
+      "Portal pairs have edge weight 0 or 1 (depending on problem variant). Add teleportation edges between portal pairs.",
+      "Run Dijkstra's algorithm from (0,0); the shortest distance to (n-1,n-1) is the answer."
+    ],
+    "approach": "Build a weighted graph where each grid cell is a node. Add edges of weight 1 for cardinal moves. For each portal pair, add a bidirectional edge of weight 0 (or 1) to represent teleportation. Run Dijkstra's shortest path algorithm from (0,0) to (n-1,n-1).",
+    "solution_python": "import heapq\nclass Solution:\n    def minCost(self, n: int, roads: List[List[int]], libraries: List[List[int]]) -> int:\n        graph = [[] for _ in range(n * n)]\n        for r in range(n):\n            for c in range(n):\n                node = r * n + c\n                if r + 1 < n: graph[node].append((node + n, 1))\n                if c + 1 < n: graph[node].append((node + 1, 1))\n        portal_map = {}\n        for a, b in libraries:\n            portal_map.setdefault(a, []).append(b)\n            portal_map.setdefault(b, []).append(a)\n        for src, dsts in portal_map.items():\n            for dst in dsts:\n                graph[src].append((dst, 0))\n        dist = [float('inf')] * (n * n)\n        dist[0] = 0\n        pq = [(0, 0)]\n        while pq:\n            d, u = heapq.heappop(pq)\n            if d > dist[u]: continue\n            for v, w in graph[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n                    heapq.heappush(pq, (dist[v], v))\n        return dist[n * n - 1]",
+    "solution_js": "var minCost = function(n, roads, libraries) {\n    const graph = Array.from({length: n * n}, () => []);\n    for (let r = 0; r < n; r++) {\n        for (let c = 0; c < n; c++) {\n            const node = r * n + c;\n            if (r + 1 < n) graph[node].push([node + n, 1]);\n            if (c + 1 < n) graph[node].push([node + 1, 1]);\n        }\n    }\n    for (const [a, b] of libraries) {\n        graph[a].push([b, 0]);\n        graph[b].push([a, 0]);\n    }\n    const dist = new Array(n * n).fill(Infinity);\n    dist[0] = 0;\n    const pq = [[0, 0]];\n    while (pq.length) {\n        pq.sort((a, b) => a[0] - b[0]);\n        const [d, u] = pq.shift();\n        if (d > dist[u]) continue;\n        for (const [v, w] of graph[u]) {\n            if (dist[u] + w < dist[v]) {\n                dist[v] = dist[u] + w;\n                pq.push([dist[v], v]);\n            }\n        }\n    }\n    return dist[n * n - 1];\n};",
+    "time_complexity": "O((n^2 + E) log n^2)",
+    "space_complexity": "O(n^2 + E)",
+    "time_complexity_explanation": "Dijkstra's runs on a graph with n^2 nodes and E edges (grid edges + portal edges).",
+    "space_complexity_explanation": "The graph adjacency list and distance array both scale with the number of nodes and edges.",
+    "key_insight": "Teleportation portals are simply zero-weight edges in the graph; Dijkstra's naturally exploits them to find the globally cheapest path.",
+    "related": [
+      743,
+      787
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 558,
+    "title": "Minimum Cost to Convert String I",
+    "slug": "minimum-cost-to-convert-string-i",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-cost-to-convert-string-i/",
+    "patterns": [
+      "Floyd-Warshall",
+      "Graph",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "You need the minimum cost to convert any character a to any character b. Model the 26 lowercase letters as nodes in a weighted directed graph.",
+      "Apply Floyd-Warshall to find the shortest (minimum cost) path between every pair of characters.",
+      "For each position where source[i] != target[i], add the precomputed minimum conversion cost. If any conversion is impossible, return -1."
+    ],
+    "approach": "Build a 26x26 cost matrix from the replacement rules. Run Floyd-Warshall to compute the minimum cost for every character-to-character conversion. Then for each index where source and target differ, look up the precomputed minimum cost and accumulate the total. Return -1 if any conversion is unreachable.",
+    "solution_python": "class Solution:\n    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:\n        INF = float('inf')\n        dist = [[INF] * 26 for _ in range(26)]\n        for i in range(26): dist[i][i] = 0\n        for o, c, w in zip(original, changed, cost):\n            u, v = ord(o) - ord('a'), ord(c) - ord('a')\n            dist[u][v] = min(dist[u][v], w)\n        for k in range(26):\n            for i in range(26):\n                for j in range(26):\n                    if dist[i][k] + dist[k][j] < dist[i][j]:\n                        dist[i][j] = dist[i][k] + dist[k][j]\n        ans = 0\n        for s, t in zip(source, target):\n            if s == t: continue\n            c = dist[ord(s)-ord('a')][ord(t)-ord('a')]\n            if c == INF: return -1\n            ans += c\n        return ans",
+    "solution_js": "var minimumCost = function(source, target, original, changed, cost) {\n    const INF = Infinity;\n    const dist = Array.from({length: 26}, (_, i) => Array.from({length: 26}, (_, j) => i === j ? 0 : INF));\n    for (let i = 0; i < original.length; i++) {\n        const u = original[i].charCodeAt(0) - 97;\n        const v = changed[i].charCodeAt(0) - 97;\n        dist[u][v] = Math.min(dist[u][v], cost[i]);\n    }\n    for (let k = 0; k < 26; k++)\n        for (let i = 0; i < 26; i++)\n            for (let j = 0; j < 26; j++)\n                if (dist[i][k] + dist[k][j] < dist[i][j])\n                    dist[i][j] = dist[i][k] + dist[k][j];\n    let ans = 0;\n    for (let i = 0; i < source.length; i++) {\n        if (source[i] === target[i]) continue;\n        const c = dist[source.charCodeAt(i) - 97][target.charCodeAt(i) - 97];\n        if (c === INF) return -1;\n        ans += c;\n    }\n    return ans;\n};",
+    "time_complexity": "O(26^3 + n)",
+    "space_complexity": "O(26^2)",
+    "time_complexity_explanation": "Floyd-Warshall on 26 nodes runs in O(26^3) = O(1) constant time; processing the string is O(n).",
+    "space_complexity_explanation": "The 26x26 distance matrix is the dominant space usage.",
+    "key_insight": "Floyd-Warshall on just 26 character nodes precomputes all-pairs shortest conversion costs efficiently, reducing the per-position lookup to O(1).",
+    "related": [
+      2977,
+      743
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 559,
+    "title": "Find Nth Smallest Integer With K One Bits",
+    "slug": "find-nth-smallest-integer-with-k-one-bits",
+    "category": "Bit Manipulation",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/find-nth-smallest-integer-with-k-one-bits/",
+    "patterns": [
+      "Bit Manipulation",
+      "Combinatorics",
+      "Binary Search"
+    ],
+    "hints": [
+      "The count of integers up to x with exactly k set bits can be computed using combinatorics over the binary representation of x.",
+      "Use binary search on the answer: find the smallest number x such that count(x, k) >= n.",
+      "To count integers up to x with exactly k set bits, process the binary digits of x from the most significant bit using a digit DP or combinatorial approach."
+    ],
+    "approach": "Binary search on the answer value. For each candidate x, count how many non-negative integers <= x have exactly k bits set using a combinatorial digit-DP approach (choose remaining bits from remaining positions). Find the smallest x where this count equals n.",
+    "solution_python": "from math import comb\nclass Solution:\n    def findNthSmallest(self, n: int, k: int) -> int:\n        def count_le(x, k):\n            bits = x.bit_length()\n            total = 0\n            ones = 0\n            for i in range(bits - 1, -1, -1):\n                if x & (1 << i):\n                    total += comb(i, k - ones)\n                    ones += 1\n                    if ones > k: break\n            if ones == k: total += 1\n            return total\n        lo, hi = 0, 10**18\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if count_le(mid, k) >= n:\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo",
+    "solution_js": "var findNthSmallest = function(n, k) {\n    function comb(n, r) {\n        if (r < 0 || r > n) return 0n;\n        if (r === 0 || r === n) return 1n;\n        let num = 1n, den = 1n;\n        for (let i = 0; i < r; i++) { num *= BigInt(n - i); den *= BigInt(i + 1); }\n        return num / den;\n    }\n    function countLe(x, k) {\n        const bits = x.toString(2).length;\n        let total = 0n, ones = 0;\n        for (let i = bits - 1; i >= 0; i--) {\n            if ((x >> BigInt(i)) & 1n) {\n                total += comb(i, k - ones);\n                ones++;\n                if (ones > k) break;\n            }\n        }\n        if (ones === k) total += 1n;\n        return total;\n    }\n    let lo = 0n, hi = BigInt(10 ** 18);\n    while (lo < hi) {\n        const mid = (lo + hi) / 2n;\n        if (countLe(mid, k) >= BigInt(n)) hi = mid;\n        else lo = mid + 1n;\n    }\n    return Number(lo);\n};",
+    "time_complexity": "O(log^2(N))",
+    "space_complexity": "O(log N)",
+    "time_complexity_explanation": "Binary search over O(log N) candidates, each requiring O(log N) steps for the digit-DP count.",
+    "space_complexity_explanation": "The digit-DP uses O(log N) space for processing binary digits.",
+    "key_insight": "Combinatorics lets you count integers with exactly k set bits up to a value x in O(log x) time, making binary search on the Nth value feasible.",
+    "related": [
+      191,
+      461
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 560,
+    "title": "Find Missing Elements",
+    "slug": "find-missing-elements",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-missing-elements/",
+    "patterns": [
+      "Hash Table",
+      "Array"
+    ],
+    "hints": [
+      "Load all elements of the array into a hash set for O(1) lookup.",
+      "Iterate over every integer in [lo, hi]; if it's not in the set, it's missing.",
+      "Collect all missing integers into a result list and return it."
+    ],
+    "approach": "Insert all array elements into a hash set. Then iterate from lo to hi inclusive and collect every integer not present in the set. Return the collected list of missing integers.",
+    "solution_python": "class Solution:\n    def findMissingElements(self, nums: List[int], lo: int, hi: int) -> List[int]:\n        seen = set(nums)\n        return [x for x in range(lo, hi + 1) if x not in seen]",
+    "solution_js": "var findMissingElements = function(nums, lo, hi) {\n    const seen = new Set(nums);\n    const result = [];\n    for (let x = lo; x <= hi; x++) {\n        if (!seen.has(x)) result.push(x);\n    }\n    return result;\n};",
+    "time_complexity": "O(n + (hi - lo))",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the set is O(n); iterating the range is O(hi - lo + 1).",
+    "space_complexity_explanation": "The hash set stores all n elements of the input array.",
+    "key_insight": "A hash set provides O(1) membership tests, making the range scan efficient regardless of array size or value distribution.",
+    "related": [
+      268,
+      448
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 561,
+    "title": "Max Increase to Keep City Skyline",
+    "slug": "max-increase-to-keep-city-skyline",
+    "category": "Array",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/max-increase-to-keep-city-skyline/",
+    "patterns": [
+      "Array",
+      "Matrix",
+      "Greedy"
+    ],
+    "hints": [
+      "The skyline from the north/south is determined by the maximum in each column; from the east/west by the maximum in each row.",
+      "To preserve the skyline, each building at [i][j] can be at most min(rowMax[i], colMax[j]).",
+      "The total increase is the sum of (min(rowMax[i], colMax[j]) - grid[i][j]) over all cells."
+    ],
+    "approach": "Compute the maximum height for each row and each column. For every cell, the new allowable height is the minimum of its row max and column max. Sum all increases (allowable minus current height) and return the total.",
+    "solution_python": "class Solution:\n    def maxIncreaseKeepingSkyline(self, grid: List[List[int]]) -> int:\n        n = len(grid)\n        row_max = [max(row) for row in grid]\n        col_max = [max(grid[r][c] for r in range(n)) for c in range(n)]\n        return sum(\n            min(row_max[r], col_max[c]) - grid[r][c]\n            for r in range(n) for c in range(n)\n        )",
+    "solution_js": "var maxIncreaseKeepingSkyline = function(grid) {\n    const n = grid.length;\n    const rowMax = grid.map(row => Math.max(...row));\n    const colMax = Array.from({length: n}, (_, c) => Math.max(...grid.map(r => grid[r][c])));\n    let total = 0;\n    for (let r = 0; r < n; r++)\n        for (let c = 0; c < n; c++)\n            total += Math.min(rowMax[r], colMax[c]) - grid[r][c];\n    return total;\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Computing row and column maxima requires O(n^2) work; the final summation is another O(n^2) pass.",
+    "space_complexity_explanation": "Two arrays of size n store the row and column maxima.",
+    "key_insight": "Each cell's maximum allowable height is independently constrained by both its row's skyline and its column's skyline — taking the minimum of both ensures neither view is violated.",
+    "related": [
+      419,
+      48
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 562,
+    "title": "Max Consecutive Ones III",
+    "slug": "max-consecutive-ones-iii",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+    "patterns": [
+      "Sliding Window",
+      "Two Pointers"
+    ],
+    "hints": [
+      "Use a sliding window with two pointers. Expand the right pointer and track how many zeros are in the window.",
+      "When the number of zeros exceeds k, shrink the window from the left until the zero count is back to k.",
+      "The answer is the maximum window size seen across all valid windows."
+    ],
+    "approach": "Maintain a sliding window with left and right pointers. Expand right and decrement k when a 0 is encountered. When k drops below 0, advance left (and restore k if left was a 0). Track the maximum window width throughout.",
+    "solution_python": "class Solution:\n    def longestOnes(self, nums: List[int], k: int) -> int:\n        left = 0\n        for right in range(len(nums)):\n            if nums[right] == 0:\n                k -= 1\n            if k < 0:\n                if nums[left] == 0:\n                    k += 1\n                left += 1\n        return right - left + 1",
+    "solution_js": "var longestOnes = function(nums, k) {\n    let left = 0;\n    for (let right = 0; right < nums.length; right++) {\n        if (nums[right] === 0) k--;\n        if (k < 0) {\n            if (nums[left] === 0) k++;\n            left++;\n        }\n    }\n    return nums.length - left;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each element is visited at most twice (once by right pointer, once by left pointer).",
+    "space_complexity_explanation": "Only pointer variables and a counter are maintained; no extra data structures.",
+    "key_insight": "The window never shrinks below its maximum size — the left pointer only advances when necessary, so the final window size equals the maximum valid window found.",
+    "related": [
+      485,
+      487,
+      1493
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 563,
+    "title": "Greatest Common Divisor of Strings",
+    "slug": "greatest-common-divisor-of-strings",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/greatest-common-divisor-of-strings/",
+    "patterns": [
+      "String",
+      "Math",
+      "GCD"
+    ],
+    "hints": [
+      "A string t divides s if s = t + t + ... (t repeated some number of times).",
+      "If a common divisor exists, then str1 + str2 must equal str2 + str1 (concatenation in both orders).",
+      "If they are equal, the GCD string is the prefix of str1 with length gcd(len(str1), len(str2))."
+    ],
+    "approach": "Check if str1 + str2 equals str2 + str1. If not, no common divisor exists and return ''. If yes, the answer is the prefix of length gcd(len(str1), len(str2)) — this is the longest string that divides both.",
+    "solution_python": "from math import gcd\nclass Solution:\n    def gcdOfStrings(self, str1: str, str2: str) -> str:\n        if str1 + str2 != str2 + str1:\n            return ''\n        return str1[:gcd(len(str1), len(str2))]",
+    "solution_js": "var gcdOfStrings = function(str1, str2) {\n    if (str1 + str2 !== str2 + str1) return '';\n    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }\n    return str1.slice(0, gcd(str1.length, str2.length));\n};",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "The concatenation check is O(m+n); the GCD computation is O(log(min(m,n))).",
+    "space_complexity_explanation": "The concatenated strings for comparison each require O(m+n) space.",
+    "key_insight": "If a GCD string exists, both concatenation orders must be identical — this elegant check is both necessary and sufficient.",
+    "related": [
+      914,
+      1979
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 564,
+    "title": "Trionic Array I",
+    "slug": "trionic-array-i",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/trionic-array-i/",
+    "patterns": [
+      "Greedy",
+      "Hash Table",
+      "Sorting"
+    ],
+    "hints": [
+      "A trionic array can be split into groups of 3 consecutive equal elements — so each distinct value must appear a multiple of 3 times.",
+      "Count the frequency of every element. If any frequency is not divisible by 3, it's impossible.",
+      "If all frequencies are divisible by 3, sort the array and verify groups of 3 consecutive elements are equal."
+    ],
+    "approach": "Count the frequency of each element using a hash map. If any frequency is not divisible by 3, return false. Otherwise, sort the array and greedily verify that every group of three consecutive elements are equal. Return true if all groups are valid.",
+    "solution_python": "from collections import Counter\nclass Solution:\n    def isTrionic(self, nums: List[int]) -> bool:\n        freq = Counter(nums)\n        if any(v % 3 != 0 for v in freq.values()):\n            return False\n        nums.sort()\n        for i in range(0, len(nums), 3):\n            if nums[i] != nums[i+1] or nums[i+1] != nums[i+2]:\n                return False\n        return True",
+    "solution_js": "var isTrionic = function(nums) {\n    const freq = new Map();\n    for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);\n    for (const v of freq.values()) if (v % 3 !== 0) return false;\n    nums.sort((a, b) => a - b);\n    for (let i = 0; i < nums.length; i += 3) {\n        if (nums[i] !== nums[i+1] || nums[i+1] !== nums[i+2]) return false;\n    }\n    return true;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the array dominates; frequency counting and group verification are both O(n).",
+    "space_complexity_explanation": "The frequency map stores at most n entries in the worst case.",
+    "key_insight": "A necessary and sufficient condition is that every element's frequency is divisible by 3 AND the sorted array has equal triplets at every group of three consecutive positions.",
+    "related": [
+      3640,
+      954
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 565,
+    "title": "X of a Kind in a Deck of Cards",
+    "slug": "x-of-a-kind-in-a-deck-of-cards",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/x-of-a-kind-in-a-deck-of-cards/",
+    "patterns": [
+      "Hash Table",
+      "Math",
+      "GCD"
+    ],
+    "hints": [
+      "Count the frequency of each card value. Any valid X must divide every frequency.",
+      "The set of valid X values is exactly the set of common divisors of all frequencies.",
+      "The GCD of all frequencies is the largest such divisor. If GCD >= 2, a valid X exists."
+    ],
+    "approach": "Count the frequency of each distinct card value. Compute the GCD of all frequencies. If the GCD is 2 or more, a valid grouping exists (X = GCD works). Otherwise return false.",
+    "solution_python": "from collections import Counter\nfrom math import gcd\nfrom functools import reduce\nclass Solution:\n    def hasGroupsSizeX(self, deck: List[int]) -> bool:\n        counts = Counter(deck).values()\n        return reduce(gcd, counts) >= 2",
+    "solution_js": "var hasGroupsSizeX = function(deck) {\n    const freq = new Map();\n    for (const c of deck) freq.set(c, (freq.get(c) || 0) + 1);\n    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }\n    let g = 0;\n    for (const v of freq.values()) g = gcd(g, v);\n    return g >= 2;\n};",
+    "time_complexity": "O(n log C)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Frequency counting is O(n); GCD computation over all frequencies is O(k log C) where k is the number of distinct values and C is the max frequency.",
+    "space_complexity_explanation": "The frequency map stores one entry per distinct card value.",
+    "key_insight": "Any valid X must divide all frequencies simultaneously, so the GCD of all frequencies is both necessary and sufficient to check for a valid grouping.",
+    "related": [
+      1,
+      1979
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 566,
+    "title": "Russian Doll Envelopes",
+    "slug": "russian-doll-envelopes",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/russian-doll-envelopes/",
+    "patterns": [
+      "Binary Search",
+      "Dynamic Programming",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort envelopes by width ascending. For envelopes with the same width, sort by height descending — this prevents using two envelopes of the same width.",
+      "After sorting, the problem reduces to finding the Longest Increasing Subsequence (LIS) on heights only.",
+      "Use patience sorting with binary search to find LIS in O(n log n)."
+    ],
+    "approach": "Sort envelopes by width ascending, breaking ties by height descending. Run the O(n log n) LIS algorithm on heights: maintain a 'tails' array and binary search for each height's position. The length of 'tails' at the end is the answer.",
+    "solution_python": "import bisect\nclass Solution:\n    def maxEnvelopes(self, envelopes: List[List[int]]) -> int:\n        envelopes.sort(key=lambda x: (x[0], -x[1]))\n        tails = []\n        for _, h in envelopes:\n            pos = bisect.bisect_left(tails, h)\n            if pos == len(tails):\n                tails.append(h)\n            else:\n                tails[pos] = h\n        return len(tails)",
+    "solution_js": "var maxEnvelopes = function(envelopes) {\n    envelopes.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : b[1] - a[1]);\n    const tails = [];\n    for (const [, h] of envelopes) {\n        let lo = 0, hi = tails.length;\n        while (lo < hi) {\n            const mid = (lo + hi) >> 1;\n            if (tails[mid] < h) lo = mid + 1;\n            else hi = mid;\n        }\n        tails[lo] = h;\n    }\n    return tails.length;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting is O(n log n); the LIS with binary search is also O(n log n).",
+    "space_complexity_explanation": "The 'tails' array holds at most n elements in the worst case.",
+    "key_insight": "Sorting by width ascending and height descending for equal widths prevents falsely using multiple envelopes of the same width, reducing the 2D problem to a standard 1D LIS.",
+    "related": [
+      300,
+      673
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 567,
+    "title": "Range Module",
+    "slug": "range-module",
+    "category": "Design",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/range-module/",
+    "patterns": [
+      "Segment Tree",
+      "Sorted List",
+      "Design"
+    ],
+    "hints": [
+      "Maintain a sorted list of disjoint intervals. Each operation (add/remove/query) finds relevant intervals using binary search.",
+      "For addRange: find all intervals overlapping [left, right), merge them into one expanded interval.",
+      "For removeRange: find all intervals overlapping [left, right), split or trim their endpoints. For queryRange: check no gaps exist in [left, right)."
+    ],
+    "approach": "Store disjoint intervals in a sorted list. addRange merges all overlapping/adjacent intervals into one. removeRange trims or splits existing intervals, possibly creating two new ones. queryRange checks whether the entire [left, right) is covered by a single existing interval.",
+    "solution_python": "from sortedcontainers import SortedList\nclass RangeModule:\n    def __init__(self):\n        self.ranges = SortedList(key=lambda x: x[0])\n\n    def addRange(self, left: int, right: int) -> None:\n        to_remove = []\n        for r in self.ranges.irange((left, -1), (right, float('inf')), (True, True)):\n            if r[1] >= left and r[0] <= right:\n                left = min(left, r[0])\n                right = max(right, r[1])\n                to_remove.append(r)\n        for r in to_remove: self.ranges.remove(r)\n        self.ranges.add((left, right))\n\n    def queryRange(self, left: int, right: int) -> bool:\n        idx = self.ranges.bisect_right((left, float('inf'))) - 1\n        if idx < 0: return False\n        r = self.ranges[idx]\n        return r[0] <= left and r[1] >= right\n\n    def removeRange(self, left: int, right: int) -> None:\n        to_remove = []\n        to_add = []\n        for r in list(self.ranges):\n            if r[1] <= left or r[0] >= right: continue\n            to_remove.append(r)\n            if r[0] < left: to_add.append((r[0], left))\n            if r[1] > right: to_add.append((right, r[1]))\n        for r in to_remove: self.ranges.remove(r)\n        for r in to_add: self.ranges.add(r)",
+    "solution_js": "class RangeModule {\n    constructor() { this.ranges = []; }\n    addRange(left, right) {\n        const res = [];\n        let inserted = false;\n        for (const [l, r] of this.ranges) {\n            if (r < left) { res.push([l, r]); }\n            else if (l > right) {\n                if (!inserted) { res.push([left, right]); inserted = true; }\n                res.push([l, r]);\n            } else {\n                left = Math.min(left, l);\n                right = Math.max(right, r);\n            }\n        }\n        if (!inserted) res.push([left, right]);\n        this.ranges = res;\n    }\n    queryRange(left, right) {\n        for (const [l, r] of this.ranges)\n            if (l <= left && r >= right) return true;\n        return false;\n    }\n    removeRange(left, right) {\n        const res = [];\n        for (const [l, r] of this.ranges) {\n            if (r <= left || l >= right) { res.push([l, r]); }\n            else {\n                if (l < left) res.push([l, left]);\n                if (r > right) res.push([right, r]);\n            }\n        }\n        this.ranges = res;\n    }\n}",
+    "time_complexity": "O(n) per operation",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each operation may scan or modify all n stored intervals in the worst case; with a sorted structure, add/remove are O(n) due to shifting.",
+    "space_complexity_explanation": "The interval list stores at most O(Q) intervals where Q is the number of add/remove operations.",
+    "key_insight": "Maintaining a canonical list of non-overlapping intervals allows all three operations to be implemented by carefully merging, splitting, and checking intervals around the target range.",
+    "related": [
+      352,
+      57,
+      56
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 568,
+    "title": "Trionic Array II",
+    "slug": "trionic-array-ii",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/trionic-array-ii/",
+    "patterns": [
+      "Dynamic Programming",
+      "Greedy"
+    ],
+    "hints": [
+      "Think about what it costs to make each group of three consecutive positions equal to some target value.",
+      "For every triple of positions, compute the cost of setting all three to each possible value (the cheapest is to pick the value requiring fewest changes).",
+      "Use DP where dp[i] = minimum operations to make the first i elements trionic. Transition considers all triples ending at position i."
+    ],
+    "approach": "Partition the array into consecutive groups of three. For each group, the minimum cost to make all three equal is (3 minus the count of the most frequent element in the group). Use DP to accumulate these minimum costs across all groups, returning the total minimum operations.",
+    "solution_python": "from collections import Counter\nclass Solution:\n    def minOperations(self, nums: List[int]) -> int:\n        n = len(nums)\n        if n % 3 != 0:\n            return -1\n        total = 0\n        for i in range(0, n, 3):\n            group = nums[i:i+3]\n            freq = Counter(group)\n            max_freq = max(freq.values())\n            total += 3 - max_freq\n        return total",
+    "solution_js": "var minOperations = function(nums) {\n    const n = nums.length;\n    if (n % 3 !== 0) return -1;\n    let total = 0;\n    for (let i = 0; i < n; i += 3) {\n        const group = nums.slice(i, i + 3);\n        const freq = new Map();\n        for (const x of group) freq.set(x, (freq.get(x) || 0) + 1);\n        const maxFreq = Math.max(...freq.values());\n        total += 3 - maxFreq;\n    }\n    return total;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each element is processed exactly once across all groups; each group of 3 is processed in O(1) time.",
+    "space_complexity_explanation": "Each group's frequency map has at most 3 entries, so space usage is constant.",
+    "key_insight": "Within each group of three consecutive positions, it's always optimal to keep the most frequent element and change the others — minimizing the number of operations per group independently minimizes the global total.",
+    "related": [
+      3637,
+      1296
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
