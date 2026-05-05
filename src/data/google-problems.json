@@ -1298,5 +1298,101 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 589,
+    "title": "Binary Number with Alternating Bits",
+    "slug": "binary-number-with-alternating-bits",
+    "category": "Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/binary-number-with-alternating-bits/",
+    "patterns": [
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "XOR n with n>>1: if the result is all 1s (i.e., result & (result+1) == 0), the bits alternate.",
+      "Alternatively, check consecutive bits by repeatedly stripping the last two bits and verifying they differ.",
+      "Numbers with alternating bits: 1,2,5,10,21,42... — notice the pattern in binary."
+    ],
+    "approach": "XOR n with n>>1. If bits alternate, this produces a number of all 1s. Check if (n ^ (n>>1)) & ((n ^ (n>>1)) + 1) == 0.",
+    "solution_python": "class Solution:\n    def hasAlternatingBits(self, n: int) -> bool:\n        m = n ^ (n >> 1)\n        return (m & (m + 1)) == 0",
+    "solution_js": "var hasAlternatingBits = function(n) {\n    const m = n ^ (n >> 1);\n    return (m & (m + 1)) === 0;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Only a constant number of bitwise operations are performed.",
+    "space_complexity_explanation": "No extra space used beyond a couple of variables.",
+    "key_insight": "XOR with right-shift produces all 1s only when bits alternate; checking all-1s is equivalent to m & (m+1) == 0.",
+    "related": [
+      190,
+      191
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 590,
+    "title": "Logger Rate Limiter",
+    "slug": "logger-rate-limiter",
+    "category": "Design",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/logger-rate-limiter/",
+    "patterns": [
+      "Hash Map",
+      "Design"
+    ],
+    "hints": [
+      "Use a hash map from message string to the last timestamp it was printed.",
+      "For each call, check if the message is new or if at least 10 seconds have elapsed since its last print; if so, allow and update the map.",
+      "This is a classic sliding-window / rate-limit pattern — only the last allowed timestamp needs to be stored, not the full history."
+    ],
+    "approach": "Maintain a dictionary mapping each message to the last timestamp it was successfully printed. On each shouldPrintMessage call, if the message is unseen or current_timestamp - stored_timestamp >= 10, update the map and return True; otherwise return False.",
+    "solution_python": "class Logger:\n    def __init__(self):\n        self.last_printed = {}\n\n    def shouldPrintMessage(self, timestamp: int, message: str) -> bool:\n        if timestamp - self.last_printed.get(message, -10) >= 10:\n            self.last_printed[message] = timestamp\n            return True\n        return False",
+    "solution_js": "var Logger = function() {\n    this.lastPrinted = new Map();\n};\n\nLogger.prototype.shouldPrintMessage = function(timestamp, message) {\n    const last = this.lastPrinted.get(message) ?? -10;\n    if (timestamp - last >= 10) {\n        this.lastPrinted.set(message, timestamp);\n        return true;\n    }\n    return false;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each call is a single hash map lookup and possible update, both O(1).",
+    "space_complexity_explanation": "The map stores at most one entry per unique message seen, so O(n) where n is the number of distinct messages.",
+    "key_insight": "Storing only the last-allowed timestamp per message is sufficient; no queue or sliding window history is needed.",
+    "related": [
+      362,
+      981
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 591,
+    "title": "Number of Ways to Arrive at Destination",
+    "slug": "number-of-ways-to-arrive-at-destination",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/",
+    "patterns": [
+      "Dijkstra",
+      "Dynamic Programming",
+      "Graph"
+    ],
+    "hints": [
+      "Run Dijkstra from node 0, but also maintain a ways[] array counting the number of shortest paths to each node.",
+      "When relaxing an edge: if the new distance is strictly shorter, update dist and reset ways; if equal to the current shortest, add the source node's ways count.",
+      "Return ways[n-1] modulo 1e9+7."
+    ],
+    "approach": "Use Dijkstra's algorithm with a min-heap. Alongside dist[], maintain ways[] initialised to 0 except ways[0]=1. When popping node u with distance d, for each neighbour v: if d + w < dist[v], update dist[v] and set ways[v] = ways[u]; if d + w == dist[v], add ways[u] to ways[v]. Return ways[n-1] mod (1e9+7).",
+    "solution_python": "import heapq\nfrom typing import List\n\nclass Solution:\n    def countPaths(self, n: int, roads: List[List[int]]) -> int:\n        MOD = 10**9 + 7\n        graph = [[] for _ in range(n)]\n        for u, v, w in roads:\n            graph[u].append((v, w))\n            graph[v].append((u, w))\n        dist = [float('inf')] * n\n        ways = [0] * n\n        dist[0] = 0\n        ways[0] = 1\n        heap = [(0, 0)]\n        while heap:\n            d, u = heapq.heappop(heap)\n            if d > dist[u]:\n                continue\n            for v, w in graph[u]:\n                nd = d + w\n                if nd < dist[v]:\n                    dist[v] = nd\n                    ways[v] = ways[u]\n                    heapq.heappush(heap, (nd, v))\n                elif nd == dist[v]:\n                    ways[v] = (ways[v] + ways[u]) % MOD\n        return ways[n - 1]",
+    "solution_js": "var countPaths = function(n, roads) {\n    const MOD = BigInt(1e9 + 7);\n    const graph = Array.from({length: n}, () => []);\n    for (const [u, v, w] of roads) {\n        graph[u].push([v, w]);\n        graph[v].push([u, w]);\n    }\n    const dist = Array(n).fill(Infinity);\n    const ways = Array(n).fill(0n);\n    dist[0] = 0;\n    ways[0] = 1n;\n    // Min-heap simulation with sorted array (acceptable for interview; use a proper heap in production)\n    const heap = [[0, 0]];\n    const heapPush = (h, item) => { h.push(item); h.sort((a, b) => a[0] - b[0]); };\n    while (heap.length) {\n        const [d, u] = heap.shift();\n        if (d > dist[u]) continue;\n        for (const [v, w] of graph[u]) {\n            const nd = d + w;\n            if (nd < dist[v]) {\n                dist[v] = nd;\n                ways[v] = ways[u];\n                heapPush(heap, [nd, v]);\n            } else if (nd === dist[v]) {\n                ways[v] = (ways[v] + ways[u]) % MOD;\n            }\n        }\n    }\n    return Number(ways[n - 1]);\n};",
+    "time_complexity": "O((V + E) log V)",
+    "space_complexity": "O(V + E)",
+    "time_complexity_explanation": "Standard Dijkstra complexity: each edge is relaxed once and each heap operation is O(log V).",
+    "space_complexity_explanation": "Adjacency list stores all edges; dist and ways arrays are O(V); heap holds at most O(E) entries.",
+    "key_insight": "Dijkstra naturally tracks shortest distances; augmenting it with a ways[] counter that resets on improvement and accumulates on equality counts all shortest paths in one pass.",
+    "related": [
+      743,
+      787
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
