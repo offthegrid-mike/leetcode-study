@@ -12,7 +12,7 @@
     "hints": [
       "Think about what data structure allows O(1) lookups to check if you've seen an element before.",
       "Iterate through the array and use a set to track seen elements. If you encounter a duplicate, return true.",
-      "A set automatically handles uniqueness — if len(set(nums)) < len(nums), there's a duplicate."
+      "A set automatically handles uniqueness \u2014 if len(set(nums)) < len(nums), there's a duplicate."
     ],
     "approach": "Use a hash set to track elements as you iterate. For each element, check if it's already in the set. If yes, return True. Otherwise, add it and continue.",
     "solution_python": "class Solution:\n    def containsDuplicate(self, nums: List[int]) -> bool:\n        seen = set()\n        for num in nums:\n            if num in seen:\n                return True\n            seen.add(num)\n        return False",
@@ -28,7 +28,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 2,
@@ -46,7 +47,7 @@
       "Count character frequencies in both strings and compare them.",
       "You can use a single counter: increment for s, decrement for t, then check all zeros."
     ],
-    "approach": "Count character frequencies using a hash map (or Counter). Compare the frequency maps of both strings — they must be identical for valid anagrams.",
+    "approach": "Count character frequencies using a hash map (or Counter). Compare the frequency maps of both strings \u2014 they must be identical for valid anagrams.",
     "solution_python": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        if len(s) != len(t):\n            return False\n        count = {}\n        for c in s:\n            count[c] = count.get(c, 0) + 1\n        for c in t:\n            count[c] = count.get(c, 0) - 1\n            if count[c] < 0:\n                return False\n        return True",
     "solution_js": "var isAnagram = function(s, t) {\n    if (s.length !== t.length) return false;\n    const count = {};\n    for (const c of s) count[c] = (count[c] || 0) + 1;\n    for (const c of t) {\n        count[c] = (count[c] || 0) - 1;\n        if (count[c] < 0) return false;\n    }\n    return true;\n};",
     "time_complexity": "O(n)",
@@ -60,7 +61,8 @@
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 3,
@@ -84,7 +86,7 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "A single pass through the array with O(1) hash map lookups for each element.",
     "space_complexity_explanation": "The hash map stores up to n elements to track values and their indices.",
-    "key_insight": "Using a hash map to store complements turns a nested loop O(n²) problem into O(n).",
+    "key_insight": "Using a hash map to store complements turns a nested loop O(n\u00b2) problem into O(n).",
     "related": [
       10,
       11
@@ -95,7 +97,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 4,
@@ -110,7 +113,7 @@
     ],
     "hints": [
       "Anagrams share the same set of characters. How can you create a common key for all anagrams?",
-      "Sort each string — all anagrams will produce the same sorted string, which can serve as a hash key.",
+      "Sort each string \u2014 all anagrams will produce the same sorted string, which can serve as a hash key.",
       "Alternatively, use a tuple of character counts (26 letters) as the key to avoid sorting."
     ],
     "approach": "Use a hash map where the key is the sorted version of each string (or a character count tuple). Group strings that share the same key.",
@@ -128,7 +131,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 5,
@@ -154,7 +158,7 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Counting frequencies is O(n) and bucket sort over n+1 buckets is O(n), giving linear time overall.",
     "space_complexity_explanation": "The frequency map and bucket array each store up to n entries.",
-    "key_insight": "Bucket sort by frequency achieves O(n) time — better than the O(n log k) heap approach.",
+    "key_insight": "Bucket sort by frequency achieves O(n) time \u2014 better than the O(n log k) heap approach.",
     "related": [
       4
     ],
@@ -163,7 +167,8 @@
       "apple",
       "netflix",
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 6,
@@ -187,8 +192,9 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Encoding and decoding both scan through all characters across all strings exactly once.",
     "space_complexity_explanation": "The output uses the same total characters as the input (plus small length prefixes), so no extra space beyond the result.",
-    "key_insight": "Length-prefixing eliminates delimiter ambiguity — the length tells you exactly how many characters to read.",
-    "related": []
+    "key_insight": "Length-prefixing eliminates delimiter ambiguity \u2014 the length tells you exactly how many characters to read.",
+    "related": [],
+    "neetcode150": true
   },
   {
     "id": 7,
@@ -212,13 +218,14 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Two linear passes through the array: one for prefix products and one for suffix products.",
     "space_complexity_explanation": "The output array is required by the problem, and only a single extra variable (running suffix) is used beyond it.",
-    "key_insight": "Product except self = prefix product × suffix product. Two passes avoid division entirely.",
+    "key_insight": "Product except self = prefix product \u00d7 suffix product. Two passes avoid division entirely.",
     "related": [
       14
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 8,
@@ -232,23 +239,24 @@
       "Matrix"
     ],
     "hints": [
-      "You need to check three constraints: no duplicates in any row, column, or 3×3 box.",
+      "You need to check three constraints: no duplicates in any row, column, or 3\u00d73 box.",
       "Use separate hash sets for each row, column, and box to track seen digits.",
       "Map each cell to its box using (row // 3, col // 3) as the box identifier."
     ],
-    "approach": "Use hash sets to track digits seen in each row, column, and 3×3 box. Iterate through all cells once, checking and updating the appropriate sets. The box index is determined by (row // 3, col // 3).",
+    "approach": "Use hash sets to track digits seen in each row, column, and 3\u00d73 box. Iterate through all cells once, checking and updating the appropriate sets. The box index is determined by (row // 3, col // 3).",
     "solution_python": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(set)\n        cols = defaultdict(set)\n        boxes = defaultdict(set)\n        for r in range(9):\n            for c in range(9):\n                d = board[r][c]\n                if d == '.':\n                    continue\n                box = (r // 3, c // 3)\n                if d in rows[r] or d in cols[c] or d in boxes[box]:\n                    return False\n                rows[r].add(d)\n                cols[c].add(d)\n                boxes[box].add(d)\n        return True",
     "solution_js": "var isValidSudoku = function(board) {\n    const rows = Array.from({length: 9}, () => new Set());\n    const cols = Array.from({length: 9}, () => new Set());\n    const boxes = Array.from({length: 9}, () => new Set());\n    for (let r = 0; r < 9; r++) {\n        for (let c = 0; c < 9; c++) {\n            const d = board[r][c];\n            if (d === '.') continue;\n            const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);\n            if (rows[r].has(d) || cols[c].has(d) || boxes[box].has(d)) return false;\n            rows[r].add(d);\n            cols[c].add(d);\n            boxes[box].add(d);\n        }\n    }\n    return true;\n};",
     "time_complexity": "O(81)",
     "space_complexity": "O(81)",
     "time_complexity_explanation": "We visit each of the 81 cells exactly once, performing constant-time set operations at each cell.",
-    "space_complexity_explanation": "The sets for rows, columns, and boxes store at most 81 entries total (9 sets × 9 digits per dimension).",
-    "key_insight": "Map each cell to its 3×3 box with (row // 3, col // 3) and use sets to check all three constraints in one pass.",
+    "space_complexity_explanation": "The sets for rows, columns, and boxes store at most 81 entries total (9 sets \u00d7 9 digits per dimension).",
+    "key_insight": "Map each cell to its 3\u00d73 box with (row // 3, col // 3) and use sets to check all three constraints in one pass.",
     "related": [],
     "companies": [
       "amazon",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 9,
@@ -280,7 +288,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 10,
@@ -312,7 +321,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 11,
@@ -325,7 +335,7 @@
       "Two Pointers"
     ],
     "hints": [
-      "The array is sorted — this means you can use two pointers instead of a hash map.",
+      "The array is sorted \u2014 this means you can use two pointers instead of a hash map.",
       "Start pointers at both ends. If the sum is too large, move the right pointer left; if too small, move left pointer right.",
       "Since the array is sorted, this guarantees you'll find the pair if it exists. Return 1-indexed positions."
     ],
@@ -340,7 +350,8 @@
     "related": [
       3,
       12
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 12,
@@ -361,9 +372,9 @@
     "approach": "Sort the array. For each element nums[i], use two pointers (l=i+1, r=end) to find pairs that sum to -nums[i]. Skip duplicates at all three positions to ensure unique triplets.",
     "solution_python": "class Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        nums.sort()\n        result = []\n        for i in range(len(nums) - 2):\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            l, r = i + 1, len(nums) - 1\n            while l < r:\n                s = nums[i] + nums[l] + nums[r]\n                if s < 0:\n                    l += 1\n                elif s > 0:\n                    r -= 1\n                else:\n                    result.append([nums[i], nums[l], nums[r]])\n                    while l < r and nums[l] == nums[l + 1]:\n                        l += 1\n                    while l < r and nums[r] == nums[r - 1]:\n                        r -= 1\n                    l += 1\n                    r -= 1\n        return result",
     "solution_js": "var threeSum = function(nums) {\n    nums.sort((a, b) => a - b);\n    const result = [];\n    for (let i = 0; i < nums.length - 2; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) continue;\n        let l = i + 1, r = nums.length - 1;\n        while (l < r) {\n            const s = nums[i] + nums[l] + nums[r];\n            if (s < 0) l++;\n            else if (s > 0) r--;\n            else {\n                result.push([nums[i], nums[l], nums[r]]);\n                while (l < r && nums[l] === nums[l + 1]) l++;\n                while (l < r && nums[r] === nums[r - 1]) r--;\n                l++;\n                r--;\n            }\n        }\n    }\n    return result;\n};",
-    "time_complexity": "O(n²)",
+    "time_complexity": "O(n\u00b2)",
     "space_complexity": "O(1)",
-    "time_complexity_explanation": "Sorting is O(n log n). For each of the n elements, the two-pointer scan is O(n), giving O(n²) total.",
+    "time_complexity_explanation": "Sorting is O(n log n). For each of the n elements, the two-pointer scan is O(n), giving O(n\u00b2) total.",
     "space_complexity_explanation": "Sorting is done in-place and only pointer variables are used (ignoring the output list).",
     "key_insight": "Reduce 3Sum to Two Sum II by sorting and fixing one element, then using two pointers. Skip duplicates at all levels.",
     "related": [
@@ -374,7 +385,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 13,
@@ -390,7 +402,7 @@
     "hints": [
       "Start with the widest container (pointers at both ends) and try to find taller lines.",
       "The area is limited by the shorter line. Moving the shorter line inward might find a taller one.",
-      "Always move the pointer pointing to the shorter line — moving the taller one can never increase the area."
+      "Always move the pointer pointing to the shorter line \u2014 moving the taller one can never increase the area."
     ],
     "approach": "Use two pointers at both ends. Calculate area = min(height[l], height[r]) * (r - l). Move the pointer at the shorter line inward, since the width is decreasing and only a taller line can compensate.",
     "solution_python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        l, r = 0, len(height) - 1\n        max_area = 0\n        while l < r:\n            area = min(height[l], height[r]) * (r - l)\n            max_area = max(max_area, area)\n            if height[l] < height[r]:\n                l += 1\n            else:\n                r -= 1\n        return max_area",
@@ -399,7 +411,7 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "The two pointers traverse the array once from both ends, moving one pointer per step.",
     "space_complexity_explanation": "Only two pointers and a running maximum variable are used.",
-    "key_insight": "Move the shorter line's pointer inward — the area is bottlenecked by the shorter side, so only changing it can help.",
+    "key_insight": "Move the shorter line's pointer inward \u2014 the area is bottlenecked by the shorter side, so only changing it can help.",
     "related": [
       14
     ],
@@ -407,7 +419,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 14,
@@ -423,7 +436,7 @@
     "hints": [
       "Water at each position = min(max height to the left, max height to the right) - height at that position.",
       "You can precompute leftMax and rightMax arrays, but two pointers achieve O(1) space.",
-      "Track leftMax and rightMax with two pointers. Process the side with the smaller max — the water level there is determined."
+      "Track leftMax and rightMax with two pointers. Process the side with the smaller max \u2014 the water level there is determined."
     ],
     "approach": "Use two pointers from both ends with running leftMax and rightMax. Process the side with the smaller max: water trapped = max - height. The smaller max guarantees the water level at that position.",
     "solution_python": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        l, r = 0, len(height) - 1\n        left_max = right_max = 0\n        water = 0\n        while l <= r:\n            if left_max <= right_max:\n                left_max = max(left_max, height[l])\n                water += left_max - height[l]\n                l += 1\n            else:\n                right_max = max(right_max, height[r])\n                water += right_max - height[r]\n                r -= 1\n        return water",
@@ -432,7 +445,7 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "A single pass through the array using two pointers, with O(1) work at each step.",
     "space_complexity_explanation": "Only two pointers and two running maximum variables are used, no auxiliary data structures.",
-    "key_insight": "Process from the side with the smaller max — water at that position is determined regardless of what's on the other side.",
+    "key_insight": "Process from the side with the smaller max \u2014 water at that position is determined regardless of what's on the other side.",
     "related": [
       13,
       27
@@ -442,7 +455,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 15,
@@ -467,7 +481,7 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "A single pass through the prices array, updating the minimum price and maximum profit at each step.",
     "space_complexity_explanation": "Only two variables are needed: minimum price so far and maximum profit.",
-    "key_insight": "Track the running minimum buy price — the optimal sell is always at the maximum difference from the lowest point so far.",
+    "key_insight": "Track the running minimum buy price \u2014 the optimal sell is always at the maximum difference from the lowest point so far.",
     "related": [],
     "companies": [
       "google",
@@ -475,7 +489,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 16,
@@ -500,7 +515,7 @@
     "space_complexity": "O(min(n, m))",
     "time_complexity_explanation": "Each character is added and removed from the set at most once, so the total work is O(n) across both pointers.",
     "space_complexity_explanation": "The hash set stores at most min(n, m) characters, where m is the alphabet size.",
-    "key_insight": "Sliding window with a set maintains the longest valid window — each character enters and leaves the set at most once.",
+    "key_insight": "Sliding window with a set maintains the longest valid window \u2014 each character enters and leaves the set at most once.",
     "related": [
       17,
       19
@@ -512,7 +527,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 17,
@@ -528,19 +544,20 @@
     "hints": [
       "A window is valid if (window length - count of most frequent char) <= k.",
       "Use a sliding window that tracks character frequencies. Expand right, shrink left when invalid.",
-      "You don't need to update maxFreq when shrinking — an overestimated maxFreq still yields correct results."
+      "You don't need to update maxFreq when shrinking \u2014 an overestimated maxFreq still yields correct results."
     ],
-    "approach": "Sliding window with character frequency count. A window is valid when (window size - maxFreq) <= k. Expand right, and shrink left when invalid. maxFreq doesn't need to decrease — we only care about finding a longer valid window.",
+    "approach": "Sliding window with character frequency count. A window is valid when (window size - maxFreq) <= k. Expand right, and shrink left when invalid. maxFreq doesn't need to decrease \u2014 we only care about finding a longer valid window.",
     "solution_python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        count = {}\n        l = 0\n        max_freq = 0\n        result = 0\n        for r in range(len(s)):\n            count[s[r]] = count.get(s[r], 0) + 1\n            max_freq = max(max_freq, count[s[r]])\n            while (r - l + 1) - max_freq > k:\n                count[s[l]] -= 1\n                l += 1\n            result = max(result, r - l + 1)\n        return result",
     "solution_js": "var characterReplacement = function(s, k) {\n    const count = {};\n    let l = 0, maxFreq = 0, result = 0;\n    for (let r = 0; r < s.length; r++) {\n        count[s[r]] = (count[s[r]] || 0) + 1;\n        maxFreq = Math.max(maxFreq, count[s[r]]);\n        while ((r - l + 1) - maxFreq > k) {\n            count[s[l]]--;\n            l++;\n        }\n        result = Math.max(result, r - l + 1);\n    }\n    return result;\n};",
     "time_complexity": "O(n)",
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Both left and right pointers move at most n steps total, and frequency updates are O(1) per step.",
     "space_complexity_explanation": "The frequency array has a fixed size of 26 (one per uppercase letter), regardless of input size.",
-    "key_insight": "Window is valid when (size - maxFreq) ≤ k. maxFreq never needs to decrease since we only care about beating the current best.",
+    "key_insight": "Window is valid when (size - maxFreq) \u2264 k. maxFreq never needs to decrease since we only care about beating the current best.",
     "related": [
       16
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 18,
@@ -569,7 +586,8 @@
     "related": [
       2,
       19
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 19,
@@ -594,14 +612,15 @@
     "space_complexity": "O(n + m)",
     "time_complexity_explanation": "Each character is visited at most twice (once by expanding right, once by shrinking left), giving O(n) for s. Building t's frequency map is O(m).",
     "space_complexity_explanation": "The frequency maps for both s and t store up to the total number of distinct characters.",
-    "key_insight": "Expand to satisfy the constraint, then contract to minimize — the classic sliding window pattern for 'minimum window' problems.",
+    "key_insight": "Expand to satisfy the constraint, then contract to minimize \u2014 the classic sliding window pattern for 'minimum window' problems.",
     "related": [
       16,
       18
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 20,
@@ -616,7 +635,7 @@
     ],
     "hints": [
       "A brute force approach checks all k elements for each window. Can you maintain a data structure that gives O(1) max?",
-      "Use a monotonic decreasing deque — the front always holds the index of the current maximum.",
+      "Use a monotonic decreasing deque \u2014 the front always holds the index of the current maximum.",
       "Remove elements from the back that are smaller than the new element. Remove front elements that fall outside the window."
     ],
     "approach": "Use a monotonic decreasing deque storing indices. For each element: remove back elements smaller than current (they'll never be max), remove front if outside window, then the front of deque is the window maximum.",
@@ -626,10 +645,11 @@
     "space_complexity": "O(k)",
     "time_complexity_explanation": "Each element is added to and removed from the deque at most once, giving amortized O(1) per element.",
     "space_complexity_explanation": "The deque stores at most k elements (the current window's indices).",
-    "key_insight": "A monotonic decreasing deque maintains potential maximums — smaller elements are discarded since they can never be the max while a larger element is in the window.",
+    "key_insight": "A monotonic decreasing deque maintains potential maximums \u2014 smaller elements are discarded since they can never be the max while a larger element is in the window.",
     "related": [
       26
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 21,
@@ -653,7 +673,7 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "We iterate through each of the n characters once, performing O(1) stack push/pop per character.",
     "space_complexity_explanation": "In the worst case (all opening brackets), the stack stores up to n elements.",
-    "key_insight": "A stack naturally handles nested structure — the most recent unmatched opener should match the next closer.",
+    "key_insight": "A stack naturally handles nested structure \u2014 the most recent unmatched opener should match the next closer.",
     "related": [
       24
     ],
@@ -664,7 +684,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 22,
@@ -694,7 +715,8 @@
     "companies": [
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 23,
@@ -707,7 +729,7 @@
       "Stack"
     ],
     "hints": [
-      "RPN evaluation is a classic stack problem — operands are pushed, operators pop two and push the result.",
+      "RPN evaluation is a classic stack problem \u2014 operands are pushed, operators pop two and push the result.",
       "When you see a number, push it. When you see an operator, pop two numbers, apply the operation, push the result.",
       "Be careful with division: it should truncate toward zero (use int() in Python, Math.trunc() in JS)."
     ],
@@ -718,8 +740,9 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "We process each of the n tokens exactly once, with O(1) stack operations per token.",
     "space_complexity_explanation": "The stack can hold up to n/2 operands at once in the worst case.",
-    "key_insight": "A stack naturally evaluates postfix expressions — operators always apply to the two most recent operands.",
-    "related": []
+    "key_insight": "A stack naturally evaluates postfix expressions \u2014 operators always apply to the two most recent operands.",
+    "related": [],
+    "neetcode150": true
   },
   {
     "id": 24,
@@ -744,7 +767,7 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "The number of valid parenthesizations is the nth Catalan number, which is O(4^n / sqrt(n)), and building each takes O(n) time.",
     "space_complexity_explanation": "The recursion depth is at most 2n (the string length), so the call stack uses O(n) space.",
-    "key_insight": "Only add ')' when close < open — this single rule guarantees all generated combinations are valid.",
+    "key_insight": "Only add ')' when close < open \u2014 this single rule guarantees all generated combinations are valid.",
     "related": [
       21
     ],
@@ -752,7 +775,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 25,
@@ -776,14 +800,15 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Each index is pushed and popped from the stack at most once, giving O(n) amortized across all elements.",
     "space_complexity_explanation": "The stack and result array each store up to n elements.",
-    "key_insight": "A monotonic decreasing stack efficiently finds the next greater element — each element is pushed and popped at most once.",
+    "key_insight": "A monotonic decreasing stack efficiently finds the next greater element \u2014 each element is pushed and popped at most once.",
     "related": [
       26,
       27
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 26,
@@ -808,10 +833,11 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Sorting the cars by position takes O(n log n), and the subsequent single-pass stack processing is O(n).",
     "space_complexity_explanation": "The stack and the array of calculated times each store up to n entries.",
-    "key_insight": "Sort by position descending and use a stack of arrival times — a slower car ahead forces faster cars behind to merge into its fleet.",
+    "key_insight": "Sort by position descending and use a stack of arrival times \u2014 a slower car ahead forces faster cars behind to merge into its fleet.",
     "related": [
       25
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 27,
@@ -842,7 +868,8 @@
     ],
     "companies": [
       "google"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 28,
@@ -864,13 +891,14 @@
     "solution_js": "var search = function(nums, target) {\n    let l = 0, r = nums.length - 1;\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] === target) return mid;\n        else if (nums[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return -1;\n};",
     "time_complexity": "O(log n)",
     "space_complexity": "O(1)",
-    "time_complexity_explanation": "Each iteration halves the search space, so at most log₂(n) comparisons are needed.",
+    "time_complexity_explanation": "Each iteration halves the search space, so at most log\u2082(n) comparisons are needed.",
     "space_complexity_explanation": "Only two pointers (left and right) and a midpoint variable are used.",
-    "key_insight": "Halving the search space each iteration gives O(log n) — the foundation of all binary search variants.",
+    "key_insight": "Halving the search space each iteration gives O(log n) \u2014 the foundation of all binary search variants.",
     "related": [
       29,
       31
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 29,
@@ -884,7 +912,7 @@
       "Matrix"
     ],
     "hints": [
-      "The matrix rows are sorted and each row starts after the previous row ends — it's essentially one sorted array.",
+      "The matrix rows are sorted and each row starts after the previous row ends \u2014 it's essentially one sorted array.",
       "Treat the 2D matrix as a 1D sorted array with index mapping: row = idx // cols, col = idx % cols.",
       "Apply standard binary search on indices 0 to (rows * cols - 1)."
     ],
@@ -898,7 +926,8 @@
     "key_insight": "Flatten the 2D matrix conceptually into a 1D sorted array using index math: row = idx // cols, col = idx % cols.",
     "related": [
       28
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 30,
@@ -922,7 +951,7 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Binary search over the range of speeds is O(log m), and each feasibility check iterates all n piles in O(n).",
     "space_complexity_explanation": "Only a few variables for binary search bounds and the hour calculation are needed.",
-    "key_insight": "Binary search on the answer — when the search space is a range of valid answers, binary search finds the optimal one.",
+    "key_insight": "Binary search on the answer \u2014 when the search space is a range of valid answers, binary search finds the optimal one.",
     "related": [
       28
     ],
@@ -930,7 +959,8 @@
       "google",
       "amazon",
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 31,
@@ -954,10 +984,11 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Each step of binary search halves the search space, requiring at most O(log n) iterations.",
     "space_complexity_explanation": "Only a constant number of pointer variables are used.",
-    "key_insight": "Compare mid with the right boundary — if mid > right, the rotation point (minimum) must be to the right of mid.",
+    "key_insight": "Compare mid with the right boundary \u2014 if mid > right, the rotation point (minimum) must be to the right of mid.",
     "related": [
       32
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 32,
@@ -981,7 +1012,7 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Binary search halves the search space each step, needing O(log n) iterations with O(1) work each.",
     "space_complexity_explanation": "Only constant extra space for the binary search pointers.",
-    "key_insight": "In a rotated sorted array, one half is always sorted — determine which half and whether the target falls within it.",
+    "key_insight": "In a rotated sorted array, one half is always sorted \u2014 determine which half and whether the target falls within it.",
     "related": [
       31
     ],
@@ -989,7 +1020,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 33,
@@ -1008,20 +1040,21 @@
       "For get(), binary search the list to find the largest timestamp <= the given timestamp.",
       "Use a hash map of key -> sorted list of (timestamp, value) pairs."
     ],
-    "approach": "Use a hash map where each key maps to a list of (timestamp, value) pairs (naturally sorted since set is called with increasing timestamps). For get, binary search to find the largest timestamp ≤ the query timestamp.",
+    "approach": "Use a hash map where each key maps to a list of (timestamp, value) pairs (naturally sorted since set is called with increasing timestamps). For get, binary search to find the largest timestamp \u2264 the query timestamp.",
     "solution_python": "class TimeMap:\n    def __init__(self):\n        self.store = {}\n\n    def set(self, key: str, value: str, timestamp: int) -> None:\n        if key not in self.store:\n            self.store[key] = []\n        self.store[key].append((timestamp, value))\n\n    def get(self, key: str, timestamp: int) -> str:\n        if key not in self.store:\n            return ''\n        vals = self.store[key]\n        l, r = 0, len(vals) - 1\n        result = ''\n        while l <= r:\n            mid = (l + r) // 2\n            if vals[mid][0] <= timestamp:\n                result = vals[mid][1]\n                l = mid + 1\n            else:\n                r = mid - 1\n        return result",
     "solution_js": "var TimeMap = function() {\n    this.store = new Map();\n};\n\nTimeMap.prototype.set = function(key, value, timestamp) {\n    if (!this.store.has(key)) this.store.set(key, []);\n    this.store.get(key).push([timestamp, value]);\n};\n\nTimeMap.prototype.get = function(key, timestamp) {\n    if (!this.store.has(key)) return '';\n    const vals = this.store.get(key);\n    let l = 0, r = vals.length - 1, result = '';\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (vals[mid][0] <= timestamp) {\n            result = vals[mid][1];\n            l = mid + 1;\n        } else {\n            r = mid - 1;\n        }\n    }\n    return result;\n};",
     "time_complexity": "O(log n) per get, O(1) per set",
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Each get operation uses binary search on the timestamp list, which is O(log n). Each set appends in O(1).",
     "space_complexity_explanation": "All key-value-timestamp entries are stored, using O(n) total space.",
-    "key_insight": "Timestamps arrive in order so the list is naturally sorted — binary search gives O(log n) lookups for the floor timestamp.",
+    "key_insight": "Timestamps arrive in order so the list is naturally sorted \u2014 binary search gives O(log n) lookups for the floor timestamp.",
     "related": [
       28
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 34,
@@ -1038,14 +1071,14 @@
       "For a valid partition, maxLeft1 <= minRight2 and maxLeft2 <= minRight1.",
       "If maxLeft1 > minRight2, move the partition left in array 1. Otherwise, move it right."
     ],
-    "approach": "Binary search on the smaller array to find a partition where the left halves of both arrays contain exactly half the total elements, and all left elements ≤ all right elements. The median is derived from the boundary elements.",
+    "approach": "Binary search on the smaller array to find a partition where the left halves of both arrays contain exactly half the total elements, and all left elements \u2264 all right elements. The median is derived from the boundary elements.",
     "solution_python": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        if len(nums1) > len(nums2):\n            nums1, nums2 = nums2, nums1\n        m, n = len(nums1), len(nums2)\n        half = (m + n + 1) // 2\n        l, r = 0, m\n        while l <= r:\n            i = (l + r) // 2\n            j = half - i\n            left1 = nums1[i - 1] if i > 0 else float('-inf')\n            right1 = nums1[i] if i < m else float('inf')\n            left2 = nums2[j - 1] if j > 0 else float('-inf')\n            right2 = nums2[j] if j < n else float('inf')\n            if left1 <= right2 and left2 <= right1:\n                if (m + n) % 2:\n                    return max(left1, left2)\n                return (max(left1, left2) + min(right1, right2)) / 2\n            elif left1 > right2:\n                r = i - 1\n            else:\n                l = i + 1",
     "solution_js": "var findMedianSortedArrays = function(nums1, nums2) {\n    if (nums1.length > nums2.length) [nums1, nums2] = [nums2, nums1];\n    const m = nums1.length, n = nums2.length;\n    const half = Math.floor((m + n + 1) / 2);\n    let l = 0, r = m;\n    while (l <= r) {\n        const i = Math.floor((l + r) / 2);\n        const j = half - i;\n        const left1 = i > 0 ? nums1[i - 1] : -Infinity;\n        const right1 = i < m ? nums1[i] : Infinity;\n        const left2 = j > 0 ? nums2[j - 1] : -Infinity;\n        const right2 = j < n ? nums2[j] : Infinity;\n        if (left1 <= right2 && left2 <= right1) {\n            if ((m + n) % 2) return Math.max(left1, left2);\n            return (Math.max(left1, left2) + Math.min(right1, right2)) / 2;\n        } else if (left1 > right2) {\n            r = i - 1;\n        } else {\n            l = i + 1;\n        }\n    }\n};",
     "time_complexity": "O(log(min(m, n)))",
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Binary search on the smaller array takes O(log(min(m,n))) steps to find the correct partition.",
     "space_complexity_explanation": "Only a constant number of variables for partition indices and boundary values are needed.",
-    "key_insight": "Binary search on the partition point of the smaller array — a correct partition means all left elements ≤ all right elements.",
+    "key_insight": "Binary search on the partition point of the smaller array \u2014 a correct partition means all left elements \u2264 all right elements.",
     "related": [],
     "companies": [
       "google",
@@ -1053,7 +1086,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 35,
@@ -1086,7 +1120,8 @@
     "companies": [
       "google",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 36,
@@ -1120,7 +1155,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 37,
@@ -1149,7 +1185,8 @@
     "related": [
       35,
       36
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 38,
@@ -1174,10 +1211,11 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Both fast and slow pointers traverse the list at most once, giving O(n) total.",
     "space_complexity_explanation": "Only the dummy node and two pointer variables are used.",
-    "key_insight": "Two pointers spaced n apart — when fast hits the end, slow is at the node before the one to remove.",
+    "key_insight": "Two pointers spaced n apart \u2014 when fast hits the end, slow is at the node before the one to remove.",
     "related": [
       35
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 39,
@@ -1208,7 +1246,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 40,
@@ -1221,9 +1260,9 @@
       "Linked List"
     ],
     "hints": [
-      "Numbers are stored in reverse order, so the head is the least significant digit — just like manual addition.",
+      "Numbers are stored in reverse order, so the head is the least significant digit \u2014 just like manual addition.",
       "Add corresponding digits plus carry. The new digit is sum % 10, the new carry is sum // 10.",
-      "Don't forget the final carry — if it's non-zero, create one more node."
+      "Don't forget the final carry \u2014 if it's non-zero, create one more node."
     ],
     "approach": "Traverse both lists simultaneously, adding corresponding digits plus carry. Create new nodes with (sum % 10) and track carry (sum // 10). Continue until both lists are exhausted and carry is 0.",
     "solution_python": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        dummy = ListNode()\n        curr = dummy\n        carry = 0\n        while l1 or l2 or carry:\n            v1 = l1.val if l1 else 0\n            v2 = l2.val if l2 else 0\n            total = v1 + v2 + carry\n            carry = total // 10\n            curr.next = ListNode(total % 10)\n            curr = curr.next\n            l1 = l1.next if l1 else None\n            l2 = l2.next if l2 else None\n        return dummy.next",
@@ -1232,7 +1271,7 @@
     "space_complexity": "O(max(m, n))",
     "time_complexity_explanation": "We traverse both lists once in parallel, processing O(max(m, n)) nodes total.",
     "space_complexity_explanation": "A new linked list node is created for each digit of the result, which has at most max(m, n) + 1 nodes.",
-    "key_insight": "Reverse-order storage means digits align perfectly for addition — just simulate grade-school addition with carry.",
+    "key_insight": "Reverse-order storage means digits align perfectly for addition \u2014 just simulate grade-school addition with carry.",
     "related": [
       36
     ],
@@ -1241,7 +1280,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 41,
@@ -1266,10 +1306,11 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "In the worst case, the slow pointer traverses the entire list once before the fast pointer catches up.",
     "space_complexity_explanation": "Only two pointers (slow and fast) are used, with no additional data structures.",
-    "key_insight": "Floyd's tortoise and hare — a fast pointer lapping a slow pointer proves a cycle exists, using only O(1) space.",
+    "key_insight": "Floyd's tortoise and hare \u2014 a fast pointer lapping a slow pointer proves a cycle exists, using only O(1) space.",
     "related": [
       42
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 42,
@@ -1285,7 +1326,7 @@
     "hints": [
       "Treat the array as a linked list where nums[i] points to index nums[i]. The duplicate creates a cycle.",
       "Use Floyd's cycle detection to find where slow and fast meet inside the cycle.",
-      "Then reset one pointer to start. Move both at speed 1 — they meet at the cycle entrance (the duplicate)."
+      "Then reset one pointer to start. Move both at speed 1 \u2014 they meet at the cycle entrance (the duplicate)."
     ],
     "approach": "Model the array as a linked list (index -> value). A duplicate means two indices point to the same value, creating a cycle. Use Floyd's algorithm: find the meeting point, then find the cycle entrance.",
     "solution_python": "class Solution:\n    def findDuplicate(self, nums: List[int]) -> int:\n        slow = fast = 0\n        while True:\n            slow = nums[slow]\n            fast = nums[nums[fast]]\n            if slow == fast:\n                break\n        slow2 = 0\n        while slow != slow2:\n            slow = nums[slow]\n            slow2 = nums[slow2]\n        return slow",
@@ -1294,10 +1335,11 @@
     "space_complexity": "O(1)",
     "time_complexity_explanation": "Floyd's algorithm uses a slow and fast pointer, each traversing the array at most twice (O(n) total).",
     "space_complexity_explanation": "Only two pointer variables are used; the array itself serves as the implicit linked list.",
-    "key_insight": "Reinterpret the array as a linked list — the duplicate number is the entrance to the cycle, found via Floyd's algorithm.",
+    "key_insight": "Reinterpret the array as a linked list \u2014 the duplicate number is the entrance to the cycle, found via Floyd's algorithm.",
     "related": [
       41
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 43,
@@ -1332,7 +1374,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 44,
@@ -1367,7 +1410,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 45,
@@ -1397,7 +1441,8 @@
     ],
     "companies": [
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 46,
@@ -1422,11 +1467,12 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Every node in the tree is visited exactly once to swap its children.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h, which is O(log n) for balanced trees or O(n) for skewed trees.",
-    "key_insight": "Swap children at every node — the recursive structure naturally handles the entire tree.",
+    "key_insight": "Swap children at every node \u2014 the recursive structure naturally handles the entire tree.",
     "related": [
       47,
       50
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 47,
@@ -1451,12 +1497,13 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Every node is visited exactly once in the DFS traversal.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h, which is O(n) in the worst case for a skewed tree.",
-    "key_insight": "Tree depth is a natural recursive problem — the depth of any node depends only on the depths of its children.",
+    "key_insight": "Tree depth is a natural recursive problem \u2014 the depth of any node depends only on the depths of its children.",
     "related": [
       46,
       48,
       49
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 48,
@@ -1481,14 +1528,15 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Each node is visited exactly once, computing height and updating the diameter in O(1) per node.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
-    "key_insight": "Piggyback on the height computation — at each node, left_height + right_height gives the diameter through that node.",
+    "key_insight": "Piggyback on the height computation \u2014 at each node, left_height + right_height gives the diameter through that node.",
     "related": [
       47,
       59
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 49,
@@ -1513,10 +1561,11 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Each node is visited once, computing and comparing subtree heights in O(1) per node.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
-    "key_insight": "Use -1 as a sentinel for 'unbalanced' — it short-circuits the height computation and avoids redundant work.",
+    "key_insight": "Use -1 as a sentinel for 'unbalanced' \u2014 it short-circuits the height computation and avoids redundant work.",
     "related": [
       47
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 50,
@@ -1534,7 +1583,7 @@
       "Base cases: both null = same; one null and one not = different.",
       "Recursively compare: values match AND left subtrees match AND right subtrees match."
     ],
-    "approach": "Recursive comparison: both null → true, one null → false, values differ → false. Otherwise recursively check both subtrees.",
+    "approach": "Recursive comparison: both null \u2192 true, one null \u2192 false, values differ \u2192 false. Otherwise recursively check both subtrees.",
     "solution_python": "class Solution:\n    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:\n        if not p and not q:\n            return True\n        if not p or not q or p.val != q.val:\n            return False\n        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)",
     "solution_js": "var isSameTree = function(p, q) {\n    if (!p && !q) return true;\n    if (!p || !q || p.val !== q.val) return false;\n    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n};",
     "time_complexity": "O(n)",
@@ -1544,7 +1593,8 @@
     "key_insight": "Structural equality of trees reduces to: same value at root, and recursive equality of both subtrees.",
     "related": [
       51
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 51,
@@ -1572,7 +1622,8 @@
     "key_insight": "Subtree check = traverse the main tree and run isSameTree at each node. It composes two simple recursive functions.",
     "related": [
       50
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 52,
@@ -1600,7 +1651,8 @@
     "key_insight": "The LCA in a BST is the first node where p and q diverge to different subtrees (or equal the node).",
     "related": [
       57
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 53,
@@ -1625,13 +1677,14 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Every node is visited exactly once during the BFS traversal.",
     "space_complexity_explanation": "The queue holds at most one full level of the tree, which can be up to n/2 nodes in a complete tree.",
-    "key_insight": "Process nodes in batches of queue.size() to separate levels — this is the core BFS level-order pattern.",
+    "key_insight": "Process nodes in batches of queue.size() to separate levels \u2014 this is the core BFS level-order pattern.",
     "related": [
       54
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 54,
@@ -1656,13 +1709,14 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Every node is visited exactly once during the level-order BFS traversal.",
     "space_complexity_explanation": "The queue stores up to one full level of nodes, which can be up to n/2 in a complete tree.",
-    "key_insight": "The right side view is simply the last node at each BFS level — a small modification to level-order traversal.",
+    "key_insight": "The right side view is simply the last node at each BFS level \u2014 a small modification to level-order traversal.",
     "related": [
       53
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 55,
@@ -1687,10 +1741,11 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Every node is visited exactly once during the DFS traversal.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
-    "key_insight": "Pass the path maximum as a DFS parameter — a node is 'good' if it meets or exceeds all ancestors on its path.",
+    "key_insight": "Pass the path maximum as a DFS parameter \u2014 a node is 'good' if it meets or exceeds all ancestors on its path.",
     "related": [
       47
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 56,
@@ -1716,11 +1771,12 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "Every node is visited exactly once, with O(1) bound-checking at each node.",
     "space_complexity_explanation": "The recursion stack depth equals the tree height h.",
-    "key_insight": "Pass valid range bounds (low, high) down the recursion — every node must satisfy low < val < high.",
+    "key_insight": "Pass valid range bounds (low, high) down the recursion \u2014 every node must satisfy low < val < high.",
     "related": [
       52,
       57
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 57,
@@ -1746,10 +1802,11 @@
     "space_complexity": "O(h)",
     "time_complexity_explanation": "The in-order traversal visits at most h nodes to reach the leftmost, then pops k nodes to find the answer.",
     "space_complexity_explanation": "The stack holds at most h nodes (the height of the tree) at any time.",
-    "key_insight": "In-order traversal of a BST yields sorted order — the kth node visited is the kth smallest element.",
+    "key_insight": "In-order traversal of a BST yields sorted order \u2014 the kth node visited is the kth smallest element.",
     "related": [
       56
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 58,
@@ -1778,7 +1835,8 @@
     "key_insight": "Preorder gives the root; inorder splits the tree into left and right subtrees. A hash map makes root lookups O(1).",
     "related": [
       53
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 59,
@@ -1806,7 +1864,8 @@
     "key_insight": "At each node, the best path through it uses both children, but the value returned to the parent can only use one branch.",
     "related": [
       48
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 60,
@@ -1832,10 +1891,11 @@
     "space_complexity": "O(n)",
     "time_complexity_explanation": "Serialization and deserialization each visit all n nodes exactly once.",
     "space_complexity_explanation": "The serialized string and the queue/list used during deserialization store all n node values.",
-    "key_insight": "Preorder traversal with null markers uniquely defines a binary tree — the deserialization just replays the traversal.",
+    "key_insight": "Preorder traversal with null markers uniquely defines a binary tree \u2014 the deserialization just replays the traversal.",
     "related": [
       58
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 61,
@@ -1859,11 +1919,12 @@
     "space_complexity": "O(n * m)",
     "time_complexity_explanation": "Each operation traverses at most m characters (the word length), with O(1) work per character.",
     "space_complexity_explanation": "In the worst case (no shared prefixes), the trie stores all characters of all n words, each of length up to m.",
-    "key_insight": "A trie stores words character-by-character in a tree — shared prefixes share nodes, making prefix operations efficient.",
+    "key_insight": "A trie stores words character-by-character in a tree \u2014 shared prefixes share nodes, making prefix operations efficient.",
     "related": [
       62,
       63
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 62,
@@ -1877,7 +1938,7 @@
       "DFS"
     ],
     "hints": [
-      "The '.' wildcard matches any single character — this requires exploring multiple branches.",
+      "The '.' wildcard matches any single character \u2014 this requires exploring multiple branches.",
       "Use a trie for storage. Add works like normal trie insert.",
       "For search, when you encounter '.', recursively try all children at that position."
     ],
@@ -1892,7 +1953,8 @@
     "related": [
       61,
       63
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 63,
@@ -1908,7 +1970,7 @@
     ],
     "hints": [
       "Build a trie from all words, then DFS from each cell in the board following the trie.",
-      "The trie lets you prune DFS branches early — if no word has this prefix, stop exploring.",
+      "The trie lets you prune DFS branches early \u2014 if no word has this prefix, stop exploring.",
       "Mark found words and prune trie branches to avoid duplicate results and speed up search."
     ],
     "approach": "Build a trie from all words. For each cell, DFS following trie children. When a word-end is reached, add it to results. Prune trie branches after finding words. Mark visited cells to avoid revisiting.",
@@ -1918,10 +1980,11 @@
     "space_complexity": "O(N * L)",
     "time_complexity_explanation": "For each of m*n cells, the DFS can explore up to 4^L paths (4 directions, L levels deep) following the trie.",
     "space_complexity_explanation": "The trie stores all N words of average length L, plus the recursion stack of depth L.",
-    "key_insight": "A trie built from all words guides the DFS — it simultaneously searches for all words and prunes impossible paths.",
+    "key_insight": "A trie built from all words guides the DFS \u2014 it simultaneously searches for all words and prunes impossible paths.",
     "related": [
       61,
       62
-    ]
+    ],
+    "neetcode150": true
   }
 ]

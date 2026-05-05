@@ -28,7 +28,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 2,
@@ -60,7 +61,8 @@
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 3,
@@ -95,7 +97,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 4,
@@ -128,7 +131,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 5,
@@ -163,7 +167,8 @@
       "apple",
       "netflix",
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 6,
@@ -188,7 +193,8 @@
     "time_complexity_explanation": "Encoding and decoding both scan through all characters across all strings exactly once.",
     "space_complexity_explanation": "The output uses the same total characters as the input (plus small length prefixes), so no extra space beyond the result.",
     "key_insight": "Length-prefixing eliminates delimiter ambiguity — the length tells you exactly how many characters to read.",
-    "related": []
+    "related": [],
+    "neetcode150": true
   },
   {
     "id": 7,
@@ -218,7 +224,8 @@
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 8,
@@ -248,7 +255,8 @@
     "companies": [
       "amazon",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 9,
@@ -280,7 +288,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 10,
@@ -312,7 +321,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 11,
@@ -340,7 +350,8 @@
     "related": [
       3,
       12
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 12,
@@ -374,7 +385,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 13,
@@ -407,7 +419,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 14,
@@ -442,7 +455,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 15,
@@ -475,7 +489,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 16,
@@ -512,7 +527,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 17,
@@ -540,7 +556,8 @@
     "key_insight": "Window is valid when (size - maxFreq) ≤ k. maxFreq never needs to decrease since we only care about beating the current best.",
     "related": [
       16
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 18,
@@ -569,7 +586,8 @@
     "related": [
       2,
       19
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 19,
@@ -601,7 +619,8 @@
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 20,
@@ -629,7 +648,8 @@
     "key_insight": "A monotonic decreasing deque maintains potential maximums — smaller elements are discarded since they can never be the max while a larger element is in the window.",
     "related": [
       26
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 21,
@@ -664,7 +684,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 22,
@@ -694,7 +715,8 @@
     "companies": [
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 23,
@@ -719,7 +741,8 @@
     "time_complexity_explanation": "We process each of the n tokens exactly once, with O(1) stack operations per token.",
     "space_complexity_explanation": "The stack can hold up to n/2 operands at once in the worst case.",
     "key_insight": "A stack naturally evaluates postfix expressions — operators always apply to the two most recent operands.",
-    "related": []
+    "related": [],
+    "neetcode150": true
   },
   {
     "id": 24,
@@ -752,7 +775,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 25,
@@ -783,7 +807,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 26,
@@ -811,7 +836,8 @@
     "key_insight": "Sort by position descending and use a stack of arrival times — a slower car ahead forces faster cars behind to merge into its fleet.",
     "related": [
       25
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 27,
@@ -842,7 +868,8 @@
     ],
     "companies": [
       "google"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 28,
@@ -870,7 +897,8 @@
     "related": [
       29,
       31
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 29,
@@ -898,7 +926,8 @@
     "key_insight": "Flatten the 2D matrix conceptually into a 1D sorted array using index math: row = idx // cols, col = idx % cols.",
     "related": [
       28
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 30,
@@ -930,7 +959,8 @@
       "google",
       "amazon",
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 31,
@@ -957,7 +987,8 @@
     "key_insight": "Compare mid with the right boundary — if mid > right, the rotation point (minimum) must be to the right of mid.",
     "related": [
       32
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 32,
@@ -989,7 +1020,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 33,
@@ -1021,7 +1053,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 34,
@@ -1053,7 +1086,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 35,
@@ -1086,7 +1120,8 @@
     "companies": [
       "google",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 36,
@@ -1120,7 +1155,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 37,
@@ -1149,7 +1185,8 @@
     "related": [
       35,
       36
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 38,
@@ -1177,7 +1214,8 @@
     "key_insight": "Two pointers spaced n apart — when fast hits the end, slow is at the node before the one to remove.",
     "related": [
       35
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 39,
@@ -1208,7 +1246,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 40,
@@ -1241,7 +1280,8 @@
       "amazon",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 41,
@@ -1269,7 +1309,8 @@
     "key_insight": "Floyd's tortoise and hare — a fast pointer lapping a slow pointer proves a cycle exists, using only O(1) space.",
     "related": [
       42
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 42,
@@ -1297,7 +1338,8 @@
     "key_insight": "Reinterpret the array as a linked list — the duplicate number is the entrance to the cycle, found via Floyd's algorithm.",
     "related": [
       41
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 43,
@@ -1332,7 +1374,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 44,
@@ -1367,7 +1410,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 45,
@@ -1397,7 +1441,8 @@
     ],
     "companies": [
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 46,
@@ -1426,7 +1471,8 @@
     "related": [
       47,
       50
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 47,
@@ -1456,7 +1502,8 @@
       46,
       48,
       49
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 48,
@@ -1488,7 +1535,8 @@
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 49,
@@ -1516,7 +1564,8 @@
     "key_insight": "Use -1 as a sentinel for 'unbalanced' — it short-circuits the height computation and avoids redundant work.",
     "related": [
       47
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 50,
@@ -1544,7 +1593,8 @@
     "key_insight": "Structural equality of trees reduces to: same value at root, and recursive equality of both subtrees.",
     "related": [
       51
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 51,
@@ -1572,7 +1622,8 @@
     "key_insight": "Subtree check = traverse the main tree and run isSameTree at each node. It composes two simple recursive functions.",
     "related": [
       50
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 52,
@@ -1600,7 +1651,8 @@
     "key_insight": "The LCA in a BST is the first node where p and q diverge to different subtrees (or equal the node).",
     "related": [
       57
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 53,
@@ -1631,7 +1683,8 @@
     ],
     "companies": [
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 54,
@@ -1662,7 +1715,8 @@
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 55,
@@ -1690,7 +1744,8 @@
     "key_insight": "Pass the path maximum as a DFS parameter — a node is 'good' if it meets or exceeds all ancestors on its path.",
     "related": [
       47
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 56,
@@ -1720,7 +1775,8 @@
     "related": [
       52,
       57
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 57,
@@ -1749,7 +1805,8 @@
     "key_insight": "In-order traversal of a BST yields sorted order — the kth node visited is the kth smallest element.",
     "related": [
       56
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 58,
@@ -1778,7 +1835,8 @@
     "key_insight": "Preorder gives the root; inorder splits the tree into left and right subtrees. A hash map makes root lookups O(1).",
     "related": [
       53
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 59,
@@ -1806,7 +1864,8 @@
     "key_insight": "At each node, the best path through it uses both children, but the value returned to the parent can only use one branch.",
     "related": [
       48
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 60,
@@ -1835,7 +1894,8 @@
     "key_insight": "Preorder traversal with null markers uniquely defines a binary tree — the deserialization just replays the traversal.",
     "related": [
       58
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 61,
@@ -1863,7 +1923,8 @@
     "related": [
       62,
       63
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 62,
@@ -1892,7 +1953,8 @@
     "related": [
       61,
       63
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 63,
@@ -1922,7 +1984,8 @@
     "related": [
       61,
       62
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 64,
@@ -1951,7 +2014,8 @@
     "related": [
       70,
       67
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 65,
@@ -1980,7 +2044,8 @@
     "related": [
       64,
       67
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 66,
@@ -2012,7 +2077,8 @@
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 67,
@@ -2045,7 +2111,8 @@
     "companies": [
       "apple",
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 68,
@@ -2075,7 +2142,8 @@
     "related": [
       69,
       116
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 69,
@@ -2105,7 +2173,8 @@
     "related": [
       68,
       64
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 70,
@@ -2134,7 +2203,8 @@
     "related": [
       64,
       67
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 71,
@@ -2163,7 +2233,8 @@
     "related": [
       74,
       72
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 72,
@@ -2192,7 +2263,8 @@
     "related": [
       75,
       71
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 73,
@@ -2220,7 +2292,8 @@
     "related": [
       71,
       74
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 74,
@@ -2249,7 +2322,8 @@
     "related": [
       71,
       75
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 75,
@@ -2278,7 +2352,8 @@
     "related": [
       72,
       74
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 76,
@@ -2312,7 +2387,8 @@
     "companies": [
       "netflix",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 77,
@@ -2341,7 +2417,8 @@
     "related": [
       71,
       72
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 78,
@@ -2373,7 +2450,8 @@
     "companies": [
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 79,
@@ -2406,7 +2484,8 @@
     "companies": [
       "google",
       "amazon"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 80,
@@ -2442,7 +2521,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 81,
@@ -2475,7 +2555,8 @@
     ],
     "companies": [
       "meta"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 82,
@@ -2505,7 +2586,8 @@
     "related": [
       80,
       85
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 83,
@@ -2535,7 +2617,8 @@
     "related": [
       80,
       84
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 84,
@@ -2565,7 +2648,8 @@
     "related": [
       80,
       83
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 85,
@@ -2598,7 +2682,8 @@
     ],
     "companies": [
       "amazon"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 86,
@@ -2628,7 +2713,8 @@
     "related": [
       85,
       80
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 87,
@@ -2662,7 +2748,8 @@
     "companies": [
       "amazon",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 88,
@@ -2695,7 +2782,8 @@
     "companies": [
       "apple",
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 89,
@@ -2724,7 +2812,8 @@
     "related": [
       90,
       87
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 90,
@@ -2754,7 +2843,8 @@
     "related": [
       89,
       91
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 91,
@@ -2783,7 +2873,8 @@
     "related": [
       89,
       90
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 92,
@@ -2816,7 +2907,8 @@
     "companies": [
       "amazon",
       "apple"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 93,
@@ -2851,7 +2943,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 94,
@@ -2879,7 +2972,8 @@
     "related": [
       93,
       95
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 95,
@@ -2907,7 +3001,8 @@
     "related": [
       96,
       94
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 96,
@@ -2935,7 +3030,8 @@
     "related": [
       95,
       93
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 97,
@@ -2971,7 +3067,8 @@
       "apple",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 98,
@@ -3000,7 +3097,8 @@
     "related": [
       97,
       77
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 99,
@@ -3028,7 +3126,8 @@
     "related": [
       93,
       100
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 100,
@@ -3060,7 +3159,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 101,
@@ -3088,7 +3188,8 @@
     "related": [
       95,
       102
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 102,
@@ -3121,7 +3222,8 @@
     "companies": [
       "apple",
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 103,
@@ -3150,7 +3252,8 @@
     "related": [
       104,
       100
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 104,
@@ -3179,7 +3282,8 @@
     "related": [
       100,
       95
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 105,
@@ -3211,7 +3315,8 @@
     ],
     "companies": [
       "amazon"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 106,
@@ -3240,7 +3345,8 @@
     "related": [
       103,
       107
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 107,
@@ -3269,7 +3375,8 @@
     "related": [
       95,
       108
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 108,
@@ -3298,7 +3405,8 @@
     "related": [
       100,
       104
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 109,
@@ -3327,7 +3435,8 @@
     "related": [
       104,
       100
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 110,
@@ -3356,7 +3465,8 @@
     "related": [
       106,
       112
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 111,
@@ -3386,7 +3496,8 @@
     "related": [
       82,
       106
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 112,
@@ -3415,7 +3526,8 @@
     "related": [
       106,
       110
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 113,
@@ -3444,7 +3556,8 @@
     "related": [
       106,
       112
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 114,
@@ -3473,7 +3586,8 @@
     "related": [
       113,
       115
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 115,
@@ -3505,7 +3619,8 @@
     ],
     "companies": [
       "amazon"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 116,
@@ -3540,7 +3655,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 117,
@@ -3573,7 +3689,8 @@
       "google",
       "amazon",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 118,
@@ -3605,7 +3722,8 @@
     ],
     "companies": [
       "amazon"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 119,
@@ -3633,7 +3751,8 @@
     "related": [
       117,
       120
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 120,
@@ -3663,7 +3782,8 @@
     "related": [
       124,
       119
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 121,
@@ -3691,7 +3811,8 @@
     "related": [
       119,
       122
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 122,
@@ -3720,7 +3841,8 @@
     "related": [
       124,
       119
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 123,
@@ -3749,7 +3871,8 @@
     "related": [
       116,
       119
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 124,
@@ -3778,7 +3901,8 @@
     "related": [
       125,
       126
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 125,
@@ -3815,7 +3939,8 @@
       "netflix",
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 126,
@@ -3845,7 +3970,8 @@
     "related": [
       125,
       127
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 127,
@@ -3874,7 +4000,8 @@
     "related": [
       128,
       125
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 128,
@@ -3909,7 +4036,8 @@
       "google",
       "apple",
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 129,
@@ -3939,7 +4067,8 @@
     "related": [
       128,
       125
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 130,
@@ -3973,7 +4102,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 131,
@@ -4008,7 +4138,8 @@
       "amazon",
       "apple",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 132,
@@ -4040,7 +4171,8 @@
     ],
     "companies": [
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 133,
@@ -4070,7 +4202,8 @@
     "related": [
       134,
       135
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 134,
@@ -4099,7 +4232,8 @@
     "related": [
       133,
       135
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 135,
@@ -4133,7 +4267,8 @@
     "companies": [
       "meta",
       "microsoft"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 136,
@@ -4162,7 +4297,8 @@
     "related": [
       134,
       135
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 137,
@@ -4192,7 +4328,8 @@
     "related": [
       130,
       131
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 138,
@@ -4225,7 +4362,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 139,
@@ -4255,7 +4393,8 @@
     "related": [
       89,
       140
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 140,
@@ -4287,7 +4426,8 @@
     ],
     "companies": [
       "netflix"
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 141,
@@ -4317,7 +4457,8 @@
     "related": [
       140,
       142
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 142,
@@ -4347,7 +4488,8 @@
     "related": [
       87,
       88
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 143,
@@ -4377,7 +4519,8 @@
     "related": [
       140,
       87
-    ]
+    ],
+    "neetcode150": true
   },
   {
     "id": 144,

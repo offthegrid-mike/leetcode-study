@@ -10,7 +10,7 @@ const CATEGORIES = [
 
 const ITEMS_PER_PAGE = 20;
 
-let filters = { category: 'All', difficulty: 'All', status: 'All', complexity: 'All', search: '', sort: 'default', page: 1 };
+let filters = { category: 'All', difficulty: 'All', status: 'All', complexity: 'All', search: '', sort: 'default', page: 1, neetcode150: false };
 
 function matchesSearch(problem, query) {
   const q = query.toLowerCase();
@@ -137,6 +137,16 @@ export async function renderProblemList(container, problems, progress) {
     renderProblemList(container, problems, progress);
   });
 
+  // NeetCode 150 toggle
+  const neetcodeToggle = createElement('button', `filter-toggle${filters.neetcode150 ? ' active' : ''}`, '⭐ NeetCode 150');
+  neetcodeToggle.title = 'Show only NeetCode 150 problems';
+  neetcodeToggle.addEventListener('click', () => {
+    filters.neetcode150 = !filters.neetcode150;
+    filters.page = 1;
+    renderProblemList(container, problems, progress);
+  });
+
+  filterRow.appendChild(neetcodeToggle);
   filterRow.appendChild(diffSelect);
   filterRow.appendChild(statusSelect);
   filterRow.appendChild(sortSelect);
@@ -160,6 +170,7 @@ export async function renderProblemList(container, problems, progress) {
   // Filter problems
   const bookmarks = filters.status === 'Bookmarked' ? await getBookmarks() : [];
   let filtered = problems.filter(p => {
+    if (filters.neetcode150 && !p.neetcode150) return false;
     if (filters.category !== 'All' && p.category !== filters.category) return false;
     if (filters.difficulty !== 'All' && p.difficulty !== filters.difficulty) return false;
     if (filters.search && !matchesSearch(p, filters.search)) return false;
