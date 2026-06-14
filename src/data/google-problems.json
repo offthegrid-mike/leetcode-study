@@ -1138,7 +1138,7 @@
     ]
   },
   {
-    "id": 584,
+    "id": 437,
     "title": "Path Sum III",
     "slug": "path-sum-iii",
     "category": "Tree",
@@ -5340,6 +5340,328 @@
     "related": [
       974,
       560
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 402,
+    "title": "Remove K Digits",
+    "slug": "remove-k-digits",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/remove-k-digits/",
+    "patterns": [
+      "Greedy",
+      "Monotonic Stack"
+    ],
+    "hints": [
+      "Think about which digit to remove first \u2014 should you remove from the front or the back of the number?",
+      "A monotonic increasing stack helps: whenever a digit is larger than the next one, removing it makes the number smaller.",
+      "After processing all digits, if k > 0 still, remove from the end of the stack (the largest trailing digits)."
+    ],
+    "approach": "Use a greedy approach with a monotonic increasing stack. Iterate through each digit; while the stack is non-empty, k > 0, and the top of the stack is greater than the current digit, pop the stack and decrement k. Push the current digit. After the loop, if k > 0, remove the last k digits. Strip leading zeros from the result.",
+    "solution_python": "class Solution:\n    def removeKdigits(self, num: str, k: int) -> str:\n        stack = []\n        for digit in num:\n            while k and stack and stack[-1] > digit:\n                stack.pop()\n                k -= 1\n            stack.append(digit)\n        # If k still > 0, remove from end\n        if k:\n            stack = stack[:-k]\n        # Strip leading zeros\n        result = ''.join(stack).lstrip('0')\n        return result if result else '0'",
+    "solution_js": "var removeKdigits = function(num, k) {\n    const stack = [];\n    for (const digit of num) {\n        while (k > 0 && stack.length > 0 && stack[stack.length - 1] > digit) {\n            stack.pop();\n            k--;\n        }\n        stack.push(digit);\n    }\n    if (k > 0) stack.splice(stack.length - k, k);\n    const result = stack.join('').replace(/^0+/, '');\n    return result || '0';\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each digit is pushed and popped from the stack at most once, giving a linear pass over the string.",
+    "space_complexity_explanation": "The stack stores at most n digits in the worst case.",
+    "key_insight": "Greedily removing a digit that is larger than the next digit always yields a smaller number \u2014 a monotonic increasing stack automates this decision efficiently.",
+    "related": [
+      316,
+      1673
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 137,
+    "title": "Single Number II",
+    "slug": "single-number-ii",
+    "category": "Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/single-number-ii/",
+    "patterns": [
+      "Bit Manipulation",
+      "Math"
+    ],
+    "hints": [
+      "Every number except one appears exactly three times \u2014 think about what happens to each bit position across all numbers.",
+      "If you sum the bits at each position across all numbers, the bits belonging to the tripled numbers contribute a multiple of 3.",
+      "Take the bit-sum modulo 3 at each position; the remaining bits reconstruct the single number."
+    ],
+    "approach": "For each of the 32 bit positions, sum the bits of all numbers at that position. Since every number except the answer appears three times, each such bit sum is divisible by 3 if the answer has a 0 there, or leaves remainder 1 if the answer has a 1 there. Taking sum % 3 at each position and reconstructing yields the answer. Alternatively, use two bitmask variables (ones, twos) to track counts mod 3.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def singleNumber(self, nums: List[int]) -> int:\n        ones, twos = 0, 0\n        for num in nums:\n            ones = (ones ^ num) & ~twos\n            twos = (twos ^ num) & ~ones\n        return ones",
+    "solution_js": "var singleNumber = function(nums) {\n    let ones = 0, twos = 0;\n    for (const num of nums) {\n        ones = (ones ^ num) & ~twos;\n        twos = (twos ^ num) & ~ones;\n    }\n    return ones;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the array is made with constant-time bit operations per element.",
+    "space_complexity_explanation": "Only two integer variables are used regardless of input size.",
+    "key_insight": "Tracking bit counts modulo 3 with two bitmasks (ones and twos) lets you cancel out all numbers that appear three times, leaving only the unique number.",
+    "related": [
+      136,
+      260
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 278,
+    "title": "First Bad Version",
+    "slug": "first-bad-version",
+    "category": "Binary Search",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/first-bad-version/",
+    "patterns": [
+      "Binary Search"
+    ],
+    "hints": [
+      "The versions form a sorted sequence: all good versions come before all bad versions.",
+      "Binary search works here \u2014 if mid is bad, the first bad version is at mid or earlier; if good, it must be after mid.",
+      "Track the leftmost bad version found and narrow the search window accordingly."
+    ],
+    "approach": "Apply binary search over the version range [1, n]. At each midpoint, call isBadVersion(mid). If it returns true, the first bad version is at mid or to the left, so move right to mid. If false, the first bad version is to the right, so move left to mid + 1. Continue until left == right, which is the first bad version.",
+    "solution_python": "# The isBadVersion API is already defined.\n# def isBadVersion(version: int) -> bool:\n\nclass Solution:\n    def firstBadVersion(self, n: int) -> int:\n        left, right = 1, n\n        while left < right:\n            mid = left + (right - left) // 2\n            if isBadVersion(mid):\n                right = mid\n            else:\n                left = mid + 1\n        return left",
+    "solution_js": "var solution = function(isBadVersion) {\n    return function(n) {\n        let left = 1, right = n;\n        while (left < right) {\n            const mid = left + Math.floor((right - left) / 2);\n            if (isBadVersion(mid)) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        return left;\n    };\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search halves the search space at each step, requiring at most log2(n) calls to isBadVersion.",
+    "space_complexity_explanation": "Only two pointer variables are maintained regardless of n.",
+    "key_insight": "Because all good versions precede all bad versions, the problem is equivalent to finding the left boundary in a binary search, minimizing the number of expensive API calls.",
+    "related": [
+      374,
+      35
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 303,
+    "title": "Range Sum Query - Immutable",
+    "slug": "range-sum-query-immutable",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/range-sum-query-immutable/",
+    "patterns": [
+      "Prefix Sum"
+    ],
+    "hints": [
+      "If sumRange is called many times, recomputing the sum from scratch each time is wasteful.",
+      "Precompute a prefix sum array so that sumRange(i, j) can be answered in O(1).",
+      "prefix[j+1] - prefix[i] gives the sum of elements from index i to j inclusive."
+    ],
+    "approach": "In the constructor, build a prefix sum array where prefix[i] stores the sum of nums[0..i-1]. Then sumRange(left, right) is simply prefix[right+1] - prefix[left], answering each query in constant time after O(n) preprocessing.",
+    "solution_python": "from typing import List\n\nclass NumArray:\n    def __init__(self, nums: List[int]):\n        self.prefix = [0] * (len(nums) + 1)\n        for i, num in enumerate(nums):\n            self.prefix[i + 1] = self.prefix[i] + num\n\n    def sumRange(self, left: int, right: int) -> int:\n        return self.prefix[right + 1] - self.prefix[left]",
+    "solution_js": "class NumArray {\n    constructor(nums) {\n        this.prefix = new Array(nums.length + 1).fill(0);\n        for (let i = 0; i < nums.length; i++) {\n            this.prefix[i + 1] = this.prefix[i] + nums[i];\n        }\n    }\n\n    sumRange(left, right) {\n        return this.prefix[right + 1] - this.prefix[left];\n    }\n}",
+    "time_complexity": "O(1) per query, O(n) build",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "After O(n) preprocessing, each sumRange query is answered with a single subtraction in O(1).",
+    "space_complexity_explanation": "The prefix sum array requires O(n) extra space proportional to the input length.",
+    "key_insight": "Storing prefix sums transforms range sum queries from O(n) repeated work into O(1) lookups by precomputing cumulative totals.",
+    "related": [
+      304,
+      307,
+      560
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 258,
+    "title": "Add Digits",
+    "slug": "add-digits",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/add-digits/",
+    "patterns": [
+      "Math",
+      "Simulation"
+    ],
+    "hints": [
+      "Repeatedly summing the digits of any positive integer eventually reaches a single digit \u2014 this is the digital root.",
+      "There is a direct mathematical formula involving modulo 9 that avoids any looping.",
+      "The digital root of n is 0 if n == 0, else 1 + (n - 1) % 9."
+    ],
+    "approach": "Use the digital root formula from number theory. For any positive integer n, the digital root is n % 9 if n % 9 != 0, or 9 if n % 9 == 0 (and n > 0). This reduces the problem to a single arithmetic operation with no loops.",
+    "solution_python": "class Solution:\n    def addDigits(self, num: int) -> int:\n        if num == 0:\n            return 0\n        return 1 + (num - 1) % 9",
+    "solution_js": "var addDigits = function(num) {\n    if (num === 0) return 0;\n    return 1 + (num - 1) % 9;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The digital root formula computes the answer with a fixed number of arithmetic operations regardless of input size.",
+    "space_complexity_explanation": "No extra data structures are used; only a constant amount of space is needed.",
+    "key_insight": "The digital root of a number equals its value modulo 9 (with a special case for multiples of 9), because repeatedly summing digits is equivalent to repeatedly subtracting 9.",
+    "related": [
+      202,
+      263
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 77,
+    "title": "Combinations",
+    "slug": "combinations",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/combinations/",
+    "patterns": [
+      "Backtracking",
+      "Recursion"
+    ],
+    "hints": [
+      "Generate all combinations by choosing numbers one at a time from a start index to avoid duplicates.",
+      "Use backtracking: add a number to the current combination, recurse, then remove it.",
+      "Prune early: if the remaining numbers available are fewer than needed to complete the combination, stop."
+    ],
+    "approach": "Use backtracking to build combinations incrementally. Maintain a current list and a start index. At each step, iterate from start to n, add the candidate to the current list, recurse with start = candidate + 1, then backtrack by removing the candidate. Add the current list to results when its length reaches k.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []\n        def backtrack(start, current):\n            if len(current) == k:\n                result.append(current[:])\n                return\n            # Pruning: need at least (k - len(current)) more numbers\n            for i in range(start, n - (k - len(current)) + 2):\n                current.append(i)\n                backtrack(i + 1, current)\n                current.pop()\n        backtrack(1, [])\n        return result",
+    "solution_js": "var combine = function(n, k) {\n    const result = [];\n    function backtrack(start, current) {\n        if (current.length === k) {\n            result.push([...current]);\n            return;\n        }\n        const need = k - current.length;\n        for (let i = start; i <= n - need + 1; i++) {\n            current.push(i);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    backtrack(1, []);\n    return result;\n};",
+    "time_complexity": "O(k * C(n, k))",
+    "space_complexity": "O(k)",
+    "time_complexity_explanation": "There are C(n, k) combinations, and each takes O(k) time to copy into the result.",
+    "space_complexity_explanation": "The recursion depth is at most k, and the current combination array holds at most k elements.",
+    "key_insight": "Fixing an ascending order for chosen numbers (always pick from start onward) avoids duplicate combinations without needing a visited set, and pruning stops branches that can no longer reach size k.",
+    "related": [
+      39,
+      46,
+      78
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Substring with Concatenation of All Words",
+    "slug": "substring-with-concatenation-of-all-words",
+    "category": "String",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/substring-with-concatenation-of-all-words/",
+    "patterns": [
+      "Sliding Window",
+      "Hash Map"
+    ],
+    "hints": [
+      "All words have the same length \u2014 use that to slice the string into fixed-size word chunks.",
+      "For each possible starting offset (0 to word_length - 1), use a sliding window of exactly total_words words.",
+      "Maintain a frequency map of the words in the current window; add the new word and remove the oldest word as the window slides."
+    ],
+    "approach": "Since every word has the same length L, iterate over starting offsets 0 through L-1. For each offset, use a sliding window of width total_words * L. Maintain a count map of words in the current window. Expand by adding the next word and shrink from the left when the window has too many of a word or an unknown word appears. Record start indices where the window map matches the target map.",
+    "solution_python": "from typing import List\nfrom collections import Counter\n\nclass Solution:\n    def findSubstring(self, s: str, words: List[str]) -> List[int]:\n        if not s or not words:\n            return []\n        word_len = len(words[0])\n        num_words = len(words)\n        window_len = word_len * num_words\n        word_count = Counter(words)\n        result = []\n\n        for offset in range(word_len):\n            left = offset\n            current = Counter()\n            count = 0\n            for right in range(offset, len(s) - word_len + 1, word_len):\n                word = s[right:right + word_len]\n                if word in word_count:\n                    current[word] += 1\n                    count += 1\n                    while current[word] > word_count[word]:\n                        left_word = s[left:left + word_len]\n                        current[left_word] -= 1\n                        count -= 1\n                        left += word_len\n                    if count == num_words:\n                        result.append(left)\n                else:\n                    current.clear()\n                    count = 0\n                    left = right + word_len\n        return result",
+    "solution_js": "var findSubstring = function(s, words) {\n    if (!s || !words.length) return [];\n    const wordLen = words[0].length;\n    const numWords = words.length;\n    const wordCount = {};\n    for (const w of words) wordCount[w] = (wordCount[w] || 0) + 1;\n    const result = [];\n\n    for (let offset = 0; offset < wordLen; offset++) {\n        let left = offset;\n        let count = 0;\n        const current = {};\n        for (let right = offset; right <= s.length - wordLen; right += wordLen) {\n            const word = s.slice(right, right + wordLen);\n            if (word in wordCount) {\n                current[word] = (current[word] || 0) + 1;\n                count++;\n                while (current[word] > wordCount[word]) {\n                    const leftWord = s.slice(left, left + wordLen);\n                    current[leftWord]--;\n                    count--;\n                    left += wordLen;\n                }\n                if (count === numWords) result.push(left);\n            } else {\n                for (const k in current) delete current[k];\n                count = 0;\n                left = right + wordLen;\n            }\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(n * L)",
+    "space_complexity": "O(n + m * L)",
+    "time_complexity_explanation": "We run L sliding window passes, each scanning O(n/L) words, giving O(n) total work per offset and O(n * L) overall \u2014 but effectively O(n) since L is constant.",
+    "space_complexity_explanation": "The word frequency maps store at most m * L characters, and the result list can hold up to O(n) indices.",
+    "key_insight": "By iterating over the L possible starting offsets and sliding a word-aligned window, you reduce the problem to a standard sliding window with a frequency map comparison, avoiding O(n * window_size) brute force.",
+    "related": [
+      76,
+      438
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 459,
+    "title": "Repeated Substring Pattern",
+    "slug": "repeated-substring-pattern",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/repeated-substring-pattern/",
+    "patterns": [
+      "String",
+      "KMP"
+    ],
+    "hints": [
+      "If a string s is formed by repeating a substring, then s must be a substring of s + s (excluding the first and last characters).",
+      "Alternatively, use the KMP failure function: if the last value of the failure table divides n and n % (n - lps[-1]) == 0, a pattern exists.",
+      "The period of the string is n - lps[-1]; if it evenly divides n, the string is a repetition of that period."
+    ],
+    "approach": "Use the doubling trick: concatenate s with itself and check if s appears in the middle of the doubled string (i.e., in (s+s)[1:-1]). This works because any string built from a repeated pattern appears as a rotation within the doubled string. Alternatively, use the KMP failure function to find the minimal period.",
+    "solution_python": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        return s in (s + s)[1:-1]",
+    "solution_js": "var repeatedSubstringPattern = function(s) {\n    return (s + s).slice(1, -1).includes(s);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Constructing the doubled string and performing the substring search both take O(n) time with efficient string matching.",
+    "space_complexity_explanation": "The doubled string requires O(n) extra space.",
+    "key_insight": "If s is made of k repetitions of a pattern, then s is a rotation of itself; all rotations of s appear as substrings of s+s, so checking membership in (s+s)[1:-1] is a clever O(n) test.",
+    "related": [
+      28,
+      686
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 144,
+    "title": "Binary Tree Preorder Traversal",
+    "slug": "binary-tree-preorder-traversal",
+    "category": "Tree",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/binary-tree-preorder-traversal/",
+    "patterns": [
+      "Tree",
+      "DFS",
+      "Stack"
+    ],
+    "hints": [
+      "Preorder visits the node first, then the left subtree, then the right subtree.",
+      "Recursion naturally implements preorder traversal; try implementing it iteratively as a bonus.",
+      "For the iterative approach, use a stack \u2014 push the right child before the left so the left is processed first."
+    ],
+    "approach": "Traverse the tree in preorder (root, left, right). Recursively: visit the current node, recurse left, recurse right. Iteratively: use an explicit stack; push the root, then repeatedly pop a node, record its value, and push its right then left children (right first so left is processed next).",
+    "solution_python": "from typing import List, Optional\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\n\nclass Solution:\n    def preorderTraversal(self, root: Optional['TreeNode']) -> List[int]:\n        result = []\n        stack = [root] if root else []\n        while stack:\n            node = stack.pop()\n            result.append(node.val)\n            if node.right:\n                stack.append(node.right)\n            if node.left:\n                stack.append(node.left)\n        return result",
+    "solution_js": "var preorderTraversal = function(root) {\n    const result = [];\n    if (!root) return result;\n    const stack = [root];\n    while (stack.length) {\n        const node = stack.pop();\n        result.push(node.val);\n        if (node.right) stack.push(node.right);\n        if (node.left) stack.push(node.left);\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Every node is visited exactly once, giving linear time proportional to the number of nodes.",
+    "space_complexity_explanation": "The stack holds at most O(h) nodes where h is the tree height, which is O(n) in the worst case for a skewed tree.",
+    "key_insight": "Pushing the right child onto the stack before the left ensures the left subtree is processed first, mirroring recursive preorder without using the call stack.",
+    "related": [
+      94,
+      145,
+      102
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 584,
+    "title": "Find Customer Referee",
+    "slug": "find-customer-referee",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-customer-referee/",
+    "patterns": [
+      "SQL",
+      "NULL Handling"
+    ],
+    "hints": [
+      "Select customers whose referee_id is not 2 \u2014 but be careful about NULL values.",
+      "In SQL, NULL compared with any value using = or != returns NULL (not TRUE/FALSE), so NULL != 2 is not TRUE.",
+      "Use IS NULL or COALESCE to explicitly handle rows where referee_id is NULL."
+    ],
+    "approach": "Write a SQL SELECT that filters the Customer table for rows where referee_id is not equal to 2. Because referee_id can be NULL and NULL != 2 evaluates to NULL (not TRUE) in SQL, the WHERE clause must also include an IS NULL check using OR to capture customers with no referee.",
+    "solution_python": "SELECT name\nFROM Customer\nWHERE referee_id != 2 OR referee_id IS NULL;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The database scans the Customer table once, which is O(n) in the number of rows.",
+    "space_complexity_explanation": "The result set stores the names of matching customers, proportional to the number of qualifying rows.",
+    "key_insight": "NULL values in SQL are not equal to anything, including 2, so a simple != 2 filter silently drops rows where referee_id is NULL \u2014 an explicit OR referee_id IS NULL is required.",
+    "related": [
+      183,
+      182
     ],
     "companies": [
       "google"
