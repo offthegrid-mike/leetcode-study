@@ -3018,5 +3018,327 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 1523,
+    "title": "Count Odd Numbers in an Interval Range",
+    "slug": "count-odd-numbers-in-an-interval-range",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/count-odd-numbers-in-an-interval-range/",
+    "patterns": [
+      "Math",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Think about how many odd numbers exist from 0 to n.",
+      "Use a helper: count(n) = (n + 1) // 2 gives odd numbers in [0, n].",
+      "The answer is count(high) - count(low - 1)."
+    ],
+    "approach": "Define a helper function count(n) that returns the number of odd integers in [0, n], which is simply (n + 1) // 2. The number of odd integers in [low, high] is then count(high) - count(low - 1). This avoids iterating through the range entirely.",
+    "solution_python": "class Solution:\n    def countOdds(self, low: int, high: int) -> int:\n        def count(n):\n            return (n + 1) // 2\n        return count(high) - count(low - 1)",
+    "solution_js": "var countOdds = function(low, high) {\n    const count = n => Math.floor((n + 1) / 2);\n    return count(high) - count(low - 1);\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Only arithmetic operations are performed regardless of the range size.",
+    "space_complexity_explanation": "No extra data structures are used.",
+    "key_insight": "The count of odd numbers in [0, n] is (n+1)//2, allowing any range query to be answered with a simple subtraction in O(1).",
+    "related": [
+      1295,
+      2769
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3070,
+    "title": "Count Submatrices with Top-Left Element and Sum Less Than k",
+    "slug": "count-submatrices-with-top-left-element-and-sum-less-than-k",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/count-submatrices-with-top-left-element-and-sum-less-than-k/",
+    "patterns": [
+      "Prefix Sum",
+      "2D Prefix Sum"
+    ],
+    "hints": [
+      "Build a 2D prefix sum table to query any submatrix sum in O(1).",
+      "Every valid submatrix must include the top-left cell (0,0), so enumerate all bottom-right corners (i,j).",
+      "Use prefix[i][j] = grid[i][j] + prefix[i-1][j] + prefix[i][j-1] - prefix[i-1][j-1]."
+    ],
+    "approach": "Compute a 2D prefix sum in-place or in a separate array so that prefix[i][j] holds the sum of the submatrix from (0,0) to (i,j). Then iterate over every cell (i,j); the prefix sum at that cell is the sum of the submatrix with top-left corner at (0,0) and bottom-right at (i,j). Count all cells where this prefix sum is less than k.",
+    "solution_python": "class Solution:\n    def countSubmatrices(self, grid: list[list[int]], k: int) -> int:\n        m, n = len(grid), len(grid[0])\n        prefix = [[0] * n for _ in range(m)]\n        count = 0\n        for i in range(m):\n            for j in range(n):\n                prefix[i][j] = grid[i][j]\n                if i > 0:\n                    prefix[i][j] += prefix[i-1][j]\n                if j > 0:\n                    prefix[i][j] += prefix[i][j-1]\n                if i > 0 and j > 0:\n                    prefix[i][j] -= prefix[i-1][j-1]\n                if prefix[i][j] <= k:\n                    count += 1\n        return count",
+    "solution_js": "var countSubmatrices = function(grid, k) {\n    const m = grid.length, n = grid[0].length;\n    const prefix = Array.from({length: m}, () => new Array(n).fill(0));\n    let count = 0;\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            prefix[i][j] = grid[i][j];\n            if (i > 0) prefix[i][j] += prefix[i-1][j];\n            if (j > 0) prefix[i][j] += prefix[i][j-1];\n            if (i > 0 && j > 0) prefix[i][j] -= prefix[i-1][j-1];\n            if (prefix[i][j] <= k) count++;\n        }\n    }\n    return count;\n};",
+    "time_complexity": "O(m*n)",
+    "space_complexity": "O(m*n)",
+    "time_complexity_explanation": "We visit each cell of the m\u00d7n grid exactly once to build the prefix sum and count valid submatrices.",
+    "space_complexity_explanation": "A 2D prefix sum array of size m\u00d7n is maintained.",
+    "key_insight": "Because every valid submatrix must include (0,0), any submatrix is fully described by its bottom-right corner, making a single 2D prefix sum pass sufficient to evaluate all candidates.",
+    "related": [
+      304,
+      1074
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 962,
+    "title": "Maximum Width Ramp",
+    "slug": "maximum-width-ramp",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-width-ramp/",
+    "patterns": [
+      "Monotonic Stack",
+      "Two Pointers"
+    ],
+    "hints": [
+      "Build a decreasing stack of indices from left to right \u2014 these are the only candidates for the left end of a ramp.",
+      "Scan from the right end; for each index j, pop from the stack while nums[stack.top()] <= nums[j] and record j - stack.top().",
+      "Once a stack index is popped for a larger j, it need not be revisited."
+    ],
+    "approach": "First, build a monotonically decreasing stack of indices by scanning left to right and only pushing an index if its value is strictly less than all previously pushed values. Then scan right to left: for each j, while the stack's top index i satisfies nums[i] <= nums[j], pop it and update the answer with j - i. This two-pass approach finds the maximum width ramp in O(n).",
+    "solution_python": "class Solution:\n    def maxWidthRamp(self, nums: list[int]) -> int:\n        n = len(nums)\n        stack = []\n        for i in range(n):\n            if not stack or nums[i] < nums[stack[-1]]:\n                stack.append(i)\n        ans = 0\n        for j in range(n - 1, -1, -1):\n            while stack and nums[stack[-1]] <= nums[j]:\n                ans = max(ans, j - stack.pop())\n        return ans",
+    "solution_js": "var maxWidthRamp = function(nums) {\n    const n = nums.length;\n    const stack = [];\n    for (let i = 0; i < n; i++) {\n        if (!stack.length || nums[i] < nums[stack[stack.length - 1]]) {\n            stack.push(i);\n        }\n    }\n    let ans = 0;\n    for (let j = n - 1; j >= 0; j--) {\n        while (stack.length && nums[stack[stack.length - 1]] <= nums[j]) {\n            ans = Math.max(ans, j - stack.pop());\n        }\n    }\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each index is pushed and popped from the stack at most once across both passes.",
+    "space_complexity_explanation": "The monotonic stack can hold at most n indices in the worst case.",
+    "key_insight": "Candidates for the ramp's left end form a decreasing prefix \u2014 any index dominated by a smaller value to its left can never extend the width. Scanning from the right greedily pops and records the farthest valid pairs.",
+    "related": [
+      84,
+      42
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 874,
+    "title": "Walking Robot Simulation",
+    "slug": "walking-robot-simulation",
+    "category": "Simulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/walking-robot-simulation/",
+    "patterns": [
+      "Simulation",
+      "Hash Set"
+    ],
+    "hints": [
+      "Store obstacles in a hash set for O(1) lookup.",
+      "Maintain the robot's direction as an index into a directions array [North, East, South, West].",
+      "Move one step at a time and check for obstacles before updating position."
+    ],
+    "approach": "Encode the four compass directions as unit vectors [N, E, S, W] and use an index into this array to track facing direction (turn right increments index mod 4, turn left decrements mod 4). Store all obstacle coordinates in a hash set as tuples. For each move command, step one unit at a time in the current direction, stopping if the next cell is an obstacle. Track the maximum squared Euclidean distance after each step.",
+    "solution_python": "class Solution:\n    def robotSim(self, commands: list[int], obstacles: list[list[int]]) -> int:\n        dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # N, E, S, W\n        obs = set(map(tuple, obstacles))\n        x = y = d = 0\n        ans = 0\n        for cmd in commands:\n            if cmd == -2:\n                d = (d - 1) % 4\n            elif cmd == -1:\n                d = (d + 1) % 4\n            else:\n                dx, dy = dirs[d]\n                for _ in range(cmd):\n                    nx, ny = x + dx, y + dy\n                    if (nx, ny) in obs:\n                        break\n                    x, y = nx, ny\n                    ans = max(ans, x*x + y*y)\n        return ans",
+    "solution_js": "var robotSim = function(commands, obstacles) {\n    const dirs = [[0,1],[1,0],[0,-1],[-1,0]];\n    const obs = new Set(obstacles.map(([x,y]) => x + ',' + y));\n    let x = 0, y = 0, d = 0, ans = 0;\n    for (const cmd of commands) {\n        if (cmd === -2) d = (d + 3) % 4;\n        else if (cmd === -1) d = (d + 1) % 4;\n        else {\n            const [dx, dy] = dirs[d];\n            for (let i = 0; i < cmd; i++) {\n                const nx = x + dx, ny = y + dy;\n                if (obs.has(nx + ',' + ny)) break;\n                x = nx; y = ny;\n                ans = Math.max(ans, x*x + y*y);\n            }\n        }\n    }\n    return ans;\n};",
+    "time_complexity": "O(C + O)",
+    "space_complexity": "O(O)",
+    "time_complexity_explanation": "C is the total number of steps across all move commands and O is the number of obstacles loaded into the hash set.",
+    "space_complexity_explanation": "The obstacle hash set stores O entries.",
+    "key_insight": "Storing obstacles in a hash set and moving one step at a time keeps each obstacle check O(1), turning an otherwise brute-force simulation into an efficient linear-time solution.",
+    "related": [
+      489,
+      2069
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 594,
+    "title": "Longest Harmonious Subsequence",
+    "slug": "longest-harmonious-subsequence",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/longest-harmonious-subsequence/",
+    "patterns": [
+      "Hash Map",
+      "Counting"
+    ],
+    "hints": [
+      "Count the frequency of each number with a hash map.",
+      "A harmonious subsequence consists of exactly two distinct values that differ by 1.",
+      "For each key k in the map, if k+1 also exists, the harmonious subsequence length is freq[k] + freq[k+1]."
+    ],
+    "approach": "Build a frequency map counting occurrences of each integer. Then iterate over every key k in the map; if k+1 also exists in the map, the harmonious subsequence formed by k and k+1 has length freq[k] + freq[k+1]. Return the maximum such value found, or 0 if none.",
+    "solution_python": "from collections import Counter\n\nclass Solution:\n    def findLHS(self, nums: list[int]) -> int:\n        freq = Counter(nums)\n        ans = 0\n        for k in freq:\n            if k + 1 in freq:\n                ans = max(ans, freq[k] + freq[k + 1])\n        return ans",
+    "solution_js": "var findLHS = function(nums) {\n    const freq = new Map();\n    for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);\n    let ans = 0;\n    for (const [k, v] of freq) {\n        if (freq.has(k + 1)) ans = Math.max(ans, v + freq.get(k + 1));\n    }\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "One pass to build the frequency map and one pass over its keys, both linear in n.",
+    "space_complexity_explanation": "The frequency map stores at most n distinct keys.",
+    "key_insight": "Because a harmonious subsequence requires exactly a difference of 1, you only need to check adjacent integer pairs in the frequency map \u2014 no sorting or sliding window required.",
+    "related": [
+      128,
+      1832
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1376,
+    "title": "Time Needed to Inform All Employees",
+    "slug": "time-needed-to-inform-all-employees",
+    "category": "Tree",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/time-needed-to-inform-all-employees/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Tree"
+    ],
+    "hints": [
+      "Build an adjacency list from manager to list of direct reports.",
+      "Run DFS from the head of the company (headID).",
+      "The time to inform the subtree rooted at employee i is informTime[i] + max(time for each subordinate)."
+    ],
+    "approach": "Build a tree represented as an adjacency list where manager[i] -> list of employees reporting to i. Perform a DFS starting from headID; at each node the total time is informTime[node] plus the maximum DFS result over all its direct reports. The base case (leaf employee) returns 0.",
+    "solution_python": "from collections import defaultdict\n\nclass Solution:\n    def numOfMinutes(self, n: int, headID: int, manager: list[int], informTime: list[int]) -> int:\n        subordinates = defaultdict(list)\n        for emp, mgr in enumerate(manager):\n            if mgr != -1:\n                subordinates[mgr].append(emp)\n\n        def dfs(node):\n            return informTime[node] + max((dfs(sub) for sub in subordinates[node]), default=0)\n\n        return dfs(headID)",
+    "solution_js": "var numOfMinutes = function(n, headID, manager, informTime) {\n    const subs = Array.from({length: n}, () => []);\n    for (let i = 0; i < n; i++) {\n        if (manager[i] !== -1) subs[manager[i]].push(i);\n    }\n    function dfs(node) {\n        let max = 0;\n        for (const sub of subs[node]) max = Math.max(max, dfs(sub));\n        return informTime[node] + max;\n    }\n    return dfs(headID);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each of the n employees is visited exactly once during the DFS.",
+    "space_complexity_explanation": "The adjacency list and recursion stack together use O(n) space.",
+    "key_insight": "The total time to inform an employee's entire subtree equals that manager's inform time plus the worst-case time among all branches \u2014 a classic tree max-path DFS.",
+    "related": [
+      207,
+      2385
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2715,
+    "title": "Timeout Cancellation",
+    "slug": "timeout-cancellation",
+    "category": "JavaScript",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/timeout-cancellation/",
+    "patterns": [
+      "JavaScript",
+      "Closures"
+    ],
+    "hints": [
+      "Use setTimeout to schedule the function call.",
+      "Return a cancellation function that calls clearTimeout.",
+      "If cancelTimeMs elapses before t ms, clearTimeout prevents fn from running."
+    ],
+    "approach": "Schedule fn(...args) with setTimeout using delay t. Return a closure that, when called, invokes clearTimeout on the stored timer ID. If the returned cancel function is called before the timer fires, the function is never executed.",
+    "solution_python": "# JavaScript-only problem: Python equivalent shown\nimport threading\n\ndef cancellable(fn, args, t):\n    timer = threading.Timer(t / 1000, lambda: fn(*args))\n    timer.start()\n    def cancel():\n        timer.cancel()\n    return cancel",
+    "solution_js": "var cancellable = function(fn, args, t) {\n    const timer = setTimeout(() => fn(...args), t);\n    return () => clearTimeout(timer);\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Scheduling a timeout and returning a cancel closure are both constant-time operations.",
+    "space_complexity_explanation": "Only a single timer reference is stored.",
+    "key_insight": "JavaScript's event loop model lets setTimeout + clearTimeout act as a natural cancellation mechanism \u2014 the cancel function is simply a closure over the timer ID.",
+    "related": [
+      2725,
+      2721
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 789,
+    "title": "Escape The Ghosts",
+    "slug": "escape-the-ghosts",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/escape-the-ghosts/",
+    "patterns": [
+      "Math",
+      "Greedy"
+    ],
+    "hints": [
+      "The Manhattan distance is the minimum number of moves to reach any target on a grid.",
+      "Compute your own Manhattan distance to the target.",
+      "If any ghost's Manhattan distance to the target is <= yours, it can intercept you."
+    ],
+    "approach": "The player can escape if and only if their Manhattan distance to the target is strictly less than every ghost's Manhattan distance to the target. This is because each entity moves optimally, and a ghost can always intercept by waiting at the target if it arrives no later than the player. Compare Manhattan distances directly.",
+    "solution_python": "class Solution:\n    def escapeGhosts(self, ghosts: list[list[int]], target: list[int]) -> bool:\n        my_dist = abs(target[0]) + abs(target[1])\n        return all(abs(g[0] - target[0]) + abs(g[1] - target[1]) > my_dist for g in ghosts)",
+    "solution_js": "var escapeGhosts = function(ghosts, target) {\n    const myDist = Math.abs(target[0]) + Math.abs(target[1]);\n    return ghosts.every(g => Math.abs(g[0] - target[0]) + Math.abs(g[1] - target[1]) > myDist);\n};",
+    "time_complexity": "O(g)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass over the g ghost positions computes each Manhattan distance in O(1).",
+    "space_complexity_explanation": "Only scalar variables are used regardless of input size.",
+    "key_insight": "On a grid with no walls, optimal movement is fully captured by Manhattan distance \u2014 if a ghost reaches the target no later than you, it can always intercept, so the problem reduces to a single distance comparison per ghost.",
+    "related": [
+      909,
+      1197
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 975,
+    "title": "Odd Even Jump",
+    "slug": "odd-even-jump",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/odd-even-jump/",
+    "patterns": [
+      "Dynamic Programming",
+      "Monotonic Stack",
+      "Ordered Map"
+    ],
+    "hints": [
+      "For each index, precompute the next index reachable on an odd jump (next greater or equal value) and on an even jump (next smaller or equal value).",
+      "Use a sorted structure (e.g. sorted keys + binary search, or a TreeMap) to find the target index efficiently.",
+      "Define dp_odd[i] and dp_even[i]: can you reach the end starting from i on an odd/even jump? Work right to left."
+    ],
+    "approach": "Precompute two arrays: next_odd[i] = the index you jump to from i on an odd jump (smallest value >= arr[i] among i+1..n-1, leftmost if tie), and next_even[i] = the index you jump to on an even jump (largest value <= arr[i], leftmost if tie). Build these using a monotonic stack on the sorted order of indices. Then use DP from right to left: odd[i] = even[next_odd[i]], even[i] = odd[next_even[i]], with the last index always True. Count indices where odd[i] is True.",
+    "solution_python": "from sortedcontainers import SortedList\n\nclass Solution:\n    def oddEvenJumps(self, arr: list[int]) -> int:\n        n = len(arr)\n        next_odd = [None] * n\n        next_even = [None] * n\n\n        # Build next_odd and next_even using monotonic stack on sorted order\n        def make_next(sorted_indices):\n            result = [None] * n\n            stack = []  # decreasing stack of indices\n            for i in sorted_indices:\n                while stack and stack[-1] < i:\n                    result[stack.pop()] = i\n                stack.append(i)\n            return result\n\n        sorted_by_val_asc = sorted(range(n), key=lambda i: (arr[i], i))\n        sorted_by_val_desc = sorted(range(n), key=lambda i: (-arr[i], i))\n\n        next_odd = make_next(sorted_by_val_asc)\n        next_even = make_next(sorted_by_val_desc)\n\n        odd = [False] * n\n        even = [False] * n\n        odd[-1] = even[-1] = True\n\n        for i in range(n - 2, -1, -1):\n            if next_odd[i] is not None:\n                odd[i] = even[next_odd[i]]\n            if next_even[i] is not None:\n                even[i] = odd[next_even[i]]\n\n        return sum(odd)",
+    "solution_js": "var oddEvenJumps = function(arr) {\n    const n = arr.length;\n    const nextOdd = new Array(n).fill(-1);\n    const nextEven = new Array(n).fill(-1);\n\n    function makeNext(sortedIndices) {\n        const result = new Array(n).fill(-1);\n        const stack = [];\n        for (const i of sortedIndices) {\n            while (stack.length && stack[stack.length-1] < i) {\n                result[stack.pop()] = i;\n            }\n            stack.push(i);\n        }\n        return result;\n    }\n\n    const sortedAsc = [...Array(n).keys()].sort((a,b) => arr[a] !== arr[b] ? arr[a]-arr[b] : a-b);\n    const sortedDesc = [...Array(n).keys()].sort((a,b) => arr[a] !== arr[b] ? arr[b]-arr[a] : a-b);\n\n    const no = makeNext(sortedAsc);\n    const ne = makeNext(sortedDesc);\n\n    const odd = new Array(n).fill(false);\n    const even = new Array(n).fill(false);\n    odd[n-1] = even[n-1] = true;\n\n    for (let i = n-2; i >= 0; i--) {\n        if (no[i] !== -1) odd[i] = even[no[i]];\n        if (ne[i] !== -1) even[i] = odd[ne[i]];\n    }\n\n    return odd.filter(Boolean).length;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting indices takes O(n log n); the monotonic stack and DP passes are each O(n).",
+    "space_complexity_explanation": "Four arrays of size n are maintained for next pointers and DP states.",
+    "key_insight": "The key insight is reducing 'find next valid jump target' to a sorted-order monotonic stack problem: by sorting indices by value, finding the next reachable index becomes a matter of finding the next larger index in that sorted order, solvable with a single stack pass.",
+    "related": [
+      456,
+      1696
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3741,
+    "title": "Minimum Distance Between Three Equal Elements II",
+    "slug": "minimum-distance-between-three-equal-elements-ii",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-distance-between-three-equal-elements-ii/",
+    "patterns": [
+      "Hash Map",
+      "Greedy"
+    ],
+    "hints": [
+      "Group the indices of each value using a hash map.",
+      "For any value with at least 3 occurrences, pick three indices that minimize the span.",
+      "The optimal triple of indices is always three consecutive occurrences in the sorted index list."
+    ],
+    "approach": "Build a map from each value to the sorted list of its indices. For each value whose index list has at least 3 entries, slide a window of size 3 over consecutive index triples and compute the cost as indices[i+2] - indices[i] (the span). Return the minimum span found across all values and all windows; return -1 if no value appears at least three times.",
+    "solution_python": "from collections import defaultdict\n\nclass Solution:\n    def minimumDistance(self, nums: list[int]) -> int:\n        indices = defaultdict(list)\n        for i, v in enumerate(nums):\n            indices[v].append(i)\n        ans = float('inf')\n        for idxs in indices.values():\n            if len(idxs) >= 3:\n                for i in range(len(idxs) - 2):\n                    ans = min(ans, idxs[i+2] - idxs[i])\n        return ans if ans < float('inf') else -1",
+    "solution_js": "var minimumDistance = function(nums) {\n    const map = new Map();\n    for (let i = 0; i < nums.length; i++) {\n        if (!map.has(nums[i])) map.set(nums[i], []);\n        map.get(nums[i]).push(i);\n    }\n    let ans = Infinity;\n    for (const idxs of map.values()) {\n        if (idxs.length >= 3) {\n            for (let i = 0; i <= idxs.length - 3; i++) {\n                ans = Math.min(ans, idxs[i+2] - idxs[i]);\n            }\n        }\n    }\n    return ans === Infinity ? -1 : ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the index map and sliding over all triples together visit each element a constant number of times.",
+    "space_complexity_explanation": "The index map stores all n positions in the worst case.",
+    "key_insight": "The minimum-cost triple of equal elements is always three consecutive appearances in index order \u2014 any non-consecutive triple has a strictly larger or equal span than some consecutive sub-triple.",
+    "related": [
+      2817,
+      2830
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
