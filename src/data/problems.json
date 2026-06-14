@@ -12177,6 +12177,40 @@
     ]
   },
   {
+    "id": 421,
+    "title": "Maximum XOR of Two Numbers in an Array",
+    "slug": "maximum-xor-of-two-numbers-in-an-array",
+    "category": "Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+    "patterns": [
+      "Bit Manipulation",
+      "Trie",
+      "Greedy"
+    ],
+    "hints": [
+      "Think about building the answer bit by bit from the most significant bit to the least significant bit.",
+      "Use a prefix (binary) trie to store all numbers, then for each number, greedily try to choose the opposite bit at each level.",
+      "Alternatively, use a bitmask approach: at each bit position, try to set it in the answer and check if a pair of numbers in the array can achieve it using XOR properties."
+    ],
+    "approach": "Use a binary trie where each number is inserted bit by bit from MSB to LSB. For each number in the array, traverse the trie greedily choosing the opposite bit direction to maximize XOR. If the opposite direction exists, take it and set that bit in the result; otherwise, take the same direction. Track the maximum XOR found across all numbers.",
+    "solution_python": "class Solution:\n    def findMaximumXOR(self, nums: list[int]) -> int:\n        # Build a trie of all numbers\n        max_num = max(nums)\n        if max_num == 0:\n            return 0\n        L = max_num.bit_length()\n        \n        # Use dictionary-based trie\n        trie = {}\n        for num in nums:\n            node = trie\n            for i in range(L, -1, -1):\n                bit = (num >> i) & 1\n                if bit not in node:\n                    node[bit] = {}\n                node = node[bit]\n        \n        max_xor = 0\n        for num in nums:\n            node = trie\n            curr_xor = 0\n            for i in range(L, -1, -1):\n                bit = (num >> i) & 1\n                # Try to go opposite direction\n                toggled = 1 - bit\n                if toggled in node:\n                    curr_xor = (curr_xor << 1) | 1\n                    node = node[toggled]\n                else:\n                    curr_xor = curr_xor << 1\n                    node = node[bit]\n            max_xor = max(max_xor, curr_xor)\n        \n        return max_xor",
+    "solution_js": "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar findMaximumXOR = function(nums) {\n    const maxNum = Math.max(...nums);\n    if (maxNum === 0) return 0;\n    const L = maxNum.toString(2).length;\n    \n    // Build trie\n    const trie = {};\n    for (const num of nums) {\n        let node = trie;\n        for (let i = L; i >= 0; i--) {\n            const bit = (num >> i) & 1;\n            if (!(bit in node)) node[bit] = {};\n            node = node[bit];\n        }\n    }\n    \n    let maxXor = 0;\n    for (const num of nums) {\n        let node = trie;\n        let currXor = 0;\n        for (let i = L; i >= 0; i--) {\n            const bit = (num >> i) & 1;\n            const toggled = 1 - bit;\n            if (toggled in node) {\n                currXor = (currXor << 1) | 1;\n                node = node[toggled];\n            } else {\n                currXor = currXor << 1;\n                node = node[bit];\n            }\n        }\n        maxXor = Math.max(maxXor, currXor);\n    }\n    \n    return maxXor;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate over all n numbers twice (once to build the trie, once to query), and each number takes O(L) = O(32) = O(1) time, giving O(n) overall.",
+    "space_complexity_explanation": "The trie stores at most O(n * L) = O(32n) = O(n) nodes for all inserted numbers.",
+    "key_insight": "By inserting all numbers into a binary trie and greedily choosing the opposite bit at each level, we can find the maximum XOR in linear time. The greedy approach works because XOR is maximized when bits differ, so we always prefer to go the opposite direction in the trie.",
+    "related": [
+      421,
+      212,
+      1707
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 422,
     "title": "Number of Smooth Descent Periods of a Stock",
     "slug": "number-of-smooth-descent-periods-of-a-stock",
