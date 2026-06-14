@@ -2696,5 +2696,327 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 3546,
+    "title": "Equal Sum Grid Partition I",
+    "slug": "equal-sum-grid-partition-i",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/equal-sum-grid-partition-i/",
+    "patterns": [
+      "Prefix Sum",
+      "Matrix"
+    ],
+    "hints": [
+      "Compute the total sum of the grid. A valid partition requires the sum of one half equals half the total sum.",
+      "Try every possible horizontal cut (between rows) and vertical cut (between columns). For each, compute the prefix sum of one side.",
+      "A horizontal cut after row i is valid if sum of rows 0..i equals totalSum / 2. Same logic for vertical cuts."
+    ],
+    "approach": "Compute the total sum of the entire grid. Then compute prefix row sums and prefix column sums. For each possible horizontal partition (after row i) and vertical partition (after column j), check if the prefix sum of one part equals half the total. If total sum is odd, no valid partition exists.",
+    "solution_python": "class Solution:\n    def canPartitionGrid(self, grid: List[List[int]]) -> bool:\n        m, n = len(grid), len(grid[0])\n        total = sum(grid[i][j] for i in range(m) for j in range(n))\n        if total % 2 != 0:\n            return False\n        half = total // 2\n        # Check horizontal cuts\n        row_sum = 0\n        for i in range(m - 1):\n            row_sum += sum(grid[i])\n            if row_sum == half:\n                return True\n        # Check vertical cuts\n        col_sum = 0\n        for j in range(n - 1):\n            col_sum += sum(grid[i][j] for i in range(m))\n            if col_sum == half:\n                return True\n        return False",
+    "solution_js": "var canPartitionGrid = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    let total = 0;\n    for (let i = 0; i < m; i++) for (let j = 0; j < n; j++) total += grid[i][j];\n    if (total % 2 !== 0) return false;\n    const half = total / 2;\n    let rowSum = 0;\n    for (let i = 0; i < m - 1; i++) {\n        for (let j = 0; j < n; j++) rowSum += grid[i][j];\n        if (rowSum === half) return true;\n    }\n    let colSum = 0;\n    for (let j = 0; j < n - 1; j++) {\n        for (let i = 0; i < m; i++) colSum += grid[i][j];\n        if (colSum === half) return true;\n    }\n    return false;\n};",
+    "time_complexity": "O(m*n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We compute the total sum and then scan rows and columns once each, all in O(m*n) time.",
+    "space_complexity_explanation": "Only a constant number of running sum variables are used beyond the input grid.",
+    "key_insight": "A valid single straight-line partition exists if and only if some prefix of rows (or columns) sums to exactly half the total, which is checkable in a single linear pass.",
+    "related": [
+      3548,
+      1292
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3548,
+    "title": "Equal Sum Grid Partition II",
+    "slug": "equal-sum-grid-partition-ii",
+    "category": "Arrays",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/equal-sum-grid-partition-ii/",
+    "patterns": [
+      "Prefix Sum",
+      "Matrix",
+      "Greedy"
+    ],
+    "hints": [
+      "Unlike Part I, you may move one element to the boundary between the two partitions \u2014 think about what that means for the sum difference.",
+      "For a horizontal cut after row i, compute leftSum and rightSum. If they differ by 2*v for some grid value v that lies on the boundary row, we can 'move' that element.",
+      "The boundary element for a horizontal cut is in rows i or i+1; for a vertical cut it is in columns j or j+1. Check if the required balancing value exists on the appropriate boundary."
+    ],
+    "approach": "Compute the total grid sum. For each potential cut, compute prefix sums. If leftSum == rightSum the partition is immediately valid. Otherwise, if the difference is even (say diff = leftSum - rightSum), check whether there exists a cell on the partition boundary row (or column) with value diff/2 \u2014 moving that cell to the other side balances the partition.",
+    "solution_python": "class Solution:\n    def canPartitionGrid(self, grid: List[List[int]]) -> bool:\n        from collections import defaultdict\n        m, n = len(grid), len(grid[0])\n        total = sum(grid[i][j] for i in range(m) for j in range(n))\n        # Horizontal cuts\n        row_sum = 0\n        for i in range(m - 1):\n            row_sum += sum(grid[i])\n            other = total - row_sum\n            diff = row_sum - other\n            if diff == 0:\n                return True\n            if diff % 2 == 0:\n                target = diff // 2\n                boundary = set(grid[i]) | set(grid[i+1])\n                if target > 0 and target in boundary:\n                    return True\n                if target < 0 and (-target) in boundary:\n                    return True\n        # Vertical cuts\n        col_sum = 0\n        for j in range(n - 1):\n            col_sum += sum(grid[i][j] for i in range(m))\n            other = total - col_sum\n            diff = col_sum - other\n            if diff == 0:\n                return True\n            if diff % 2 == 0:\n                target = diff // 2\n                boundary = set(grid[i][j] for i in range(m)) | set(grid[i][j+1] for i in range(m))\n                if target > 0 and target in boundary:\n                    return True\n                if target < 0 and (-target) in boundary:\n                    return True\n        return False",
+    "solution_js": "var canPartitionGrid = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    let total = 0;\n    for (let i = 0; i < m; i++) for (let j = 0; j < n; j++) total += grid[i][j];\n    // Horizontal cuts\n    let rowSum = 0;\n    for (let i = 0; i < m - 1; i++) {\n        for (let j = 0; j < n; j++) rowSum += grid[i][j];\n        const other = total - rowSum;\n        const diff = rowSum - other;\n        if (diff === 0) return true;\n        if (diff % 2 === 0) {\n            const target = Math.abs(diff / 2);\n            const boundary = new Set([...grid[i], ...grid[i+1]]);\n            if (boundary.has(target)) return true;\n        }\n    }\n    // Vertical cuts\n    let colSum = 0;\n    for (let j = 0; j < n - 1; j++) {\n        for (let i = 0; i < m; i++) colSum += grid[i][j];\n        const other = total - colSum;\n        const diff = colSum - other;\n        if (diff === 0) return true;\n        if (diff % 2 === 0) {\n            const target = Math.abs(diff / 2);\n            const boundary = new Set([...Array.from({length: m}, (_, i) => grid[i][j]), ...Array.from({length: m}, (_, i) => grid[i][j+1])]);\n            if (boundary.has(target)) return true;\n        }\n    }\n    return false;\n};",
+    "time_complexity": "O(m*n)",
+    "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "Each row and column prefix sum is computed in O(m*n) total; boundary set construction is also O(m) or O(n) per cut.",
+    "space_complexity_explanation": "Sets storing boundary row or column values are at most O(max(m,n)) in size.",
+    "key_insight": "Allowing one boundary-cell reassignment means a cut is valid when the sum difference equals exactly twice some value present on the partition boundary line.",
+    "related": [
+      3546,
+      1292
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2946,
+    "title": "Matrix Similarity After Cyclic Shifts",
+    "slug": "matrix-similarity-after-cyclic-shifts",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/matrix-similarity-after-cyclic-shifts/",
+    "patterns": [
+      "Simulation",
+      "Matrix"
+    ],
+    "hints": [
+      "Simulate the cyclic shifts: odd-indexed rows shift right, even-indexed rows shift left.",
+      "After k shifts, an odd row shifted right k times returns to original after n shifts (n = number of columns).",
+      "Compare each cell of the shifted matrix to the original. Use modular arithmetic to find where each element ends up."
+    ],
+    "approach": "For each row, determine the effective shift amount using modulo by the row length. Even-indexed rows shift left by k (equivalent to shifting right by n-k), and odd-indexed rows shift right by k. After computing the net shift mod n, check if each row is identical to the original row under that cyclic shift.",
+    "solution_python": "class Solution:\n    def areSimilar(self, mat: List[List[int]], k: int) -> bool:\n        m, n = len(mat), len(mat[0])\n        for i in range(m):\n            shift = k % n\n            for j in range(n):\n                if i % 2 == 0:  # even row: shift left\n                    if mat[i][j] != mat[i][(j + shift) % n]:\n                        return False\n                else:  # odd row: shift right\n                    if mat[i][j] != mat[i][(j - shift) % n]:\n                        return False\n        return True",
+    "solution_js": "var areSimilar = function(mat, k) {\n    const m = mat.length, n = mat[0].length;\n    for (let i = 0; i < m; i++) {\n        const shift = k % n;\n        for (let j = 0; j < n; j++) {\n            if (i % 2 === 0) {\n                if (mat[i][j] !== mat[i][(j + shift) % n]) return false;\n            } else {\n                if (mat[i][j] !== mat[i][((j - shift) % n + n) % n]) return false;\n            }\n        }\n    }\n    return true;\n};",
+    "time_complexity": "O(m*n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each cell is visited exactly once to compare against its shifted position.",
+    "space_complexity_explanation": "No extra data structures are needed beyond a few index variables.",
+    "key_insight": "Rather than physically rotating the array, use modular index arithmetic to check in-place whether the matrix is self-similar under the cyclic shift.",
+    "related": [
+      2839,
+      2840
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2839,
+    "title": "Check if Strings Can be Made Equal With Operations I",
+    "slug": "check-if-strings-can-be-made-equal-with-operations-i",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/check-if-strings-can-be-made-equal-with-operations-i/",
+    "patterns": [
+      "String",
+      "Sorting"
+    ],
+    "hints": [
+      "The operation swaps characters at positions i and i+2. Notice that only characters at even indices can be swapped with other even-index characters, and odd indices with other odd indices.",
+      "Since the strings are short (length 4), just sort the even-indexed characters and odd-indexed characters of each string separately.",
+      "After sorting within even and odd index groups, the two strings are equalizable if and only if their sorted groups match."
+    ],
+    "approach": "For each string of length 4, separate the characters at even indices (0, 2) and odd indices (1, 3). Sort each group independently. Two strings can be made equal if and only if the sorted even-index group and sorted odd-index group of s1 match those of s2.",
+    "solution_python": "class Solution:\n    def canBeEqual(self, s1: str, s2: str) -> bool:\n        return (sorted(s1[0::2]) == sorted(s2[0::2]) and\n                sorted(s1[1::2]) == sorted(s2[1::2]))",
+    "solution_js": "var canBeEqual = function(s1, s2) {\n    const sortGroup = (s, start) => s.split('').filter((_, i) => i % 2 === start).sort().join('');\n    return sortGroup(s1, 0) === sortGroup(s2, 0) && sortGroup(s1, 1) === sortGroup(s2, 1);\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "String length is fixed at 4, so all operations (sorting groups of size 2) are constant time.",
+    "space_complexity_explanation": "Only fixed-size arrays of length 2 are created for sorting.",
+    "key_insight": "A swap of positions i and i+2 preserves the parity of indices, so the even-indexed characters and odd-indexed characters form independent groups that can only be rearranged among themselves.",
+    "related": [
+      2840,
+      2946
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 834,
+    "title": "Sum of Distances in Tree",
+    "slug": "sum-of-distances-in-tree",
+    "category": "Tree",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/sum-of-distances-in-tree/",
+    "patterns": [
+      "Tree",
+      "Depth-First Search",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "First compute the answer for the root using one DFS, tracking subtree sizes and cumulative distances.",
+      "Then rerooting: when you move the root from a parent to a child, the distance decreases by subtree_size[child] and increases by (n - subtree_size[child]).",
+      "Two DFS passes \u2014 one bottom-up to compute subtree sizes and root distances, one top-down to propagate answers to all nodes \u2014 gives the full result in O(n)."
+    ],
+    "approach": "Use two DFS passes. In the first pass (post-order), compute the size of each subtree and the sum of distances from the root to all nodes. In the second pass (pre-order), use the rerooting technique: for each node v and its parent u, ans[v] = ans[u] - count[v] + (n - count[v]), where count[v] is the subtree size. This propagates the answer from root to all nodes in O(n).",
+    "solution_python": "class Solution:\n    def sumOfDistancesInTree(self, n: int, edges: List[List[int]]) -> List[int]:\n        from collections import defaultdict\n        graph = defaultdict(list)\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n        count = [1] * n\n        ans = [0] * n\n        def dfs(node, parent):\n            for child in graph[node]:\n                if child != parent:\n                    dfs(child, node)\n                    count[node] += count[child]\n                    ans[node] += ans[child] + count[child]\n        def dfs2(node, parent):\n            for child in graph[node]:\n                if child != parent:\n                    ans[child] = ans[node] - count[child] + (n - count[child])\n                    dfs2(child, node)\n        dfs(0, -1)\n        dfs2(0, -1)\n        return ans",
+    "solution_js": "var sumOfDistancesInTree = function(n, edges) {\n    const graph = Array.from({length: n}, () => []);\n    for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }\n    const count = new Array(n).fill(1);\n    const ans = new Array(n).fill(0);\n    function dfs(node, parent) {\n        for (const child of graph[node]) {\n            if (child !== parent) {\n                dfs(child, node);\n                count[node] += count[child];\n                ans[node] += ans[child] + count[child];\n            }\n        }\n    }\n    function dfs2(node, parent) {\n        for (const child of graph[node]) {\n            if (child !== parent) {\n                ans[child] = ans[node] - count[child] + (n - count[child]);\n                dfs2(child, node);\n            }\n        }\n    }\n    dfs(0, -1);\n    dfs2(0, -1);\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Two DFS traversals each visit every node and edge exactly once.",
+    "space_complexity_explanation": "The adjacency list, count array, and ans array each require O(n) space.",
+    "key_insight": "The rerooting trick allows propagating the root's answer to all other nodes in O(n) by leveraging the relationship between a parent's answer and its child's answer via subtree sizes.",
+    "related": [
+      310,
+      2049
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1095,
+    "title": "Find in Mountain Array",
+    "slug": "find-in-mountain-array",
+    "category": "Binary Search",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/find-in-mountain-array/",
+    "patterns": [
+      "Binary Search"
+    ],
+    "hints": [
+      "First find the peak index of the mountain array using binary search.",
+      "Then binary search in the ascending half (left of peak) for the target.",
+      "If not found in the ascending half, binary search in the descending half (right of peak). Return the smaller index if found in the ascending half."
+    ],
+    "approach": "Perform three binary searches. First, find the peak (maximum) index using binary search by comparing adjacent elements. Second, binary search the ascending left portion for the target. Third, if not found, binary search the descending right portion. The problem requires minimizing API calls to the MountainArray interface.",
+    "solution_python": "# \"\"\"\n# This is MountainArray's API interface.\n# You should not implement it, or speculate about its implementation\n# \"\"\"\n#class MountainArray:\n#    def get(self, index: int) -> int:\n#    def length(self) -> int:\nclass Solution:\n    def findInMountainArray(self, target: int, mountain_arr: 'MountainArray') -> int:\n        n = mountain_arr.length()\n        # Find peak\n        lo, hi = 0, n - 1\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if mountain_arr.get(mid) < mountain_arr.get(mid + 1):\n                lo = mid + 1\n            else:\n                hi = mid\n        peak = lo\n        # Search ascending part\n        lo, hi = 0, peak\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            val = mountain_arr.get(mid)\n            if val == target:\n                return mid\n            elif val < target:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        # Search descending part\n        lo, hi = peak + 1, n - 1\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            val = mountain_arr.get(mid)\n            if val == target:\n                return mid\n            elif val > target:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        return -1",
+    "solution_js": "var findInMountainArray = function(target, mountainArr) {\n    const n = mountainArr.length();\n    // Find peak\n    let lo = 0, hi = n - 1;\n    while (lo < hi) {\n        const mid = (lo + hi) >> 1;\n        if (mountainArr.get(mid) < mountainArr.get(mid + 1)) lo = mid + 1;\n        else hi = mid;\n    }\n    const peak = lo;\n    // Search ascending\n    lo = 0; hi = peak;\n    while (lo <= hi) {\n        const mid = (lo + hi) >> 1;\n        const val = mountainArr.get(mid);\n        if (val === target) return mid;\n        else if (val < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    // Search descending\n    lo = peak + 1; hi = n - 1;\n    while (lo <= hi) {\n        const mid = (lo + hi) >> 1;\n        const val = mountainArr.get(mid);\n        if (val === target) return mid;\n        else if (val > target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Three separate binary searches each take O(log n) time, for a total of O(log n).",
+    "space_complexity_explanation": "Only pointer variables are used; no extra data structures are allocated.",
+    "key_insight": "A mountain array has exactly one peak that splits it into ascending and descending halves, each searchable by binary search \u2014 but the descending half has reversed comparison direction.",
+    "related": [
+      852,
+      162
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2840,
+    "title": "Check if Strings Can be Made Equal With Operations II",
+    "slug": "check-if-strings-can-be-made-equal-with-operations-ii",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/check-if-strings-can-be-made-equal-with-operations-ii/",
+    "patterns": [
+      "String",
+      "Sorting",
+      "Hash Map"
+    ],
+    "hints": [
+      "The operation swaps characters at positions i and i+2, which means characters at even positions can only swap with other even-position characters.",
+      "Collect all characters at even indices from both strings and sort them; do the same for odd indices.",
+      "The two strings are equalizable if and only if their sorted even-index characters match and sorted odd-index characters match."
+    ],
+    "approach": "For strings of arbitrary equal length, characters at even indices can only reach other even-index positions via repeated swaps of distance 2, and similarly for odd indices. Collect characters at even positions and odd positions from each string, sort each group, and check that s1 and s2 have the same multiset of characters at even positions and the same multiset at odd positions.",
+    "solution_python": "class Solution:\n    def checkStrings(self, s1: str, s2: str) -> bool:\n        return (sorted(s1[0::2]) == sorted(s2[0::2]) and\n                sorted(s1[1::2]) == sorted(s2[1::2]))",
+    "solution_js": "var checkStrings = function(s1, s2) {\n    const sortGroup = (s, parity) =>\n        [...s].filter((_, i) => i % 2 === parity).sort().join('');\n    return sortGroup(s1, 0) === sortGroup(s2, 0) &&\n           sortGroup(s1, 1) === sortGroup(s2, 1);\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the even and odd character groups each takes O(n/2 * log(n/2)) which simplifies to O(n log n).",
+    "space_complexity_explanation": "The sorted character arrays require O(n) space in total.",
+    "key_insight": "Index-parity is an invariant of the swap operation \u2014 swapping positions i and i+2 keeps both characters within their parity class \u2014 so equalizing the strings reduces to matching multisets within each parity class.",
+    "related": [
+      2839,
+      2946
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2095,
+    "title": "Delete the Middle Node of a Linked List",
+    "slug": "delete-the-middle-node-of-a-linked-list",
+    "category": "Linked List",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/",
+    "patterns": [
+      "Two Pointers",
+      "Linked List"
+    ],
+    "hints": [
+      "Use the fast and slow pointer technique to find the middle node.",
+      "To delete a node, you need a reference to the node before the middle. Consider starting the slow pointer one step behind.",
+      "When the fast pointer reaches the end, the slow pointer will be just before the middle node \u2014 update slow.next to skip the middle."
+    ],
+    "approach": "Use two pointers: a slow pointer that moves one step at a time and a fast pointer that moves two steps. To delete the middle node, keep a 'prev' pointer one step behind slow. When fast reaches the end of the list, prev.next points to the middle node \u2014 skip it by setting prev.next = prev.next.next.",
+    "solution_python": "class Solution:\n    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if not head or not head.next:\n            return None\n        dummy = ListNode(0)\n        dummy.next = head\n        slow, fast = dummy, head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n        slow.next = slow.next.next\n        return dummy.next",
+    "solution_js": "var deleteMiddle = function(head) {\n    if (!head || !head.next) return null;\n    let dummy = { next: head };\n    let slow = dummy, fast = head;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    slow.next = slow.next.next;\n    return dummy.next;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The fast pointer traverses the list once, visiting each node at most once.",
+    "space_complexity_explanation": "Only a constant number of pointer variables are used regardless of list length.",
+    "key_insight": "By starting the slow pointer at a dummy node before head, when fast reaches the end, slow is positioned exactly at the node preceding the middle, allowing O(1) deletion.",
+    "related": [
+      876,
+      2130
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3474,
+    "title": "Lexicographically Smallest Generated String",
+    "slug": "lexicographically-smallest-generated-string",
+    "category": "Greedy",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/lexicographically-smallest-generated-string/",
+    "patterns": [
+      "Greedy",
+      "String"
+    ],
+    "hints": [
+      "Think greedily: try to place 'a' at each position from left to right whenever it does not violate constraints imposed by str1 and str2.",
+      "str1 determines which positions in the result have a fixed substring starting there. If str1[i] = 'T', the substring result[i..i+len2-1] must equal str2.",
+      "When placing characters, propagate forward the forced characters from str2 at all 'T' positions, and verify consistency \u2014 if a position is forced to two different characters, there is no solution."
+    ],
+    "approach": "Build the result string greedily from left to right. For each position i, if str1[i] == 'T', the window result[i..i+m-1] must be str2 \u2014 mark all these positions as forced. If str1[i] == 'F', ensure no forced constraint already set a value; if unconstrained, set it to 'a'. After propagating all constraints, check for conflicts. Use a forward-pass to lock in forced characters and a backward-pass or single pass with a 'last forced T' tracking to ensure the last occurrence of 'T' constraints are satisfied.",
+    "solution_python": "class Solution:\n    def generateString(self, str1: str, str2: str) -> str:\n        n, m = len(str1), len(str2)\n        result = ['a'] * (n + m - 1)\n        # Mark forced positions from 'T' constraints\n        forced = [False] * (n + m - 1)\n        for i in range(n):\n            if str1[i] == 'T':\n                for j in range(m):\n                    if forced[i + j] and result[i + j] != str2[j]:\n                        return ''\n                    result[i + j] = str2[j]\n                    forced[i + j] = True\n        # For 'F' positions ensure str2 is NOT placed (change first char if needed)\n        for i in range(n):\n            if str1[i] == 'F':\n                # The window i..i+m-1 must NOT equal str2\n                # If the window is currently all matching str2, change a non-forced pos\n                match = all(result[i+j] == str2[j] for j in range(m))\n                if match:\n                    # Find a non-forced position in window to change\n                    changed = False\n                    for j in range(m - 1, -1, -1):\n                        if not forced[i + j]:\n                            result[i + j] = 'b' if str2[j] == 'a' else 'a'\n                            changed = True\n                            break\n                    if not changed:\n                        return ''\n        return ''.join(result)",
+    "solution_js": "var generateString = function(str1, str2) {\n    const n = str1.length, m = str2.length;\n    const result = new Array(n + m - 1).fill('a');\n    const forced = new Array(n + m - 1).fill(false);\n    for (let i = 0; i < n; i++) {\n        if (str1[i] === 'T') {\n            for (let j = 0; j < m; j++) {\n                if (forced[i+j] && result[i+j] !== str2[j]) return '';\n                result[i+j] = str2[j];\n                forced[i+j] = true;\n            }\n        }\n    }\n    for (let i = 0; i < n; i++) {\n        if (str1[i] === 'F') {\n            const match = Array.from({length: m}, (_, j) => result[i+j] === str2[j]).every(Boolean);\n            if (match) {\n                let changed = false;\n                for (let j = m - 1; j >= 0; j--) {\n                    if (!forced[i+j]) {\n                        result[i+j] = str2[j] === 'a' ? 'b' : 'a';\n                        changed = true;\n                        break;\n                    }\n                }\n                if (!changed) return '';\n            }\n        }\n    }\n    return result.join('');\n};",
+    "time_complexity": "O(n*m)",
+    "space_complexity": "O(n + m)",
+    "time_complexity_explanation": "For each of the n positions in str1, we may inspect up to m positions of str2, giving O(n*m) in the worst case.",
+    "space_complexity_explanation": "The result and forced arrays are each of length n+m-1.",
+    "key_insight": "Greedily assign 'a' everywhere, then use the 'T' constraints to forcibly overwrite windows with str2, checking conflicts; for 'F' constraints, if the window accidentally matches str2, disrupt it at the rightmost non-forced position to keep lexicographic order minimal.",
+    "related": [
+      3476,
+      1023
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 921,
+    "title": "Minimum Add to Make Parentheses Valid",
+    "slug": "minimum-add-to-make-parentheses-valid",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
+    "patterns": [
+      "Stack",
+      "Greedy"
+    ],
+    "hints": [
+      "Track two counters: unmatched open parentheses and unmatched close parentheses.",
+      "Scan left to right: a ')' with no open to match increments the close counter; an '(' increments the open counter.",
+      "The answer is the sum of unmatched opens and unmatched closes at the end."
+    ],
+    "approach": "Use a greedy approach with two counters. Traverse the string maintaining 'open' (unmatched '(' so far) and 'close' (unmatched ')' seen before any '(' to match). For each '(' increment open; for each ')' if open > 0 decrement open (matched), else increment close. The answer is open + close.",
+    "solution_python": "class Solution:\n    def minAddToMakeValid(self, s: str) -> int:\n        open_count = 0\n        close_count = 0\n        for c in s:\n            if c == '(':\n                open_count += 1\n            else:\n                if open_count > 0:\n                    open_count -= 1\n                else:\n                    close_count += 1\n        return open_count + close_count",
+    "solution_js": "var minAddToMakeValid = function(s) {\n    let open = 0, close = 0;\n    for (const c of s) {\n        if (c === '(') open++;\n        else {\n            if (open > 0) open--;\n            else close++;\n        }\n    }\n    return open + close;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single left-to-right pass over the string of length n.",
+    "space_complexity_explanation": "Only two integer counters are maintained regardless of input size.",
+    "key_insight": "Unmatched closing brackets can never be fixed by later characters, so counting them separately from unmatched opening brackets gives the exact minimum additions needed.",
+    "related": [
+      1249,
+      20
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
