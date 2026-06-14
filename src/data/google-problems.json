@@ -386,32 +386,31 @@
   },
   {
     "id": 561,
-    "title": "Max Increase to Keep City Skyline",
-    "slug": "max-increase-to-keep-city-skyline",
+    "title": "Array Partition",
+    "slug": "array-partition",
     "category": "Array",
-    "difficulty": "Medium",
-    "leetcode_url": "https://leetcode.com/problems/max-increase-to-keep-city-skyline/",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/array-partition/",
     "patterns": [
-      "Array",
-      "Matrix",
+      "Sorting",
       "Greedy"
     ],
     "hints": [
-      "The skyline from the north/south is determined by the maximum in each column; from the east/west by the maximum in each row.",
-      "To preserve the skyline, each building at [i][j] can be at most min(rowMax[i], colMax[j]).",
-      "The total increase is the sum of (min(rowMax[i], colMax[j]) - grid[i][j]) over all cells."
+      "Think about which pairs maximize the sum of minimums \u2014 pairing the largest with the second largest wastes potential.",
+      "Sort the array: pairing adjacent elements (index 0&1, 2&3, ...) means the minimum of each pair is the smaller element at the even index.",
+      "After sorting, summing elements at indices 0, 2, 4, ... gives the maximum possible sum of pair minimums."
     ],
-    "approach": "Compute the maximum height for each row and each column. For every cell, the new allowable height is the minimum of its row max and column max. Sum all increases (allowable minus current height) and return the total.",
-    "solution_python": "class Solution:\n    def maxIncreaseKeepingSkyline(self, grid: List[List[int]]) -> int:\n        n = len(grid)\n        row_max = [max(row) for row in grid]\n        col_max = [max(grid[r][c] for r in range(n)) for c in range(n)]\n        return sum(\n            min(row_max[r], col_max[c]) - grid[r][c]\n            for r in range(n) for c in range(n)\n        )",
-    "solution_js": "var maxIncreaseKeepingSkyline = function(grid) {\n    const n = grid.length;\n    const rowMax = grid.map(row => Math.max(...row));\n    const colMax = Array.from({length: n}, (_, c) => Math.max(...grid.map(r => grid[r][c])));\n    let total = 0;\n    for (let r = 0; r < n; r++)\n        for (let c = 0; c < n; c++)\n            total += Math.min(rowMax[r], colMax[c]) - grid[r][c];\n    return total;\n};",
-    "time_complexity": "O(n^2)",
-    "space_complexity": "O(n)",
-    "time_complexity_explanation": "Computing row and column maxima requires O(n^2) work; the final summation is another O(n^2) pass.",
-    "space_complexity_explanation": "Two arrays of size n store the row and column maxima.",
-    "key_insight": "Each cell's maximum allowable height is independently constrained by both its row's skyline and its column's skyline \u2014 taking the minimum of both ensures neither view is violated.",
+    "approach": "Sort the array in ascending order. Then, pair elements at consecutive indices (0,1), (2,3), etc. The minimum of each pair is always the element at the even index. Summing all elements at even indices after sorting yields the maximum sum of minimums.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def arrayPairSum(self, nums: List[int]) -> int:\n        nums.sort()\n        return sum(nums[i] for i in range(0, len(nums), 2))",
+    "solution_js": "var arrayPairSum = function(nums) {\n    nums.sort((a, b) => a - b);\n    let sum = 0;\n    for (let i = 0; i < nums.length; i += 2) sum += nums[i];\n    return sum;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting dominates at O(n log n); the subsequent sum scan is O(n).",
+    "space_complexity_explanation": "Sorting is done in-place and only a constant amount of extra variables are used.",
+    "key_insight": "Sorting and pairing adjacent elements guarantees that the wasted element (the larger of each pair) is as small as possible, maximizing the sum of the minimums.",
     "related": [
-      419,
-      48
+      905,
+      976
     ],
     "companies": [
       "google"
@@ -1041,31 +1040,32 @@
   },
   {
     "id": 581,
-    "title": "Third Maximum Number",
-    "slug": "third-maximum-number",
+    "title": "Shortest Unsorted Continuous Subarray",
+    "slug": "shortest-unsorted-continuous-subarray",
     "category": "Array",
-    "difficulty": "Easy",
-    "leetcode_url": "https://leetcode.com/problems/third-maximum-number/",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/",
     "patterns": [
-      "Array",
-      "Sorting"
+      "Two Pointers",
+      "Sorting",
+      "Monotonic Stack"
     ],
     "hints": [
-      "Keep track of the top three distinct values seen so far using three variables (first, second, third).",
-      "Skip values already represented in your top-three set. Update the three variables in order when a new value qualifies.",
-      "If fewer than three distinct values exist, return the maximum."
+      "Think about what the sorted version of the array looks like \u2014 find the leftmost and rightmost positions where the original array differs from its sorted version.",
+      "Alternatively, use a single pass: track the running maximum from left; whenever you see a value smaller than the running max, it must be included in the unsorted subarray.",
+      "Do a similar pass from right tracking the running minimum to find the left boundary of the subarray."
     ],
-    "approach": "Maintain three variables representing the top three distinct maximums. Iterate through the array, updating these in order while skipping duplicates. If third is still unset (fewer than 3 distinct values), return first (the maximum).",
-    "solution_python": "class Solution:\n    def thirdMax(self, nums: List[int]) -> int:\n        first = second = third = float('-inf')\n        for n in nums:\n            if n in (first, second, third): continue\n            if n > first: first, second, third = n, first, second\n            elif n > second: second, third = n, second\n            elif n > third: third = n\n        return third if third != float('-inf') else first",
-    "solution_js": "var thirdMax = function(nums) {\n    let first = -Infinity, second = -Infinity, third = -Infinity;\n    for (const n of nums) {\n        if (n === first || n === second || n === third) continue;\n        if (n > first) { third = second; second = first; first = n; }\n        else if (n > second) { third = second; second = n; }\n        else if (n > third) { third = n; }\n    }\n    return third === -Infinity ? first : third;\n};",
-    "time_complexity": "O(n)",
-    "space_complexity": "O(1)",
-    "time_complexity_explanation": "Single pass through the array.",
-    "space_complexity_explanation": "Three scalar variables regardless of input size.",
-    "key_insight": "Tracking only three distinct maximums in O(1) space avoids sorting the entire array.",
+    "approach": "Compare the array to its sorted version and find the leftmost and rightmost indices where they differ. The subarray between those indices (inclusive) is the shortest unsorted continuous subarray. Alternatively, scan left-to-right tracking the max and right-to-left tracking the min to find boundaries in O(n) time without extra space.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findUnsortedSubarray(self, nums: List[int]) -> int:\n        sorted_nums = sorted(nums)\n        left, right = 0, len(nums) - 1\n        while left < len(nums) and nums[left] == sorted_nums[left]:\n            left += 1\n        if left == len(nums):\n            return 0\n        while nums[right] == sorted_nums[right]:\n            right -= 1\n        return right - left + 1",
+    "solution_js": "var findUnsortedSubarray = function(nums) {\n    const sorted = [...nums].sort((a, b) => a - b);\n    let left = 0, right = nums.length - 1;\n    while (left < nums.length && nums[left] === sorted[left]) left++;\n    if (left === nums.length) return 0;\n    while (nums[right] === sorted[right]) right--;\n    return right - left + 1;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the array takes O(n log n); the two linear scans are O(n), dominated by the sort.",
+    "space_complexity_explanation": "A copy of the array is created for sorting, requiring O(n) extra space.",
+    "key_insight": "The shortest unsorted subarray is exactly the range where the original array disagrees with its sorted version; finding the first and last disagreement positions gives the boundaries directly.",
     "related": [
-      215,
-      786
+      75,
+      148
     ],
     "companies": [
       "google"
@@ -5662,6 +5662,261 @@
     "related": [
       183,
       182
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 305,
+    "title": "Number of Islands II",
+    "slug": "number-of-islands-ii",
+    "category": "Graph",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/number-of-islands-ii/",
+    "patterns": [
+      "Union-Find",
+      "Graph"
+    ],
+    "hints": [
+      "Each addLand operation turns a water cell into land \u2014 think about how to efficiently merge it with adjacent land cells.",
+      "Union-Find (Disjoint Set Union) is ideal: each land cell is a node, and adding land merges it with its neighbors.",
+      "When a new cell is added, start with count+1, then for each of the 4 neighbors that is land and in a different component, union them and decrement count."
+    ],
+    "approach": "Use a Union-Find data structure over the m*n grid cells. For each addLand position, mark it as land, increment the island count, then check all 4 neighbors. If a neighbor is already land and belongs to a different component, union the two components and decrement the count. Append the current count after each operation.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def numIslands2(self, m: int, n: int, positions: List[List[int]]) -> List[int]:\n        parent = {}\n        rank = {}\n\n        def find(x):\n            if parent[x] != x:\n                parent[x] = find(parent[x])\n            return parent[x]\n\n        def union(x, y):\n            px, py = find(x), find(y)\n            if px == py:\n                return False\n            if rank.get(px, 0) < rank.get(py, 0):\n                px, py = py, px\n            parent[py] = px\n            if rank.get(px, 0) == rank.get(py, 0):\n                rank[px] = rank.get(px, 0) + 1\n            return True\n\n        count = 0\n        result = []\n        for r, c in positions:\n            if (r, c) in parent:\n                result.append(count)\n                continue\n            parent[(r, c)] = (r, c)\n            count += 1\n            for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n                nr, nc = r + dr, c + dc\n                if (nr, nc) in parent:\n                    if union((r, c), (nr, nc)):\n                        count -= 1\n            result.append(count)\n        return result",
+    "solution_js": "var numIslands2 = function(m, n, positions) {\n    const parent = new Map();\n    const rank = new Map();\n\n    function find(x) {\n        if (parent.get(x) !== x) parent.set(x, find(parent.get(x)));\n        return parent.get(x);\n    }\n\n    function union(x, y) {\n        const px = find(x), py = find(y);\n        if (px === py) return false;\n        const rx = rank.get(px) || 0, ry = rank.get(py) || 0;\n        if (rx < ry) { parent.set(px, py); }\n        else if (rx > ry) { parent.set(py, px); }\n        else { parent.set(py, px); rank.set(px, rx + 1); }\n        return true;\n    }\n\n    let count = 0;\n    const result = [];\n    for (const [r, c] of positions) {\n        const key = `${r},${c}`;\n        if (parent.has(key)) { result.push(count); continue; }\n        parent.set(key, key);\n        count++;\n        for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {\n            const nk = `${r+dr},${c+dc}`;\n            if (parent.has(nk) && union(key, nk)) count--;\n        }\n        result.push(count);\n    }\n    return result;\n};",
+    "time_complexity": "O(k * alpha(m*n))",
+    "space_complexity": "O(m*n)",
+    "time_complexity_explanation": "For k operations, each union-find operation is near-constant O(alpha(m*n)) with path compression and union by rank.",
+    "space_complexity_explanation": "The parent and rank maps store at most m*n cells, one per grid position.",
+    "key_insight": "Union-Find lets you efficiently track connected components: each addLand potentially merges up to 4 existing islands, and you can update the count in O(alpha) per merge.",
+    "related": [
+      200,
+      323
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 38,
+    "title": "Count and Say",
+    "slug": "count-and-say",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/count-and-say/",
+    "patterns": [
+      "String",
+      "Simulation"
+    ],
+    "hints": [
+      "The sequence is defined recursively: countAndSay(n) is the run-length encoding of countAndSay(n-1).",
+      "To generate the next term, scan the current string and count consecutive identical digits.",
+      "For each group of consecutive identical digits, append the count followed by the digit to build the next string."
+    ],
+    "approach": "Start with '1' as the base case. For each step up to n, scan the current string using two pointers or a counter to identify runs of identical characters. Build the next string by appending the run length followed by the character for each run. Repeat n-1 times to reach the nth term.",
+    "solution_python": "class Solution:\n    def countAndSay(self, n: int) -> str:\n        result = '1'\n        for _ in range(n - 1):\n            next_result = []\n            i = 0\n            while i < len(result):\n                count = 1\n                while i + count < len(result) and result[i + count] == result[i]:\n                    count += 1\n                next_result.append(str(count) + result[i])\n                i += count\n            result = ''.join(next_result)\n        return result",
+    "solution_js": "var countAndSay = function(n) {\n    let result = '1';\n    for (let i = 1; i < n; i++) {\n        let next = '';\n        let j = 0;\n        while (j < result.length) {\n            let count = 1;\n            while (j + count < result.length && result[j + count] === result[j]) count++;\n            next += count + result[j];\n            j += count;\n        }\n        result = next;\n    }\n    return result;\n};",
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(2^n)",
+    "time_complexity_explanation": "Each term can be up to twice the length of the previous one, so the nth term has length O(2^n) and we build n-1 terms.",
+    "space_complexity_explanation": "The longest string stored at any time is the nth term, which can be O(2^n) characters.",
+    "key_insight": "Each term is a run-length encoding of the previous term; iteratively applying RLE n-1 times starting from '1' produces the answer.",
+    "related": [
+      271,
+      443
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 461,
+    "title": "Hamming Distance",
+    "slug": "hamming-distance",
+    "category": "Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/hamming-distance/",
+    "patterns": [
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "XOR of two numbers produces a 1-bit wherever the two numbers differ.",
+      "After XORing x and y, count the number of 1-bits in the result.",
+      "You can count set bits using Python's bin().count('1') or by repeatedly checking and shifting the least significant bit."
+    ],
+    "approach": "XOR x and y to get a number whose set bits correspond to positions where x and y differ. Then count the number of set bits (popcount) in the XOR result. This can be done with built-in bit count functions or by repeatedly extracting the lowest set bit.",
+    "solution_python": "class Solution:\n    def hammingDistance(self, x: int, y: int) -> int:\n        return bin(x ^ y).count('1')",
+    "solution_js": "var hammingDistance = function(x, y) {\n    let xor = x ^ y;\n    let count = 0;\n    while (xor) {\n        count += xor & 1;\n        xor >>= 1;\n    }\n    return count;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Integers are fixed 32-bit (or bounded) width, so XOR and bit counting run in constant time.",
+    "space_complexity_explanation": "Only a fixed number of integer variables are used regardless of input size.",
+    "key_insight": "XOR isolates all differing bits in one operation; counting the 1-bits of the XOR directly gives the Hamming distance.",
+    "related": [
+      191,
+      477
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 204,
+    "title": "Count Primes",
+    "slug": "count-primes",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/count-primes/",
+    "patterns": [
+      "Math",
+      "Sieve of Eratosthenes"
+    ],
+    "hints": [
+      "A naive approach checks each number for primality, but that's too slow for large n.",
+      "The Sieve of Eratosthenes efficiently marks all composites: start from 2 and mark every multiple.",
+      "You only need to sieve up to sqrt(n) since any composite number has a factor no larger than its square root."
+    ],
+    "approach": "Apply the Sieve of Eratosthenes: create a boolean array of size n initialized to True. Starting from 2, for each prime p found, mark all multiples of p (starting from p*p) as composite. Count all indices still marked True at the end (indices 2 through n-1).",
+    "solution_python": "class Solution:\n    def countPrimes(self, n: int) -> int:\n        if n < 2:\n            return 0\n        sieve = [True] * n\n        sieve[0] = sieve[1] = False\n        for i in range(2, int(n**0.5) + 1):\n            if sieve[i]:\n                for j in range(i*i, n, i):\n                    sieve[j] = False\n        return sum(sieve)",
+    "solution_js": "var countPrimes = function(n) {\n    if (n < 2) return 0;\n    const sieve = new Array(n).fill(true);\n    sieve[0] = sieve[1] = false;\n    for (let i = 2; i * i < n; i++) {\n        if (sieve[i]) {\n            for (let j = i * i; j < n; j += i) sieve[j] = false;\n        }\n    }\n    return sieve.filter(Boolean).length;\n};",
+    "time_complexity": "O(n log log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The Sieve of Eratosthenes runs in O(n log log n) time due to the harmonic series of prime reciprocals.",
+    "space_complexity_explanation": "A boolean array of size n is allocated to track which numbers are prime.",
+    "key_insight": "Starting the inner loop at p*p (rather than 2*p) is the key optimization: all smaller multiples of p have already been marked by smaller primes.",
+    "related": [
+      263,
+      264
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 463,
+    "title": "Island Perimeter",
+    "slug": "island-perimeter",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/island-perimeter/",
+    "patterns": [
+      "Array",
+      "Graph"
+    ],
+    "hints": [
+      "Each land cell contributes 4 sides to the perimeter, but shared edges with adjacent land cells reduce the count.",
+      "For every pair of horizontally or vertically adjacent land cells, 2 perimeter units are lost (one from each cell).",
+      "Count all land cells and all shared edges separately, then compute: perimeter = 4 * land_cells - 2 * shared_edges."
+    ],
+    "approach": "Iterate over every cell in the grid. For each land cell (value 1), add 4 to the perimeter. Then check the cell to the right and the cell below; if either is also land, subtract 2 (one shared edge removes one side from each neighbor). This gives the total perimeter in a single pass.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def islandPerimeter(self, grid: List[List[int]]) -> int:\n        rows, cols = len(grid), len(grid[0])\n        perimeter = 0\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == 1:\n                    perimeter += 4\n                    if r + 1 < rows and grid[r+1][c] == 1:\n                        perimeter -= 2\n                    if c + 1 < cols and grid[r][c+1] == 1:\n                        perimeter -= 2\n        return perimeter",
+    "solution_js": "var islandPerimeter = function(grid) {\n    let perimeter = 0;\n    for (let r = 0; r < grid.length; r++) {\n        for (let c = 0; c < grid[0].length; c++) {\n            if (grid[r][c] === 1) {\n                perimeter += 4;\n                if (r + 1 < grid.length && grid[r+1][c] === 1) perimeter -= 2;\n                if (c + 1 < grid[0].length && grid[r][c+1] === 1) perimeter -= 2;\n            }\n        }\n    }\n    return perimeter;\n};",
+    "time_complexity": "O(m*n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Every cell in the m x n grid is visited exactly once.",
+    "space_complexity_explanation": "Only a single integer accumulator is used; no additional data structures are needed.",
+    "key_insight": "Rather than tracing boundaries, count each land cell as contributing 4 sides and subtract 2 for every shared edge with a neighbor, reducing the problem to a simple arithmetic scan.",
+    "related": [
+      200,
+      695
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 260,
+    "title": "Single Number III",
+    "slug": "single-number-iii",
+    "category": "Bit Manipulation",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/single-number-iii/",
+    "patterns": [
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "XOR all numbers together \u2014 the result is xor = a ^ b where a and b are the two unique numbers.",
+      "Find any set bit in xor (e.g., the lowest set bit using xor & (-xor)) \u2014 this bit differs between a and b.",
+      "Use that distinguishing bit to partition all numbers into two groups and XOR each group separately to isolate a and b."
+    ],
+    "approach": "XOR all elements to get a^b (since duplicates cancel). Find a bit that is set in a^b (use lowest set bit: diff & -diff). Partition numbers into two groups based on whether that bit is set. XOR each group separately; duplicates cancel within each group, leaving a in one and b in the other.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def singleNumber(self, nums: List[int]) -> List[int]:\n        xor = 0\n        for n in nums:\n            xor ^= n\n        diff = xor & (-xor)  # lowest set bit\n        a = 0\n        for n in nums:\n            if n & diff:\n                a ^= n\n        return [a, a ^ xor]",
+    "solution_js": "var singleNumber = function(nums) {\n    let xor = 0;\n    for (const n of nums) xor ^= n;\n    const diff = xor & (-xor);\n    let a = 0;\n    for (const n of nums) {\n        if (n & diff) a ^= n;\n    }\n    return [a, a ^ xor];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear passes over the array are made; each pass is O(n).",
+    "space_complexity_explanation": "Only a constant number of integer variables are used regardless of input size.",
+    "key_insight": "XORing all elements gives a^b; isolating any differing bit lets you split the array into two groups that each XOR to one of the two unique numbers.",
+    "related": [
+      136,
+      137
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 109,
+    "title": "Convert Sorted List to Binary Search Tree",
+    "slug": "convert-sorted-list-to-binary-search-tree",
+    "category": "Tree",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/",
+    "patterns": [
+      "Divide and Conquer",
+      "Linked List",
+      "Tree"
+    ],
+    "hints": [
+      "The middle element of the sorted list should be the root of the BST to keep it height-balanced.",
+      "Use the slow/fast pointer technique to find the middle of the linked list in O(n) time.",
+      "Recursively build the left subtree from the left half of the list and the right subtree from the right half."
+    ],
+    "approach": "Use the slow/fast pointer technique to find the middle node of the linked list. The middle node becomes the root. Disconnect the left half from the middle, then recursively build the left subtree from the left half and the right subtree from the right half (starting after the middle node). This produces a height-balanced BST.",
+    "solution_python": "from typing import Optional\n\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\n\nclass Solution:\n    def sortedListToBST(self, head: Optional['ListNode']) -> Optional['TreeNode']:\n        if not head:\n            return None\n        if not head.next:\n            return TreeNode(head.val)\n        prev, slow, fast = None, head, head\n        while fast and fast.next:\n            prev = slow\n            slow = slow.next\n            fast = fast.next.next\n        prev.next = None  # disconnect left half\n        root = TreeNode(slow.val)\n        root.left = self.sortedListToBST(head)\n        root.right = self.sortedListToBST(slow.next)\n        return root",
+    "solution_js": "var sortedListToBST = function(head) {\n    if (!head) return null;\n    if (!head.next) return new TreeNode(head.val);\n    let prev = null, slow = head, fast = head;\n    while (fast && fast.next) {\n        prev = slow;\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    prev.next = null;\n    const root = new TreeNode(slow.val);\n    root.left = sortedListToBST(head);\n    root.right = sortedListToBST(slow.next);\n    return root;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(log n)",
+    "time_complexity_explanation": "Finding the middle takes O(n) at each of the O(log n) recursion levels, giving O(n log n) total.",
+    "space_complexity_explanation": "The recursion stack depth is O(log n) for a balanced BST built from n nodes.",
+    "key_insight": "Making the middle element the root at each recursive step ensures the BST is height-balanced, since equal-length left and right sublists become equal-depth subtrees.",
+    "related": [
+      108,
+      148
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 228,
+    "title": "Summary Ranges",
+    "slug": "summary-ranges",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/summary-ranges/",
+    "patterns": [
+      "Two Pointers",
+      "Array"
+    ],
+    "hints": [
+      "Use a pointer to mark the start of each consecutive range, then extend it as long as consecutive elements differ by 1.",
+      "When the consecutive sequence breaks (or you reach the end), record the range as either 'a' (single element) or 'a->b' (multi-element).",
+      "Move the start pointer to the next element after the break and repeat."
+    ],
+    "approach": "Iterate through the sorted unique array with a start pointer. For each position, advance an end pointer while consecutive elements differ by exactly 1. When the sequence breaks, record either 'start' if start equals end, or 'start->end' otherwise. Move start past the end and continue.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def summaryRanges(self, nums: List[int]) -> List[str]:\n        result = []\n        i = 0\n        while i < len(nums):\n            start = nums[i]\n            while i + 1 < len(nums) and nums[i+1] == nums[i] + 1:\n                i += 1\n            if nums[i] == start:\n                result.append(str(start))\n            else:\n                result.append(f'{start}->{nums[i]}')\n            i += 1\n        return result",
+    "solution_js": "var summaryRanges = function(nums) {\n    const result = [];\n    let i = 0;\n    while (i < nums.length) {\n        const start = nums[i];\n        while (i + 1 < nums.length && nums[i+1] === nums[i] + 1) i++;\n        result.push(nums[i] === start ? `${start}` : `${start}->${nums[i]}`);\n        i++;\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each element is visited at most twice (once by the outer loop and once by the inner advance), giving linear time.",
+    "space_complexity_explanation": "Only pointer variables and the output list are used; the output is not counted as extra space.",
+    "key_insight": "Tracking the start of each run and extending until a gap is found lets you emit each range in one step without any backtracking.",
+    "related": [
+      163,
+      352
     ],
     "companies": [
       "google"
