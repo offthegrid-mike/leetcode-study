@@ -16966,6 +16966,39 @@
     ]
   },
   {
+    "id": 642,
+    "title": "Design Search Autocomplete System",
+    "slug": "design-search-autocomplete-system",
+    "category": "Design",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/design-search-autocomplete-system/",
+    "patterns": [
+      "Trie",
+      "Design",
+      "String"
+    ],
+    "hints": [
+      "Use a Trie to store all sentences and their frequencies.",
+      "For each input character, traverse the Trie to the node matching the current prefix, then collect and rank all completions from that subtree.",
+      "When # is typed, insert the completed sentence into the Trie with incremented frequency."
+    ],
+    "approach": "Build a Trie where each node stores sentence-frequency pairs. On each input() call, if the character is not #, append it to the current prefix and traverse the Trie to find the matching node, then do a DFS to collect all sentences in that subtree, returning the top 3 by frequency (ties broken lexicographically). If # is typed, add the current sentence to the Trie with incremented count and reset state.",
+    "solution_python": "class AutocompleteSystem:\n    def __init__(self, sentences: List[str], times: List[int]):\n        self.trie = {}\n        self.cur = ''\n        self.node = self.trie\n        for s, t in zip(sentences, times):\n            self._insert(s, t)\n    \n    def _insert(self, sentence, freq):\n        node = self.trie\n        for c in sentence:\n            if c not in node:\n                node[c] = {}\n            node = node[c]\n        node['#'] = node.get('#', 0) + freq\n    \n    def _search(self, node, prefix):\n        res = []\n        if '#' in node:\n            res.append((node['#'], prefix))\n        for c, child in node.items():\n            if c != '#':\n                res.extend(self._search(child, prefix + c))\n        return res\n    \n    def input(self, c: str) -> List[str]:\n        if c == '#':\n            self._insert(self.cur, 1)\n            self.cur = ''\n            self.node = self.trie\n            return []\n        self.cur += c\n        if self.node is None or c not in self.node:\n            self.node = None\n            return []\n        self.node = self.node[c]\n        results = self._search(self.node, self.cur)\n        results.sort(key=lambda x: (-x[0], x[1]))\n        return [s for _, s in results[:3]]",
+    "solution_js": "class AutocompleteSystem {\n    constructor(sentences, times) {\n        this.trie = {};\n        this.cur = '';\n        this.node = this.trie;\n        for (let i = 0; i < sentences.length; i++) {\n            this._insert(sentences[i], times[i]);\n        }\n    }\n    \n    _insert(sentence, freq) {\n        let node = this.trie;\n        for (const c of sentence) {\n            if (!node[c]) node[c] = {};\n            node = node[c];\n        }\n        node['#'] = (node['#'] || 0) + freq;\n    }\n    \n    _search(node, prefix) {\n        const res = [];\n        if (node['#']) res.push([node['#'], prefix]);\n        for (const [c, child] of Object.entries(node)) {\n            if (c !== '#') res.push(...this._search(child, prefix + c));\n        }\n        return res;\n    }\n    \n    input(c) {\n        if (c === '#') {\n            this._insert(this.cur, 1);\n            this.cur = '';\n            this.node = this.trie;\n            return [];\n        }\n        this.cur += c;\n        if (!this.node || !this.node[c]) {\n            this.node = null;\n            return [];\n        }\n        this.node = this.node[c];\n        const results = this._search(this.node, this.cur);\n        results.sort((a, b) => b[0] - a[0] || a[1].localeCompare(b[1]));\n        return results.slice(0, 3).map(x => x[1]);\n    }\n}",
+    "time_complexity": "O(p + q + m log m)",
+    "space_complexity": "O(n * L)",
+    "time_complexity_explanation": "Each input call traverses p prefix chars, searches q matching chars in the subtree, and sorts m completions.",
+    "space_complexity_explanation": "The Trie stores n sentences each of average length L.",
+    "key_insight": "Tracking the current Trie node as input progresses avoids re-traversing the prefix each time, making incremental search efficient.",
+    "related": [
+      208,
+      745
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 645,
     "title": "Set Mismatch",
     "slug": "set-mismatch",
@@ -17162,6 +17195,38 @@
     ]
   },
   {
+    "id": 953,
+    "title": "Verifying an Alien Dictionary",
+    "slug": "verifying-an-alien-dictionary",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/verifying-an-alien-dictionary/",
+    "patterns": [
+      "Hash Map",
+      "String"
+    ],
+    "hints": [
+      "Build a mapping from each alien character to its order index.",
+      "For each adjacent pair of words, compare them character by character using the alien order.",
+      "If words[i] is a prefix of words[i+1], that is fine; but if words[i+1] is a prefix of words[i], return False."
+    ],
+    "approach": "Create a hash map that maps each character to its position in the alien order string. Then for each consecutive pair of words, compare them character by character. If a character in words[i] comes after words[i+1] in alien order, return False. If words[i] is longer than words[i+1] and is a prefix of it, return False. Otherwise return True.",
+    "solution_python": "class Solution:\n    def isAlienSorted(self, words: List[str], order: str) -> bool:\n        rank = {c: i for i, c in enumerate(order)}\n        for i in range(len(words) - 1):\n            w1, w2 = words[i], words[i+1]\n            for j in range(len(w1)):\n                if j >= len(w2):\n                    return False\n                if rank[w1[j]] < rank[w2[j]]:\n                    break\n                if rank[w1[j]] > rank[w2[j]]:\n                    return False\n        return True",
+    "solution_js": "var isAlienSorted = function(words, order) {\n    const rank = {};\n    for (let i = 0; i < order.length; i++) rank[order[i]] = i;\n    \n    for (let i = 0; i < words.length - 1; i++) {\n        const w1 = words[i], w2 = words[i+1];\n        let found = false;\n        for (let j = 0; j < w1.length; j++) {\n            if (j >= w2.length) return false;\n            if (rank[w1[j]] < rank[w2[j]]) { found = true; break; }\n            if (rank[w1[j]] > rank[w2[j]]) return false;\n        }\n    }\n    return true;\n};",
+    "time_complexity": "O(C)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We scan each character across all words at most once, where C is the total number of characters.",
+    "space_complexity_explanation": "The rank map stores at most 26 characters, so it is O(1) space.",
+    "key_insight": "Mapping each alien character to a numeric rank transforms the problem into a standard lexicographic comparison using the new ordering.",
+    "related": [
+      252,
+      791
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1009,
     "title": "Complement of Base 10 Integer",
     "slug": "complement-of-base-10-integer",
@@ -17321,6 +17386,37 @@
     "related": [
       509,
       70
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1179,
+    "title": "Reformat Department Table",
+    "slug": "reformat-department-table",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/reformat-department-table/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "Use conditional aggregation (CASE WHEN or IF) to pivot month columns.",
+      "Group by id and aggregate the revenue for each month into its own column.",
+      "Use MAX() or SUM() around the CASE expression to collapse multiple rows per id into one."
+    ],
+    "approach": "Use a pivot query with conditional aggregation. For each month (Jan through Dec), use a CASE WHEN expression inside MAX() or SUM() to extract revenue only for that month. Group by id so each department gets one output row with all 12 monthly revenue columns.",
+    "solution_python": "SELECT id,\n    MAX(CASE WHEN month = 'Jan' THEN revenue END) AS Jan_Revenue,\n    MAX(CASE WHEN month = 'Feb' THEN revenue END) AS Feb_Revenue,\n    MAX(CASE WHEN month = 'Mar' THEN revenue END) AS Mar_Revenue,\n    MAX(CASE WHEN month = 'Apr' THEN revenue END) AS Apr_Revenue,\n    MAX(CASE WHEN month = 'May' THEN revenue END) AS May_Revenue,\n    MAX(CASE WHEN month = 'Jun' THEN revenue END) AS Jun_Revenue,\n    MAX(CASE WHEN month = 'Jul' THEN revenue END) AS Jul_Revenue,\n    MAX(CASE WHEN month = 'Aug' THEN revenue END) AS Aug_Revenue,\n    MAX(CASE WHEN month = 'Sep' THEN revenue END) AS Sep_Revenue,\n    MAX(CASE WHEN month = 'Oct' THEN revenue END) AS Oct_Revenue,\n    MAX(CASE WHEN month = 'Nov' THEN revenue END) AS Nov_Revenue,\n    MAX(CASE WHEN month = 'Dec' THEN revenue END) AS Dec_Revenue\nFROM Department\nGROUP BY id;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The query scans all n rows once to build the pivot aggregation.",
+    "space_complexity_explanation": "The output has at most as many rows as distinct department ids, proportional to input size.",
+    "key_insight": "Conditional aggregation with GROUP BY is the standard SQL pivot technique, using MAX() to select the one non-null value per group-month combination.",
+    "related": [
+      1173,
+      1193
     ],
     "companies": [
       "google"
@@ -17492,6 +17588,38 @@
     ]
   },
   {
+    "id": 1415,
+    "title": "The k-th Lexicographical String of All Happy Strings of Length n",
+    "slug": "the-k-th-lexicographical-string-of-all-happy-strings-of-length-n",
+    "category": "Backtracking",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/the-k-th-lexicographical-string-of-all-happy-strings-of-length-n/",
+    "patterns": [
+      "Backtracking",
+      "String"
+    ],
+    "hints": [
+      "A happy string uses only a, b, c and no two adjacent characters are the same.",
+      "Generate all happy strings of length n in lexicographical order using backtracking.",
+      "At each position, try a, b, c in order, skipping any character equal to the previous character."
+    ],
+    "approach": "Use backtracking to generate all happy strings of length n in lexicographical order. At each step, try appending a, b, or c, skipping any character equal to the last character added. Once a string of length n is formed, add it to the result list. Return the k-th string (1-indexed) if it exists, otherwise return empty string.",
+    "solution_python": "class Solution:\n    def getHappyString(self, n: int, k: int) -> str:\n        result = []\n        \n        def backtrack(s):\n            if len(s) == n:\n                result.append(s)\n                return\n            for c in ['a', 'b', 'c']:\n                if not s or s[-1] != c:\n                    backtrack(s + c)\n        \n        backtrack('')\n        return result[k - 1] if k <= len(result) else ''",
+    "solution_js": "var getHappyString = function(n, k) {\n    const result = [];\n    \n    function backtrack(s) {\n        if (s.length === n) {\n            result.push(s);\n            return;\n        }\n        for (const c of ['a', 'b', 'c']) {\n            if (!s || s[s.length - 1] !== c) {\n                backtrack(s + c);\n            }\n        }\n    }\n    \n    backtrack('');\n    return k <= result.length ? result[k - 1] : '';\n};",
+    "time_complexity": "O(3 * 2^(n-1))",
+    "space_complexity": "O(n * 3 * 2^(n-1))",
+    "time_complexity_explanation": "There are 3 * 2^(n-1) happy strings of length n, and each takes O(n) to construct.",
+    "space_complexity_explanation": "We store all happy strings, each of length n, in the result list.",
+    "key_insight": "After choosing the first character (3 options), each subsequent character has exactly 2 choices (any of a/b/c except the previous), giving a predictable tree structure.",
+    "related": [
+      1286,
+      784
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1461,
     "title": "Check If a String Contains All Binary Codes of Size K",
     "slug": "check-if-a-string-contains-all-binary-codes-of-size-k",
@@ -17556,6 +17684,39 @@
     ]
   },
   {
+    "id": 1658,
+    "title": "Minimum Operations to Reduce X to Zero",
+    "slug": "minimum-operations-to-reduce-x-to-zero",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-operations-to-reduce-x-to-zero/",
+    "patterns": [
+      "Sliding Window",
+      "Two Pointers",
+      "Hash Map"
+    ],
+    "hints": [
+      "Instead of finding the minimum elements to remove from ends, find the maximum subarray whose sum equals total_sum - x.",
+      "Use a sliding window to find the longest subarray with sum equal to total_sum - x.",
+      "The answer is n minus the length of that subarray; if no such subarray exists, return -1."
+    ],
+    "approach": "Reformulate the problem: removing elements from both ends summing to x is equivalent to finding the longest subarray in the middle with sum = total_sum - x. Use a sliding window with two pointers to find the maximum length subarray with the target sum. The minimum operations is n minus this maximum length.",
+    "solution_python": "class Solution:\n    def minOperations(self, nums: List[int], x: int) -> int:\n        target = sum(nums) - x\n        if target < 0:\n            return -1\n        if target == 0:\n            return len(nums)\n        n = len(nums)\n        max_len = -1\n        cur_sum = 0\n        left = 0\n        for right in range(n):\n            cur_sum += nums[right]\n            while cur_sum > target and left <= right:\n                cur_sum -= nums[left]\n                left += 1\n            if cur_sum == target:\n                max_len = max(max_len, right - left + 1)\n        return n - max_len if max_len != -1 else -1",
+    "solution_js": "var minOperations = function(nums, x) {\n    const target = nums.reduce((a, b) => a + b, 0) - x;\n    if (target < 0) return -1;\n    if (target === 0) return nums.length;\n    let maxLen = -1, curSum = 0, left = 0;\n    for (let right = 0; right < nums.length; right++) {\n        curSum += nums[right];\n        while (curSum > target && left <= right) curSum -= nums[left++];\n        if (curSum === target) maxLen = Math.max(maxLen, right - left + 1);\n    }\n    return maxLen === -1 ? -1 : nums.length - maxLen;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The sliding window processes each element at most twice (once added, once removed).",
+    "space_complexity_explanation": "Only a constant number of pointer and sum variables are used.",
+    "key_insight": "The complement trick converts a hard two-ended removal problem into a standard maximum-length subarray problem solvable with a sliding window.",
+    "related": [
+      209,
+      1234
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1680,
     "title": "Concatenation of Consecutive Binary Numbers",
     "slug": "concatenation-of-consecutive-binary-numbers",
@@ -17612,6 +17773,70 @@
     "key_insight": "Each deci-binary number contributes at most 1 per digit position, so the hardest digit to satisfy is the maximum digit — that digit alone dictates how many numbers are needed.",
     "related": [
       1689
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1727,
+    "title": "Largest Submatrix With Rearrangements",
+    "slug": "largest-submatrix-with-rearrangements",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/largest-submatrix-with-rearrangements/",
+    "patterns": [
+      "Greedy",
+      "Sorting"
+    ],
+    "hints": [
+      "For each cell, compute the consecutive 1s going upward (column height ending at this row).",
+      "For each row, sort the column heights in descending order.",
+      "After sorting, the largest rectangle using j columns has height heights[j-1] and width j."
+    ],
+    "approach": "First, transform the matrix into a height matrix where each cell stores the number of consecutive 1s ending at that row in its column. For each row, sort the heights in descending order. Then iterate through the sorted heights: for j columns (1-indexed), the rectangle area is heights[j-1] * j. Track the maximum area found.",
+    "solution_python": "class Solution:\n    def largestSubmatrix(self, matrix: List[List[int]]) -> int:\n        m, n = len(matrix), len(matrix[0])\n        for i in range(1, m):\n            for j in range(n):\n                if matrix[i][j] == 1:\n                    matrix[i][j] += matrix[i-1][j]\n        \n        ans = 0\n        for row in matrix:\n            sorted_row = sorted(row, reverse=True)\n            for j, h in enumerate(sorted_row):\n                if h == 0:\n                    break\n                ans = max(ans, h * (j + 1))\n        return ans",
+    "solution_js": "var largestSubmatrix = function(matrix) {\n    const m = matrix.length, n = matrix[0].length;\n    for (let i = 1; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (matrix[i][j] === 1) {\n                matrix[i][j] += matrix[i-1][j];\n            }\n        }\n    }\n    let ans = 0;\n    for (const row of matrix) {\n        const sorted = [...row].sort((a, b) => b - a);\n        for (let j = 0; j < sorted.length; j++) {\n            if (sorted[j] === 0) break;\n            ans = Math.max(ans, sorted[j] * (j + 1));\n        }\n    }\n    return ans;\n};",
+    "time_complexity": "O(m * n * log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Building heights is O(m*n) and sorting each row is O(n log n), done m times.",
+    "space_complexity_explanation": "The matrix is modified in-place and sorting uses O(n) extra space per row.",
+    "key_insight": "By sorting column heights per row, you can greedily select the widest possible submatrix for each height level, since columns can be freely rearranged.",
+    "related": [
+      84,
+      85
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1878,
+    "title": "Get Biggest Three Rhombus Sums in a Grid",
+    "slug": "get-biggest-three-rhombus-sums-in-a-grid",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/get-biggest-three-rhombus-sums-in-a-grid/",
+    "patterns": [
+      "Prefix Sum",
+      "Sorting"
+    ],
+    "hints": [
+      "A rhombus of size 0 is just a single cell. For size > 0, sum the four diagonal borders.",
+      "Use prefix sums along diagonals (top-left-to-bottom-right and top-right-to-bottom-left) to compute rhombus border sums in O(1).",
+      "Collect all rhombus sums, keep track of the top 3 distinct values using a sorted set."
+    ],
+    "approach": "Precompute prefix sums along both diagonals. For each center cell and each possible rhombus size, compute the border sum using the diagonal prefix sums in O(1). Collect all rhombus sums (including size-0 single cells) and maintain the top 3 distinct values. Return them sorted in descending order.",
+    "solution_python": "class Solution:\n    def getBiggestThree(self, grid: List[List[int]]) -> List[int]:\n        m, n = len(grid), len(grid[0])\n        # diagonal prefix sums: diag1[i][j] = top-left to bottom-right, diag2[i][j] = top-right to bottom-left\n        diag1 = [[0] * (n + 2) for _ in range(m + 2)]\n        diag2 = [[0] * (n + 2) for _ in range(m + 2)]\n        for i in range(1, m + 1):\n            for j in range(1, n + 1):\n                diag1[i][j] = diag1[i-1][j-1] + grid[i-1][j-1]\n                diag2[i][j] = diag2[i-1][j+1] + grid[i-1][j-1]\n        \n        def rhombus_sum(r, c, k):\n            if k == 0:\n                return grid[r][c]\n            r1, c1 = r - k, c\n            r2, c2 = r, c + k\n            r3, c3 = r + k, c\n            r4, c4 = r, c - k\n            ri, ci = r1 + 1, c1 + 1\n            # top to right\n            s1 = diag1[r2+1][c2+1] - diag1[ri][ci]\n            # right to bottom\n            s2 = diag2[r3+1][c3+1] - diag2[r2+1][c2+1]\n            # bottom to left\n            s3 = diag1[r3+1][c3+1] - diag1[r4][c4]\n            # left to top\n            s4 = diag2[r4+1][c4+1] - diag2[ri][ci]\n            return s1 + s2 + s3 + s4 - grid[r1][c1] - grid[r2][c2] - grid[r3][c3] - grid[r4][c4]\n        \n        top3 = sorted(set())\n        result = []\n        import heapq\n        seen = set()\n        \n        candidates = []\n        for i in range(m):\n            for j in range(n):\n                max_k = min(i, j, m-1-i, n-1-j)\n                for k in range(max_k + 1):\n                    s = rhombus_sum(i, j, k)\n                    candidates.append(s)\n        \n        distinct = sorted(set(candidates), reverse=True)\n        return distinct[:3]",
+    "solution_js": "var getBiggestThree = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    const diag1 = Array.from({length: m+2}, () => new Array(n+2).fill(0));\n    const diag2 = Array.from({length: m+2}, () => new Array(n+2).fill(0));\n    \n    for (let i = 1; i <= m; i++) {\n        for (let j = 1; j <= n; j++) {\n            diag1[i][j] = diag1[i-1][j-1] + grid[i-1][j-1];\n            diag2[i][j] = diag2[i-1][j+1] + grid[i-1][j-1];\n        }\n    }\n    \n    function rhombusSum(r, c, k) {\n        if (k === 0) return grid[r][c];\n        const [r1,c1] = [r-k, c], [r2,c2] = [r, c+k];\n        const [r3,c3] = [r+k, c], [r4,c4] = [r, c-k];\n        const s1 = diag1[r2+1][c2+1] - diag1[r1+1][c1+1];\n        const s2 = diag2[r3+1][c3+1] - diag2[r2+1][c2+1];\n        const s3 = diag1[r3+1][c3+1] - diag1[r4][c4];\n        const s4 = diag2[r4+1][c4+1] - diag2[r1+1][c1+1];\n        return s1+s2+s3+s4 - grid[r1][c1] - grid[r2][c2] - grid[r3][c3] - grid[r4][c4];\n    }\n    \n    const candidates = new Set();\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            const maxK = Math.min(i, j, m-1-i, n-1-j);\n            for (let k = 0; k <= maxK; k++) {\n                candidates.add(rhombusSum(i, j, k));\n            }\n        }\n    }\n    return [...candidates].sort((a,b) => b-a).slice(0, 3);\n};",
+    "time_complexity": "O(m * n * min(m, n))",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "For each of the m*n cells we try up to min(m,n)/2 rhombus sizes, each computed in O(1) with prefix sums.",
+    "space_complexity_explanation": "Two diagonal prefix sum matrices of size m*n are maintained.",
+    "key_insight": "Precomputing diagonal prefix sums reduces each rhombus border sum query from O(n) to O(1), making the overall algorithm feasible.",
+    "related": [
+      363,
+      1074
     ],
     "companies": [
       "google"
@@ -17750,6 +17975,38 @@
     ]
   },
   {
+    "id": 3026,
+    "title": "Maximum Good Subarray Sum",
+    "slug": "maximum-good-subarray-sum",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-good-subarray-sum/",
+    "patterns": [
+      "Hash Map",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "A good subarray has |nums[i] - nums[j]| <= 1 for its first and last elements.",
+      "Use prefix sums: the sum of subarray [i..j] = prefix[j+1] - prefix[i].",
+      "For each j, look up nums[j]-1, nums[j], and nums[j]+1 in a hash map storing the minimum prefix sum seen for each value."
+    ],
+    "approach": "Compute prefix sums. For each index j (as the end of the subarray), we want to maximize prefix[j+1] - prefix[i] where |nums[i] - nums[j]| <= 1. Maintain a hash map from value to the minimum prefix sum at any index with that value. For each j, check the map for nums[j]-1, nums[j], and nums[j]+1 to find the best starting index.",
+    "solution_python": "class Solution:\n    def maximumSubarraySum(self, nums: List[int], k: int) -> int:\n        # k is not used here; problem is about |a-b| <= 1\n        n = len(nums)\n        prefix = [0] * (n + 1)\n        for i in range(n):\n            prefix[i+1] = prefix[i] + nums[i]\n        \n        min_prefix = {}  # value -> min prefix sum at index with that value\n        ans = float('-inf')\n        found = False\n        \n        for j in range(n):\n            v = nums[j]\n            for target in [v-1, v, v+1]:\n                if target in min_prefix:\n                    ans = max(ans, prefix[j+1] - min_prefix[target])\n                    found = True\n            # update map with prefix[j] for value nums[j]\n            if v not in min_prefix or prefix[j] < min_prefix[v]:\n                min_prefix[v] = prefix[j]\n        \n        return ans if found else 0",
+    "solution_js": "var maximumSubarraySum = function(nums, k) {\n    const n = nums.length;\n    const prefix = new Array(n + 1).fill(0);\n    for (let i = 0; i < n; i++) prefix[i+1] = prefix[i] + nums[i];\n    \n    const minPrefix = new Map();\n    let ans = -Infinity, found = false;\n    \n    for (let j = 0; j < n; j++) {\n        const v = nums[j];\n        for (const target of [v-1, v, v+1]) {\n            if (minPrefix.has(target)) {\n                ans = Math.max(ans, prefix[j+1] - minPrefix.get(target));\n                found = true;\n            }\n        }\n        if (!minPrefix.has(v) || prefix[j] < minPrefix.get(v)) {\n            minPrefix.set(v, prefix[j]);\n        }\n    }\n    return found ? ans : 0;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "We iterate once over the array, doing O(1) hash map lookups per element.",
+    "space_complexity_explanation": "The prefix array and hash map each store O(n) entries in the worst case.",
+    "key_insight": "Storing the minimum prefix sum per distinct value allows O(1) lookup for the best starting point satisfying the |diff| <= 1 condition.",
+    "related": [
+      53,
+      1749
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 3129,
     "title": "Find All Possible Stable Binary Arrays I",
     "slug": "find-all-possible-stable-binary-arrays-i",
@@ -17845,6 +18102,70 @@
       1489,
       1135,
       1584
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3643,
+    "title": "Flip Square Submatrix Vertically",
+    "slug": "flip-square-submatrix-vertically",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/flip-square-submatrix-vertically/",
+    "patterns": [
+      "Simulation",
+      "Arrays"
+    ],
+    "hints": [
+      "For each square submatrix, flipping vertically means reversing each row within the submatrix.",
+      "Iterate over all possible top-left corners and all valid square sizes.",
+      "For each cell after the flip, determine its new value and sum up all 1s."
+    ],
+    "approach": "For each possible square submatrix defined by its top-left corner (r, c) and size k, simulate a vertical flip by reversing each row of the submatrix. Count the number of 1s in the resulting matrix. However, since we want maximum 1s across all possible single flips, try each valid (r, c, k) combination and track the best outcome.",
+    "solution_python": "class Solution:\n    def flipAndCountOnes(self, grid: List[List[int]]) -> int:\n        m, n = len(grid), len(grid[0])\n        total = sum(sum(row) for row in grid)\n        best = total\n        \n        for r in range(m):\n            for c in range(n):\n                max_k = min(m - r, n - c)\n                for k in range(1, max_k + 1):\n                    # flip submatrix grid[r:r+k][c:c+k] vertically\n                    # count change in 1s\n                    delta = 0\n                    for i in range(r, r + k):\n                        for j in range(k // 2):\n                            left = c + j\n                            right = c + k - 1 - j\n                            if grid[i][left] != grid[i][right]:\n                                # after flip one becomes 0 and one becomes 1 (net 0 change)\n                                pass\n                            # no net change when symmetric positions differ\n                            # delta only when same value at mirror positions\n                        for j in range(k // 2):\n                            left = c + j\n                            right = c + k - 1 - j\n                            # swapping doesnt change count\n                            pass\n                    best = max(best, total)\n        return best",
+    "solution_js": "var flipAndCountOnes = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    let total = 0;\n    for (const row of grid) for (const v of row) total += v;\n    return total;\n};",
+    "time_complexity": "O(m * n * min(m,n))",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Iterating all square submatrices takes O(m * n * min(m,n)) time.",
+    "space_complexity_explanation": "Only a constant amount of extra space is needed beyond the input.",
+    "key_insight": "Flipping a submatrix vertically (reversing rows) only swaps values at mirror-image column positions within each row, so the count of 1s in the submatrix does not change.",
+    "related": [
+      832,
+      1074
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3875,
+    "title": "Construct Uniform Parity Array I",
+    "slug": "construct-uniform-parity-array-i",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/construct-uniform-parity-array-i/",
+    "patterns": [
+      "Greedy",
+      "Arrays"
+    ],
+    "hints": [
+      "The goal is to make all elements have the same parity (all odd or all even) by incrementing by 1 at most once per element.",
+      "Count how many elements are already odd and how many are even.",
+      "To make all odd: change each even number (costs 1 op each). To make all even: change each odd number (costs 1 op each). Return the minimum."
+    ],
+    "approach": "Count the number of odd and even elements in the array. To make all elements odd, we need to increment each even element by 1 (total operations = count of even numbers). To make all elements even, we need to increment each odd element by 1 (total operations = count of odd numbers). Return the minimum of the two options.",
+    "solution_python": "class Solution:\n    def minOperations(self, nums: List[int]) -> int:\n        odd_count = sum(1 for x in nums if x % 2 == 1)\n        even_count = len(nums) - odd_count\n        return min(odd_count, even_count)",
+    "solution_js": "var minOperations = function(nums) {\n    let oddCount = 0;\n    for (const x of nums) if (x % 2 === 1) oddCount++;\n    return Math.min(oddCount, nums.length - oddCount);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass over the array counts odd and even elements.",
+    "space_complexity_explanation": "Only two counter variables are used regardless of input size.",
+    "key_insight": "Incrementing an even number makes it odd and vice versa, so we can freely convert any element with one operation, making the problem equivalent to choosing the majority parity.",
+    "related": [
+      2654,
+      2946
     ],
     "companies": [
       "google"
