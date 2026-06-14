@@ -4635,5 +4635,330 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 3629,
+    "title": "Minimum Jumps to Reach End via Prime Teleportation",
+    "slug": "minimum-jumps-to-reach-end-via-prime-teleportation",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-jumps-to-reach-end-via-prime-teleportation/",
+    "patterns": [
+      "BFS",
+      "Graph",
+      "Math",
+      "Sieve of Eratosthenes"
+    ],
+    "hints": [
+      "Think of positions as nodes in a graph \u2014 you can jump to adjacent positions or teleport to positions sharing a prime factor.",
+      "Use a sieve to find all prime factors for each number, then group indices by shared prime factors.",
+      "BFS from index 0 gives the shortest path (minimum jumps) to the last index."
+    ],
+    "approach": "Model the problem as a shortest-path (BFS) problem. Each index is a node; edges exist between adjacent indices (cost 1) and between any two indices whose values share a prime factor (cost 1). Use a sieve-like factorization to group indices by prime factors. Run multi-source BFS expanding via adjacency and via the prime-factor groups, marking each prime group as visited once to avoid re-expansion.",
+    "solution_python": "from collections import defaultdict, deque\nfrom typing import List\n\nclass Solution:\n    def minJumps(self, nums: List[int]) -> int:\n        n = len(nums)\n        if n == 1:\n            return 0\n        \n        # Map prime -> list of indices\n        prime_to_idx = defaultdict(list)\n        for i, v in enumerate(nums):\n            x = v\n            d = 2\n            while d * d <= x:\n                if x % d == 0:\n                    prime_to_idx[d].append(i)\n                    while x % d == 0:\n                        x //= d\n                d += 1\n            if x > 1:\n                prime_to_idx[x].append(i)\n        \n        dist = [-1] * n\n        dist[0] = 0\n        q = deque([0])\n        visited_primes = set()\n        \n        while q:\n            idx = q.popleft()\n            d = dist[idx]\n            # Adjacent jumps\n            for nxt in [idx - 1, idx + 1]:\n                if 0 <= nxt < n and dist[nxt] == -1:\n                    dist[nxt] = d + 1\n                    if nxt == n - 1:\n                        return dist[nxt]\n                    q.append(nxt)\n            # Prime teleportation\n            x = nums[idx]\n            f = 2\n            primes = []\n            while f * f <= x:\n                if x % f == 0:\n                    primes.append(f)\n                    while x % f == 0:\n                        x //= f\n                f += 1\n            if x > 1:\n                primes.append(x)\n            for p in primes:\n                if p not in visited_primes:\n                    visited_primes.add(p)\n                    for nxt in prime_to_idx[p]:\n                        if dist[nxt] == -1:\n                            dist[nxt] = d + 1\n                            if nxt == n - 1:\n                                return dist[nxt]\n                            q.append(nxt)\n        return dist[n - 1]",
+    "solution_js": "var minJumps = function(nums) {\n    const n = nums.length;\n    if (n === 1) return 0;\n    const primeToIdx = new Map();\n    for (let i = 0; i < n; i++) {\n        let x = nums[i];\n        for (let d = 2; d * d <= x; d++) {\n            if (x % d === 0) {\n                if (!primeToIdx.has(d)) primeToIdx.set(d, []);\n                primeToIdx.get(d).push(i);\n                while (x % d === 0) x = Math.floor(x / d);\n            }\n        }\n        if (x > 1) {\n            if (!primeToIdx.has(x)) primeToIdx.set(x, []);\n            primeToIdx.get(x).push(i);\n        }\n    }\n    const dist = new Array(n).fill(-1);\n    dist[0] = 0;\n    const q = [0];\n    const visitedPrimes = new Set();\n    let head = 0;\n    while (head < q.length) {\n        const idx = q[head++];\n        const d = dist[idx];\n        for (const nxt of [idx - 1, idx + 1]) {\n            if (nxt >= 0 && nxt < n && dist[nxt] === -1) {\n                dist[nxt] = d + 1;\n                if (nxt === n - 1) return dist[nxt];\n                q.push(nxt);\n            }\n        }\n        let x = nums[idx];\n        const primes = [];\n        for (let f = 2; f * f <= x; f++) {\n            if (x % f === 0) { primes.push(f); while (x % f === 0) x = Math.floor(x / f); }\n        }\n        if (x > 1) primes.push(x);\n        for (const p of primes) {\n            if (!visitedPrimes.has(p)) {\n                visitedPrimes.add(p);\n                for (const nxt of (primeToIdx.get(p) || [])) {\n                    if (dist[nxt] === -1) {\n                        dist[nxt] = d + 1;\n                        if (nxt === n - 1) return dist[nxt];\n                        q.push(nxt);\n                    }\n                }\n            }\n        }\n    }\n    return dist[n - 1];\n};",
+    "time_complexity": "O(n * sqrt(max_val))",
+    "space_complexity": "O(n + P)",
+    "time_complexity_explanation": "Factorizing each of n numbers takes O(sqrt(max_val)) each; BFS visits each node and prime group at most once.",
+    "space_complexity_explanation": "Space for the prime-to-index map scales with total prime factor occurrences P across all numbers, plus O(n) for the BFS queue and distance array.",
+    "key_insight": "Marking an entire prime-factor group as visited after its first BFS expansion prevents redundant re-visits, collapsing what could be O(n^2) teleportation edges into effectively O(n) work.",
+    "related": [
+      1345,
+      2039
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1781,
+    "title": "Sum of Beauty of All Substrings",
+    "slug": "sum-of-beauty-of-all-substrings",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/sum-of-beauty-of-all-substrings/",
+    "patterns": [
+      "String",
+      "Hash Map",
+      "Sliding Window"
+    ],
+    "hints": [
+      "The beauty of a substring is max_freq - min_freq; try all substrings.",
+      "Fix the left boundary and extend the right boundary, maintaining a frequency map.",
+      "To find min non-zero frequency efficiently, track a frequency-of-frequency map."
+    ],
+    "approach": "Enumerate every substring by fixing the left index i and sweeping the right index j from i to n-1. Maintain a character frequency map; also maintain a frequency-of-frequencies map to retrieve the maximum frequency in O(1). For minimum frequency, iterate over the 26-character frequency map. Sum up max_freq - min_freq for each substring.",
+    "solution_python": "class Solution:\n    def beautySum(self, s: str) -> int:\n        total = 0\n        n = len(s)\n        for i in range(n):\n            freq = {}\n            for j in range(i, n):\n                c = s[j]\n                freq[c] = freq.get(c, 0) + 1\n                max_f = max(freq.values())\n                min_f = min(freq.values())\n                total += max_f - min_f\n        return total",
+    "solution_js": "var beautySum = function(s) {\n    let total = 0;\n    const n = s.length;\n    for (let i = 0; i < n; i++) {\n        const freq = {};\n        for (let j = i; j < n; j++) {\n            const c = s[j];\n            freq[c] = (freq[c] || 0) + 1;\n            const vals = Object.values(freq);\n            const maxF = Math.max(...vals);\n            const minF = Math.min(...vals);\n            total += maxF - minF;\n        }\n    }\n    return total;\n};",
+    "time_complexity": "O(n^2 * 26)",
+    "space_complexity": "O(26)",
+    "time_complexity_explanation": "There are O(n^2) substrings; computing max and min over at most 26 character frequencies takes O(26) per substring.",
+    "space_complexity_explanation": "The frequency map stores at most 26 lowercase English letters regardless of substring length.",
+    "key_insight": "Because the alphabet is fixed at 26 characters, scanning all character frequencies for min/max is O(1) in practice, making the O(n^2) double-loop the dominant cost.",
+    "related": [
+      395,
+      2262
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1914,
+    "title": "Cyclically Rotating a Grid",
+    "slug": "cyclically-rotating-a-grid",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/cyclically-rotating-a-grid/",
+    "patterns": [
+      "Arrays",
+      "Matrix",
+      "Simulation"
+    ],
+    "hints": [
+      "Extract each concentric ring (layer) of the matrix into a 1D array.",
+      "Rotate the 1D array by k positions (use modulo to handle large k).",
+      "Write the rotated values back into the corresponding ring positions."
+    ],
+    "approach": "The grid consists of min(m,n)/2 concentric rectangular rings. For each ring, extract all elements in clockwise order into a list, rotate the list by k % len(ring) positions to the right, then write the rotated values back into the grid in the same clockwise order. This cleanly decouples the rotation from the indexing logic.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def rotateGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:\n        m, n = len(grid), len(grid[0])\n        layers = min(m, n) // 2\n        \n        for layer in range(layers):\n            top, left = layer, layer\n            bottom, right = m - 1 - layer, n - 1 - layer\n            ring = []\n            # top row left to right\n            for c in range(left, right + 1):\n                ring.append(grid[top][c])\n            # right col top+1 to bottom\n            for r in range(top + 1, bottom + 1):\n                ring.append(grid[r][right])\n            # bottom row right-1 to left\n            for c in range(right - 1, left - 1, -1):\n                ring.append(grid[bottom][c])\n            # left col bottom-1 to top+1\n            for r in range(bottom - 1, top, -1):\n                ring.append(grid[r][left])\n            \n            L = len(ring)\n            rot = k % L\n            ring = ring[rot:] + ring[:rot]\n            \n            idx = 0\n            for c in range(left, right + 1):\n                grid[top][c] = ring[idx]; idx += 1\n            for r in range(top + 1, bottom + 1):\n                grid[r][right] = ring[idx]; idx += 1\n            for c in range(right - 1, left - 1, -1):\n                grid[bottom][c] = ring[idx]; idx += 1\n            for r in range(bottom - 1, top, -1):\n                grid[r][left] = ring[idx]; idx += 1\n        \n        return grid",
+    "solution_js": "var rotateGrid = function(grid, k) {\n    const m = grid.length, n = grid[0].length;\n    const layers = Math.floor(Math.min(m, n) / 2);\n    for (let layer = 0; layer < layers; layer++) {\n        const top = layer, left = layer;\n        const bottom = m - 1 - layer, right = n - 1 - layer;\n        const ring = [];\n        for (let c = left; c <= right; c++) ring.push(grid[top][c]);\n        for (let r = top + 1; r <= bottom; r++) ring.push(grid[r][right]);\n        for (let c = right - 1; c >= left; c--) ring.push(grid[bottom][c]);\n        for (let r = bottom - 1; r > top; r--) ring.push(grid[r][left]);\n        const L = ring.length;\n        const rot = k % L;\n        const rotated = [...ring.slice(rot), ...ring.slice(0, rot)];\n        let idx = 0;\n        for (let c = left; c <= right; c++) grid[top][c] = rotated[idx++];\n        for (let r = top + 1; r <= bottom; r++) grid[r][right] = rotated[idx++];\n        for (let c = right - 1; c >= left; c--) grid[bottom][c] = rotated[idx++];\n        for (let r = bottom - 1; r > top; r--) grid[r][left] = rotated[idx++];\n    }\n    return grid;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m + n)",
+    "time_complexity_explanation": "Each cell is visited a constant number of times (extract + write back), giving O(m*n) total work.",
+    "space_complexity_explanation": "The largest ring has O(m+n) elements, which is the maximum size of the temporary ring array.",
+    "key_insight": "Flattening each concentric ring into a 1D list reduces the rotation to a simple array slice operation, avoiding complex in-place index arithmetic.",
+    "related": [
+      48,
+      54
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 172,
+    "title": "Factorial Trailing Zeroes",
+    "slug": "factorial-trailing-zeroes",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/factorial-trailing-zeroes/",
+    "patterns": [
+      "Math"
+    ],
+    "hints": [
+      "Trailing zeroes come from factors of 10 = 2 * 5; there are always more factors of 2 than 5 in n!.",
+      "Count how many multiples of 5 are in n!, then multiples of 25, 125, etc.",
+      "Sum floor(n/5) + floor(n/25) + floor(n/125) + ... until the term is zero."
+    ],
+    "approach": "Trailing zeroes in n! are produced by factors of 10, each requiring one factor of 2 and one factor of 5. Since factors of 2 are always more abundant, the count of trailing zeroes equals the count of factors of 5 in n!. This is computed by summing floor(n/5^k) for k=1,2,3,... until 5^k > n.",
+    "solution_python": "class Solution:\n    def trailingZeroes(self, n: int) -> int:\n        count = 0\n        power = 5\n        while power <= n:\n            count += n // power\n            power *= 5\n        return count",
+    "solution_js": "var trailingZeroes = function(n) {\n    let count = 0;\n    let power = 5;\n    while (power <= n) {\n        count += Math.floor(n / power);\n        power *= 5;\n    }\n    return count;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The loop runs log_5(n) times since power multiplies by 5 each iteration.",
+    "space_complexity_explanation": "Only a constant number of variables are used.",
+    "key_insight": "The number of times 5 divides n! is floor(n/5) + floor(n/25) + ... because every multiple of 25 contributes an extra factor of 5 beyond what floor(n/5) counts, and similarly for higher powers.",
+    "related": [
+      233,
+      263
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1154,
+    "title": "Day of the Year",
+    "slug": "day-of-the-year",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/day-of-the-year/",
+    "patterns": [
+      "Math",
+      "String"
+    ],
+    "hints": [
+      "Parse the year, month, and day from the date string.",
+      "Sum the days in all months before the given month.",
+      "Remember to add 1 to February's count if the year is a leap year."
+    ],
+    "approach": "Parse the date string to extract year, month, and day. Maintain a list of days per month. Determine if the year is a leap year (divisible by 4 but not 100, or divisible by 400) and adjust February accordingly. Sum the days of all complete months before the given month, then add the day component.",
+    "solution_python": "class Solution:\n    def dayOfYear(self, date: str) -> int:\n        year, month, day = map(int, date.split('-'))\n        days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\n        if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0:\n            days_in_month[1] = 29\n        return sum(days_in_month[:month - 1]) + day",
+    "solution_js": "var dayOfYear = function(date) {\n    const parts = date.split('-').map(Number);\n    const year = parts[0], month = parts[1], day = parts[2];\n    const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n    if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) days[1] = 29;\n    let total = day;\n    for (let i = 0; i < month - 1; i++) total += days[i];\n    return total;\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The computation involves a fixed-size array of 12 months, so all operations are constant time.",
+    "space_complexity_explanation": "Only the fixed-length 12-element month array and a few integer variables are used.",
+    "key_insight": "Leap year detection requires checking divisibility by 400 as an override to the 100-year exception, which is the most common source of bugs in this problem.",
+    "related": [
+      1185
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2553,
+    "title": "Separate the Digits in an Array",
+    "slug": "separate-the-digits-in-an-array",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/separate-the-digits-in-an-array/",
+    "patterns": [
+      "Arrays",
+      "Simulation"
+    ],
+    "hints": [
+      "Convert each integer to its string representation to access individual digits.",
+      "Iterate through each number, convert to string, and extend the result list with each digit as an integer.",
+      "The order of digits within a number must be preserved."
+    ],
+    "approach": "Iterate through each number in the input array. Convert each number to a string, then iterate through its characters, converting each character back to an integer and appending it to the result list. This preserves the relative order of numbers and digits within each number.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def separateDigits(self, nums: List[int]) -> List[int]:\n        result = []\n        for num in nums:\n            for ch in str(num):\n                result.append(int(ch))\n        return result",
+    "solution_js": "var separateDigits = function(nums) {\n    const result = [];\n    for (const num of nums) {\n        for (const ch of String(num)) {\n            result.push(Number(ch));\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(n * d)",
+    "space_complexity": "O(n * d)",
+    "time_complexity_explanation": "For n numbers each with at most d digits, we process every digit once, giving O(n*d) total operations.",
+    "space_complexity_explanation": "The result array holds all digits from all numbers, totaling O(n*d) elements.",
+    "key_insight": "Converting integers to strings for digit extraction is the most idiomatic and readable approach, avoiding manual modular arithmetic.",
+    "related": [
+      2396
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1109,
+    "title": "Corporate Flight Bookings",
+    "slug": "corporate-flight-bookings",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/corporate-flight-bookings/",
+    "patterns": [
+      "Arrays",
+      "Difference Array",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Use a difference array: for booking [first, last, seats], add seats at index first-1 and subtract at index last.",
+      "After processing all bookings, compute the prefix sum of the difference array.",
+      "The prefix sum at each index gives the total seats booked for that flight."
+    ],
+    "approach": "Apply the difference array technique. Create an array diff of size n+1. For each booking (first, last, seats), do diff[first-1] += seats and diff[last] -= seats. Then compute the prefix sum of diff, where prefix_sum[i] represents the total seats booked on flight i+1. This achieves O(n+m) time instead of O(n*m) for direct range updates.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def corpFlightBookings(self, bookings: List[List[int]], n: int) -> List[int]:\n        diff = [0] * (n + 1)\n        for first, last, seats in bookings:\n            diff[first - 1] += seats\n            diff[last] -= seats\n        result = []\n        running = 0\n        for i in range(n):\n            running += diff[i]\n            result.append(running)\n        return result",
+    "solution_js": "var corpFlightBookings = function(bookings, n) {\n    const diff = new Array(n + 1).fill(0);\n    for (const [first, last, seats] of bookings) {\n        diff[first - 1] += seats;\n        diff[last] -= seats;\n    }\n    const result = [];\n    let running = 0;\n    for (let i = 0; i < n; i++) {\n        running += diff[i];\n        result.push(running);\n    }\n    return result;\n};",
+    "time_complexity": "O(n + m)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Processing m bookings in the difference array takes O(m), and a single prefix-sum pass over n flights takes O(n).",
+    "space_complexity_explanation": "The difference array of size n+1 and the result array of size n both use O(n) space.",
+    "key_insight": "The difference array trick converts O(m) range-update operations from O(n) each to O(1) each, deferring the cost to a single O(n) prefix-sum pass at the end.",
+    "related": [
+      370,
+      1094,
+      2251
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2633,
+    "title": "Convert Object to JSON String",
+    "slug": "convert-object-to-json-string",
+    "category": "JavaScript",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/convert-object-to-json-string/",
+    "patterns": [
+      "Recursion",
+      "JavaScript"
+    ],
+    "hints": [
+      "Handle the base cases: null, boolean, number, and string serialize differently from objects and arrays.",
+      "For arrays, recursively serialize each element and join with commas inside brackets.",
+      "For objects (non-null, non-array), recursively serialize each key-value pair and join inside braces."
+    ],
+    "approach": "Implement a recursive serializer without using JSON.stringify. Check the type of the value: null serializes to 'null'; booleans and numbers serialize to their string form; strings are wrapped in double quotes; arrays serialize each element recursively and join them comma-separated in brackets; plain objects serialize each key as a quoted string followed by a colon and the recursively serialized value, joined comma-separated in braces.",
+    "solution_python": "# JavaScript-only: Python equivalent shown\nclass Solution:\n    def jsonStringify(self, obj) -> str:\n        if obj is None:\n            return 'null'\n        if isinstance(obj, bool):\n            return 'true' if obj else 'false'\n        if isinstance(obj, (int, float)):\n            return str(obj)\n        if isinstance(obj, str):\n            return '\"' + obj + '\"'\n        if isinstance(obj, list):\n            return '[' + ','.join(self.jsonStringify(v) for v in obj) + ']'\n        # dict\n        parts = []\n        for k, v in obj.items():\n            parts.append('\"' + k + '\":' + self.jsonStringify(v))\n        return '{' + ','.join(parts) + '}'",
+    "solution_js": "var jsonStringify = function(object) {\n    if (object === null) return 'null';\n    if (typeof object === 'boolean') return object.toString();\n    if (typeof object === 'number') return object.toString();\n    if (typeof object === 'string') return '\"' + object + '\"';\n    if (Array.isArray(object)) {\n        return '[' + object.map(jsonStringify).join(',') + ']';\n    }\n    // plain object\n    const parts = [];\n    for (const key of Object.keys(object)) {\n        parts.push('\"' + key + '\":' + jsonStringify(object[key]));\n    }\n    return '{' + parts.join(',') + '}';\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(d)",
+    "time_complexity_explanation": "Each node in the object tree is visited exactly once, so time is proportional to the total number of values n.",
+    "space_complexity_explanation": "The recursion stack depth is proportional to the maximum nesting depth d of the object structure.",
+    "key_insight": "The type-checking order matters: check for null before typeof object === 'object', and check Array.isArray before treating a value as a plain object, since arrays are also objects in JavaScript.",
+    "related": [
+      2628,
+      2700
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2784,
+    "title": "Check if Array is Good",
+    "slug": "check-if-array-is-good",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/check-if-array-is-good/",
+    "patterns": [
+      "Arrays",
+      "Hash Map",
+      "Sorting"
+    ],
+    "hints": [
+      "A good array is a permutation of [1, 2, ..., n-1, n, n] for some n.",
+      "The maximum value n must appear exactly twice; all values 1 through n-1 must appear exactly once.",
+      "Use a frequency counter and verify the expected counts."
+    ],
+    "approach": "Find the maximum value n in the array. A good array must have length n+1 and be a permutation of [1, 2, ..., n-1, n, n]. Count the frequency of each element: n must appear exactly twice, and every integer from 1 to n-1 must appear exactly once. Any deviation means the array is not good.",
+    "solution_python": "from collections import Counter\nfrom typing import List\n\nclass Solution:\n    def isGood(self, nums: List[int]) -> bool:\n        n = max(nums)\n        if len(nums) != n + 1:\n            return False\n        freq = Counter(nums)\n        for i in range(1, n):\n            if freq[i] != 1:\n                return False\n        return freq[n] == 2",
+    "solution_js": "var isGood = function(nums) {\n    const n = Math.max(...nums);\n    if (nums.length !== n + 1) return false;\n    const freq = {};\n    for (const x of nums) freq[x] = (freq[x] || 0) + 1;\n    for (let i = 1; i < n; i++) {\n        if ((freq[i] || 0) !== 1) return false;\n    }\n    return (freq[n] || 0) === 2;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the frequency map and verifying each expected value both take O(n) time.",
+    "space_complexity_explanation": "The frequency map stores at most n distinct values.",
+    "key_insight": "Knowing that the target is always [1..n-1, n, n] (with n being the array maximum) makes verification straightforward: just check that n appears twice and every smaller positive integer appears once.",
+    "related": [
+      41,
+      442
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1674,
+    "title": "Minimum Moves to Make Array Complementary",
+    "slug": "minimum-moves-to-make-array-complementary",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-moves-to-make-array-complementary/",
+    "patterns": [
+      "Arrays",
+      "Difference Array",
+      "Hash Map"
+    ],
+    "hints": [
+      "For each pair (nums[i], nums[n-1-i]), figure out the range of target sums T achievable with 0, 1, or 2 moves.",
+      "Use a difference array over possible target sums 2..2*limit to record the cost contribution of each pair.",
+      "The minimum total cost across all target sums T is the answer."
+    ],
+    "approach": "For each complementary pair (a, b) where a <= b, define: with 0 moves the current sum is a+b; with 1 move the sum can be anything in [1+b, a+limit] (change just a) union [a+1, b+limit] minus the 2-move zone; with 2 moves the sum can be [2, limit+1] or [b+1+a, 2*limit]. Use a difference array of size 2*limit+2 to accumulate the minimum move cost for each possible target sum, then find the minimum prefix sum.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def minMoves(self, nums: List[int], limit: int) -> int:\n        n = len(nums)\n        diff = [0] * (2 * limit + 2)\n        \n        for i in range(n // 2):\n            a, b = nums[i], nums[n - 1 - i]\n            lo, hi = min(a, b), max(a, b)\n            # default: 2 moves for the whole range\n            diff[2] += 2\n            diff[2 * limit + 1] -= 2\n            # 1 move: [lo+1, lo+limit] and [hi+1 ... but simpler: [1+hi, lo+limit]\n            # Actually: 1 move suffices in [lo+1, hi+limit]\n            diff[lo + 1] -= 1\n            diff[hi + limit + 1] += 1\n            # 0 moves: exactly a+b\n            diff[a + b] -= 1\n            diff[a + b + 1] += 1\n        \n        ans = n\n        cur = 0\n        for s in range(2, 2 * limit + 1):\n            cur += diff[s]\n            ans = min(ans, cur)\n        return ans",
+    "solution_js": "var minMoves = function(nums, limit) {\n    const n = nums.length;\n    const diff = new Array(2 * limit + 2).fill(0);\n    \n    for (let i = 0; i < Math.floor(n / 2); i++) {\n        let a = nums[i], b = nums[n - 1 - i];\n        const lo = Math.min(a, b), hi = Math.max(a, b);\n        diff[2] += 2;\n        diff[2 * limit + 1] -= 2;\n        diff[lo + 1] -= 1;\n        diff[hi + limit + 1] += 1;\n        diff[a + b] -= 1;\n        diff[a + b + 1] += 1;\n    }\n    \n    let ans = n, cur = 0;\n    for (let s = 2; s <= 2 * limit; s++) {\n        cur += diff[s];\n        ans = Math.min(ans, cur);\n    }\n    return ans;\n};",
+    "time_complexity": "O(n + limit)",
+    "space_complexity": "O(limit)",
+    "time_complexity_explanation": "Processing n/2 pairs into the difference array takes O(n); sweeping the 2*limit range for the minimum takes O(limit).",
+    "space_complexity_explanation": "The difference array has size 2*limit+2, giving O(limit) space.",
+    "key_insight": "The difference array over target sums elegantly encodes the piecewise move cost per pair: 2 moves by default across the full range, minus 1 in the achievable-with-one-move range, minus another 1 at the exact current sum requiring 0 moves.",
+    "related": [
+      1109,
+      370
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
