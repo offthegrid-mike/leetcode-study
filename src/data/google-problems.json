@@ -4960,5 +4960,324 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 1050,
+    "title": "Actors and Directors Who Cooperated At Least Three Times",
+    "slug": "actors-and-directors-who-cooperated-at-least-three-times",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/actors-and-directors-who-cooperated-at-least-three-times/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "You need to find pairs (actor_id, director_id) that appear together more than twice.",
+      "Use GROUP BY on both columns and count the rows in each group.",
+      "Filter groups using HAVING COUNT(*) >= 3."
+    ],
+    "approach": "Group the ActorDirector table by (actor_id, director_id) and count the number of times each pair appears. Use HAVING to keep only pairs with a count of at least 3. Select just the actor_id and director_id columns in the result.",
+    "solution_python": "SELECT actor_id, director_id\nFROM ActorDirector\nGROUP BY actor_id, director_id\nHAVING COUNT(*) >= 3;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(k)",
+    "time_complexity_explanation": "The database scans all n rows once to build the groups.",
+    "space_complexity_explanation": "Storage is proportional to k, the number of distinct (actor, director) pairs.",
+    "key_insight": "A simple GROUP BY with a HAVING filter is all that is needed \u2014 no subquery or join required.",
+    "related": [],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2351,
+    "title": "First Letter to Appear Twice",
+    "slug": "first-letter-to-appear-twice",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/first-letter-to-appear-twice/",
+    "patterns": [
+      "Hash Set",
+      "String"
+    ],
+    "hints": [
+      "Iterate through the string character by character.",
+      "Keep a set of characters you have already seen.",
+      "The first character that is already in the set is your answer."
+    ],
+    "approach": "Iterate through the string one character at a time, maintaining a hash set of characters seen so far. For each character, check if it is already in the set \u2014 if so, return it immediately as the answer. Otherwise, add it to the set and continue.",
+    "solution_python": "class Solution:\n    def repeatedCharacter(self, s: str) -> str:\n        seen = set()\n        for ch in s:\n            if ch in seen:\n                return ch\n            seen.add(ch)\n        return ''",
+    "solution_js": "var repeatedCharacter = function(s) {\n    const seen = new Set();\n    for (const ch of s) {\n        if (seen.has(ch)) return ch;\n        seen.add(ch);\n    }\n    return '';\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the string of length n is performed.",
+    "space_complexity_explanation": "The set holds at most 26 lowercase letters, so space is constant.",
+    "key_insight": "Because the alphabet is small (26 letters), the set can hold at most 26 entries before a duplicate must appear, making this O(1) space.",
+    "related": [
+      387,
+      1436
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 771,
+    "title": "Jewels and Stones",
+    "slug": "jewels-and-stones",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/jewels-and-stones/",
+    "patterns": [
+      "Hash Set",
+      "String"
+    ],
+    "hints": [
+      "Store all jewel types in a set for O(1) lookups.",
+      "Iterate through the stones string and check each character against the set.",
+      "Count how many stones are in the jewels set."
+    ],
+    "approach": "Convert the jewels string into a hash set for constant-time lookup. Then iterate over each character in stones and increment a counter whenever the character is found in the jewels set. Return the final count.",
+    "solution_python": "class Solution:\n    def numJewelsInStones(self, jewels: str, stones: str) -> int:\n        jewel_set = set(jewels)\n        return sum(s in jewel_set for s in stones)",
+    "solution_js": "var numJewelsInStones = function(jewels, stones) {\n    const jewelSet = new Set(jewels);\n    let count = 0;\n    for (const s of stones) {\n        if (jewelSet.has(s)) count++;\n    }\n    return count;\n};",
+    "time_complexity": "O(j + s)",
+    "space_complexity": "O(j)",
+    "time_complexity_explanation": "Building the jewel set takes O(j) and scanning all stones takes O(s).",
+    "space_complexity_explanation": "The hash set stores at most j distinct jewel characters.",
+    "key_insight": "Converting the jewels string to a set turns each stone lookup from O(j) to O(1), reducing the overall complexity from O(j*s) to O(j+s).",
+    "related": [
+      2351
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3932,
+    "title": "Count K-th Roots in a Range",
+    "slug": "count-k-th-roots-in-a-range",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/count-k-th-roots-in-a-range/",
+    "patterns": [
+      "Math",
+      "Binary Search"
+    ],
+    "hints": [
+      "A number x is a perfect k-th power if the k-th root of x is an integer.",
+      "Find the smallest and largest integer whose k-th power falls within [lo, hi].",
+      "The count is simply the number of integers in that range of roots."
+    ],
+    "approach": "Find the integer k-th root of lo (ceiling) and the integer k-th root of hi (floor). Any integer r in [ceil(lo^(1/k)), floor(hi^(1/k))] satisfies lo <= r^k <= hi. The answer is the count of such integers. Use math.isqrt or careful rounding to avoid floating-point errors for the k-th root.",
+    "solution_python": "class Solution:\n    def countKthRoots(self, lo: int, hi: int, k: int) -> int:\n        import math\n        def kth_root_floor(n: int) -> int:\n            if n < 0:\n                return 0\n            r = int(round(n ** (1 / k)))\n            # adjust for floating-point imprecision\n            while (r + 1) ** k <= n:\n                r += 1\n            while r > 0 and r ** k > n:\n                r -= 1\n            return r\n        \n        r_lo = kth_root_floor(lo - 1) + 1  # ceiling root of lo\n        r_hi = kth_root_floor(hi)           # floor root of hi\n        return max(0, r_hi - r_lo + 1)",
+    "solution_js": "var countKthRoots = function(lo, hi, k) {\n    function kthRootFloor(n) {\n        if (n < 0) return 0;\n        let r = Math.round(Math.pow(n, 1 / k));\n        while (Math.pow(r + 1, k) <= n) r++;\n        while (r > 0 && Math.pow(r, k) > n) r--;\n        return r;\n    }\n    const rLo = kthRootFloor(lo - 1) + 1;\n    const rHi = kthRootFloor(hi);\n    return Math.max(0, rHi - rLo + 1);\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Computing the k-th root via binary search or floating-point with adjustment is O(log n) per root computation.",
+    "space_complexity_explanation": "Only a constant amount of extra space is used.",
+    "key_insight": "Rather than enumerating all numbers in [lo, hi], enumerate the possible integer k-th roots \u2014 the count of perfect k-th powers in a range equals the count of integers whose k-th power lies in that range.",
+    "related": [
+      367,
+      633
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2104,
+    "title": "Sum of Subarray Ranges",
+    "slug": "sum-of-subarray-ranges",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/sum-of-subarray-ranges/",
+    "patterns": [
+      "Monotonic Stack",
+      "Arrays"
+    ],
+    "hints": [
+      "The range of a subarray is max - min. Sum of ranges = sum of maximums - sum of minimums.",
+      "Use a monotonic stack to compute, for each element, how many subarrays it is the maximum of.",
+      "Do the same to find how many subarrays each element is the minimum of, then combine.",
+      "Contribution of element nums[i] as max: (i - left_bound) * (right_bound - i) * nums[i]."
+    ],
+    "approach": "Decompose the problem: sum of ranges = sum of subarray maximums minus sum of subarray minimums. For each element, use a monotonic stack to find the left and right boundaries where it is the maximum (or minimum). Multiply its value by the number of subarrays where it dominates to get its total contribution. Subtract the minimum contribution from the maximum contribution.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def subArrayRanges(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        def sum_of_extremes(is_max: bool) -> int:\n            total = 0\n            stack = []\n            for i in range(n + 1):\n                while stack and (i == n or (nums[stack[-1]] < nums[i] if is_max else nums[stack[-1]] > nums[i])):\n                    mid = stack.pop()\n                    left = stack[-1] if stack else -1\n                    total += nums[mid] * (i - mid) * (mid - left)\n                stack.append(i)\n            return total\n        \n        return sum_of_extremes(True) - sum_of_extremes(False)",
+    "solution_js": "var subArrayRanges = function(nums) {\n    const n = nums.length;\n    \n    function sumOfExtremes(isMax) {\n        let total = 0;\n        const stack = [];\n        for (let i = 0; i <= n; i++) {\n            while (stack.length && (i === n || (isMax ? nums[stack[stack.length-1]] < nums[i] : nums[stack[stack.length-1]] > nums[i]))) {\n                const mid = stack.pop();\n                const left = stack.length ? stack[stack.length-1] : -1;\n                total += nums[mid] * (i - mid) * (mid - left);\n            }\n            stack.push(i);\n        }\n        return total;\n    }\n    \n    return sumOfExtremes(true) - sumOfExtremes(false);\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each element is pushed and popped from the monotonic stack at most once, giving O(n) total work.",
+    "space_complexity_explanation": "The monotonic stack holds at most n indices at a time.",
+    "key_insight": "Rewriting sum-of-ranges as (sum of maxes) minus (sum of mins) lets you apply the monotonic stack contribution technique independently to each extreme, keeping both time and code complexity low.",
+    "related": [
+      907,
+      84
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3110,
+    "title": "Score of a String",
+    "slug": "score-of-a-string",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/score-of-a-string/",
+    "patterns": [
+      "String"
+    ],
+    "hints": [
+      "Iterate through consecutive pairs of characters.",
+      "For each adjacent pair, compute the absolute difference of their ASCII values.",
+      "Accumulate the sum of all those differences."
+    ],
+    "approach": "Perform a single linear pass through the string. For each index i from 0 to n-2, compute the absolute difference between the ASCII (ordinal) values of s[i] and s[i+1] and add it to a running total. Return the total after processing all pairs.",
+    "solution_python": "class Solution:\n    def scoreOfString(self, s: str) -> int:\n        return sum(abs(ord(s[i]) - ord(s[i+1])) for i in range(len(s) - 1))",
+    "solution_js": "var scoreOfString = function(s) {\n    let score = 0;\n    for (let i = 0; i < s.length - 1; i++) {\n        score += Math.abs(s.charCodeAt(i) - s.charCodeAt(i + 1));\n    }\n    return score;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The string is traversed once, visiting each of the n-1 adjacent pairs.",
+    "space_complexity_explanation": "Only a single accumulator variable is used, requiring O(1) extra space.",
+    "key_insight": "The score is just the sum of absolute differences of adjacent character codes \u2014 a straightforward one-liner that needs no special data structure.",
+    "related": [
+      1880,
+      2697
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1345,
+    "title": "Jump Game IV",
+    "slug": "jump-game-iv",
+    "category": "Graph",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/jump-game-iv/",
+    "patterns": [
+      "BFS",
+      "Graph",
+      "Hash Map"
+    ],
+    "hints": [
+      "Model the array as a graph: index i connects to i-1, i+1, and all indices with the same value.",
+      "Use BFS from index 0 to find the shortest path to the last index.",
+      "Pre-group indices by value to efficiently enumerate same-value jumps, and clear each group once visited to avoid re-processing."
+    ],
+    "approach": "Build a mapping from value to list of indices that share that value. Run BFS from index 0. From each index, enqueue i-1, i+1, and all indices with the same value as arr[i]. To prevent O(n^2) revisiting, remove a value group from the map once it has been processed. The BFS level at which index n-1 is first reached is the answer.",
+    "solution_python": "from typing import List\nfrom collections import defaultdict, deque\n\nclass Solution:\n    def minJumps(self, arr: List[int]) -> int:\n        n = len(arr)\n        if n == 1:\n            return 0\n        \n        graph = defaultdict(list)\n        for i, v in enumerate(arr):\n            graph[v].append(i)\n        \n        visited = {0}\n        queue = deque([0])\n        steps = 0\n        \n        while queue:\n            steps += 1\n            for _ in range(len(queue)):\n                i = queue.popleft()\n                for nxt in [i - 1, i + 1] + graph[arr[i]]:\n                    if nxt == n - 1:\n                        return steps\n                    if 0 <= nxt < n and nxt not in visited:\n                        visited.add(nxt)\n                        queue.append(nxt)\n                graph[arr[i]] = []  # clear to avoid revisiting\n        return -1",
+    "solution_js": "var minJumps = function(arr) {\n    const n = arr.length;\n    if (n === 1) return 0;\n    \n    const graph = new Map();\n    for (let i = 0; i < n; i++) {\n        if (!graph.has(arr[i])) graph.set(arr[i], []);\n        graph.get(arr[i]).push(i);\n    }\n    \n    const visited = new Set([0]);\n    let queue = [0];\n    let steps = 0;\n    \n    while (queue.length) {\n        steps++;\n        const next = [];\n        for (const i of queue) {\n            const neighbors = [i - 1, i + 1, ...(graph.get(arr[i]) || [])];\n            graph.set(arr[i], []);  // clear to prevent re-processing\n            for (const j of neighbors) {\n                if (j === n - 1) return steps;\n                if (j >= 0 && j < n && !visited.has(j)) {\n                    visited.add(j);\n                    next.push(j);\n                }\n            }\n        }\n        queue = next;\n    }\n    return -1;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each index is enqueued and processed at most once; clearing the value groups ensures same-value edges are visited only once in aggregate.",
+    "space_complexity_explanation": "The graph mapping and BFS queue each hold O(n) entries in the worst case.",
+    "key_insight": "Clearing each value's index list from the map after processing it is the critical optimization that prevents the BFS from revisiting the same teleport edges repeatedly, keeping the algorithm O(n) instead of O(n^2).",
+    "related": [
+      45,
+      1306,
+      403
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3043,
+    "title": "Find the Length of the Longest Common Prefix",
+    "slug": "find-the-length-of-the-longest-common-prefix",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-the-length-of-the-longest-common-prefix/",
+    "patterns": [
+      "Hash Set",
+      "String",
+      "Trie"
+    ],
+    "hints": [
+      "For each number in arr1, store all its string prefixes in a set.",
+      "For each number in arr2, generate its string prefixes and check if any appear in the set.",
+      "Track the maximum matching prefix length found across all pairs."
+    ],
+    "approach": "Convert each number in arr1 to a string and insert all of its prefixes into a hash set. Then, for each number in arr2, generate all of its prefixes and check for membership in the set; track the longest match found. The total work is proportional to the sum of digit lengths across both arrays.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def longestCommonPrefix(self, arr1: List[int], arr2: List[int]) -> int:\n        prefix_set = set()\n        for num in arr1:\n            s = str(num)\n            for i in range(1, len(s) + 1):\n                prefix_set.add(s[:i])\n        \n        best = 0\n        for num in arr2:\n            s = str(num)\n            for i in range(1, len(s) + 1):\n                if s[:i] in prefix_set:\n                    best = max(best, i)\n        return best",
+    "solution_js": "var longestCommonPrefix = function(arr1, arr2) {\n    const prefixSet = new Set();\n    for (const num of arr1) {\n        const s = String(num);\n        for (let i = 1; i <= s.length; i++) {\n            prefixSet.add(s.slice(0, i));\n        }\n    }\n    let best = 0;\n    for (const num of arr2) {\n        const s = String(num);\n        for (let i = 1; i <= s.length; i++) {\n            if (prefixSet.has(s.slice(0, i))) {\n                best = Math.max(best, i);\n            }\n        }\n    }\n    return best;\n};",
+    "time_complexity": "O(m * d1 + n * d2)",
+    "space_complexity": "O(m * d1)",
+    "time_complexity_explanation": "For each of the m numbers in arr1 with up to d1 digits, and n numbers in arr2 with up to d2 digits, all prefixes are generated \u2014 giving O(m*d1 + n*d2) total work.",
+    "space_complexity_explanation": "The prefix set stores at most m*d1 distinct prefix strings from arr1.",
+    "key_insight": "Storing all prefixes of arr1 in a hash set transforms each arr2 lookup from a nested O(m) comparison to O(1) per prefix check, enabling an efficient single-pass solution.",
+    "related": [
+      14,
+      1858
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2657,
+    "title": "Find the Prefix Common Array of Two Arrays",
+    "slug": "find-the-prefix-common-array-of-two-arrays",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/",
+    "patterns": [
+      "Arrays",
+      "Hash Set",
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "At each index i, C[i] is the count of values that have appeared in both A[0..i] and B[0..i].",
+      "Maintain two sets (or a frequency array) tracking what each prefix has seen.",
+      "When you add A[i] to set A and it is already in set B, increment the common count; same logic for B[i]."
+    ],
+    "approach": "Iterate from index 0 to n-1 while maintaining two sets (or a frequency count array). At each step, add A[i] to the first set and B[i] to the second. If A[i] is already in the second set or B[i] is already in the first set, it contributes to the common count. Also handle the case where A[i] == B[i] at the same step to avoid double-counting. Record the running count at each index.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:\n        n = len(A)\n        freq = [0] * (n + 1)\n        common = 0\n        result = []\n        \n        for i in range(n):\n            freq[A[i]] += 1\n            if freq[A[i]] == 2:\n                common += 1\n            freq[B[i]] += 1\n            if freq[B[i]] == 2:\n                common += 1\n            result.append(common)\n        \n        return result",
+    "solution_js": "var findThePrefixCommonArray = function(A, B) {\n    const n = A.length;\n    const freq = new Array(n + 1).fill(0);\n    let common = 0;\n    const result = [];\n    \n    for (let i = 0; i < n; i++) {\n        freq[A[i]]++;\n        if (freq[A[i]] === 2) common++;\n        freq[B[i]]++;\n        if (freq[B[i]] === 2) common++;\n        result.push(common);\n    }\n    \n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through both arrays of length n is performed.",
+    "space_complexity_explanation": "The frequency array has size n+1, and the output array has size n.",
+    "key_insight": "Using a single frequency array is cleaner than two sets: a value becomes \"common\" exactly when its frequency hits 2 (meaning it appeared in both A's prefix and B's prefix), regardless of whether A[i] == B[i].",
+    "related": [
+      1940,
+      2215
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1129,
+    "title": "Shortest Path with Alternating Colors",
+    "slug": "shortest-path-with-alternating-colors",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/shortest-path-with-alternating-colors/",
+    "patterns": [
+      "BFS",
+      "Graph"
+    ],
+    "hints": [
+      "Model the graph with two separate adjacency lists: one for red edges and one for blue edges.",
+      "BFS state must track both the current node and the color of the last edge used.",
+      "Initialize the queue with node 0 using both possible \"last edge\" colors to allow the first step to be either color."
+    ],
+    "approach": "Build separate adjacency lists for red and blue edges. Run BFS where each state is (node, last_color_used). Start from node 0 with both color options (meaning the next edge can be either). At each step, if the last edge was red, only traverse blue edges and vice versa. Track visited states as (node, color) pairs to avoid cycles. The BFS distance when a node is first reached (for either color) is its answer.",
+    "solution_python": "from typing import List\nfrom collections import defaultdict, deque\n\nclass Solution:\n    def shortestAlternatingPaths(self, n: int, redEdges: List[List[int]], blueEdges: List[List[int]]) -> List[int]:\n        red = defaultdict(list)\n        blue = defaultdict(list)\n        for u, v in redEdges:\n            red[u].append(v)\n        for u, v in blueEdges:\n            blue[u].append(v)\n        \n        # state: (node, color) where color 0=red, 1=blue\n        dist = [-1] * n\n        dist[0] = 0\n        visited = set()\n        queue = deque()\n        queue.append((0, 0, 0))  # (node, steps, last_color)\n        queue.append((0, 0, 1))\n        visited.add((0, 0))\n        visited.add((0, 1))\n        \n        while queue:\n            node, steps, color = queue.popleft()\n            neighbors = blue[node] if color == 0 else red[node]\n            next_color = 1 - color\n            for nb in neighbors:\n                if (nb, next_color) not in visited:\n                    visited.add((nb, next_color))\n                    if dist[nb] == -1:\n                        dist[nb] = steps + 1\n                    queue.append((nb, steps + 1, next_color))\n        \n        return dist",
+    "solution_js": "var shortestAlternatingPaths = function(n, redEdges, blueEdges) {\n    const red = Array.from({length: n}, () => []);\n    const blue = Array.from({length: n}, () => []);\n    for (const [u, v] of redEdges) red[u].push(v);\n    for (const [u, v] of blueEdges) blue[u].push(v);\n    \n    const dist = new Array(n).fill(-1);\n    dist[0] = 0;\n    const visited = new Set(['0,0', '0,1']);\n    const queue = [[0, 0, 0], [0, 0, 1]]; // [node, steps, lastColor]\n    let head = 0;\n    \n    while (head < queue.length) {\n        const [node, steps, color] = queue[head++];\n        const neighbors = color === 0 ? blue[node] : red[node];\n        const nextColor = 1 - color;\n        for (const nb of neighbors) {\n            const key = nb + ',' + nextColor;\n            if (!visited.has(key)) {\n                visited.add(key);\n                if (dist[nb] === -1) dist[nb] = steps + 1;\n                queue.push([nb, steps + 1, nextColor]);\n            }\n        }\n    }\n    return dist;\n};",
+    "time_complexity": "O(n + e)",
+    "space_complexity": "O(n + e)",
+    "time_complexity_explanation": "Each (node, color) state is visited at most once; the total states are 2n and total edge traversals are at most 2e where e is the total number of edges.",
+    "space_complexity_explanation": "The adjacency lists store all e edges and the BFS queue and visited set hold at most O(n + e) entries.",
+    "key_insight": "The key insight is that BFS state must include the color of the last edge used \u2014 without this, you cannot enforce the alternating constraint and may incorrectly merge paths that used different last-edge colors.",
+    "related": [
+      1091,
+      847
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
