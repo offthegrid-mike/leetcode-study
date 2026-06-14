@@ -4310,5 +4310,330 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 1254,
+    "title": "Number of Closed Islands",
+    "slug": "number-of-closed-islands",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/number-of-closed-islands/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Graph",
+      "Flood Fill"
+    ],
+    "hints": [
+      "An island is 'closed' if it is completely surrounded by water (1s) and does not touch the boundary.",
+      "Try flood-filling all land connected to the boundary first to eliminate open islands.",
+      "After eliminating boundary-connected land, count remaining islands using DFS/BFS."
+    ],
+    "approach": "First, flood-fill (mark as visited) all land cells (0s) connected to the grid boundary, since those cannot form closed islands. Then iterate over all remaining unvisited cells: each unvisited land cell starts a new DFS/BFS that marks all connected land cells, incrementing the closed island count by 1 per connected component found.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def closedIsland(self, grid: List[List[int]]) -> int:\n        rows, cols = len(grid), len(grid[0])\n\n        def dfs(r, c):\n            if r < 0 or r >= rows or c < 0 or c >= cols:\n                return\n            if grid[r][c] == 1:\n                return\n            grid[r][c] = 1  # mark visited\n            dfs(r+1, c)\n            dfs(r-1, c)\n            dfs(r, c+1)\n            dfs(r, c-1)\n\n        # Eliminate land connected to boundary\n        for r in range(rows):\n            for c in range(cols):\n                if (r == 0 or r == rows-1 or c == 0 or c == cols-1) and grid[r][c] == 0:\n                    dfs(r, c)\n\n        # Count remaining closed islands\n        count = 0\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == 0:\n                    dfs(r, c)\n                    count += 1\n        return count",
+    "solution_js": "var closedIsland = function(grid) {\n    const rows = grid.length, cols = grid[0].length;\n\n    function dfs(r, c) {\n        if (r < 0 || r >= rows || c < 0 || c >= cols) return;\n        if (grid[r][c] === 1) return;\n        grid[r][c] = 1;\n        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1);\n    }\n\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if ((r === 0 || r === rows-1 || c === 0 || c === cols-1) && grid[r][c] === 0) {\n                dfs(r, c);\n            }\n        }\n    }\n\n    let count = 0;\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (grid[r][c] === 0) { dfs(r, c); count++; }\n        }\n    }\n    return count;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is visited at most twice (once in boundary elimination, once in island counting), giving O(m*n) total work.",
+    "space_complexity_explanation": "The DFS call stack can be at most O(m*n) deep in the worst case of a grid filled with land.",
+    "key_insight": "The trick is to first 'drown' all land connected to the boundary \u2014 only the truly enclosed land components remain, each of which is exactly one closed island.",
+    "related": [
+      200,
+      695,
+      1020
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2877,
+    "title": "Create a DataFrame from List",
+    "slug": "create-a-dataframe-from-list",
+    "category": "Pandas",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/create-a-dataframe-from-list/",
+    "patterns": [
+      "Pandas"
+    ],
+    "hints": [
+      "Use pd.DataFrame() to construct a DataFrame directly from the list.",
+      "Pass column names as a list to the 'columns' parameter.",
+      "Each inner list (or row) becomes one row in the resulting DataFrame."
+    ],
+    "approach": "Use the pandas DataFrame constructor to convert the 2D list of student data into a DataFrame. Pass the column names ['student_id', 'age'] explicitly so the resulting table has the correct headers. The constructor handles the conversion directly in one call.",
+    "solution_python": "import pandas as pd\nfrom typing import List\n\ndef createDataframe(student_data: List[List[int]]) -> pd.DataFrame:\n    return pd.DataFrame(student_data, columns=['student_id', 'age'])",
+    "solution_js": "// Pandas problem: Python-only solution",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Constructing the DataFrame requires iterating over all n rows of input data once.",
+    "space_complexity_explanation": "The resulting DataFrame stores all n rows, using O(n) space.",
+    "key_insight": "The pandas DataFrame constructor directly accepts a 2D list; specifying column names in the constructor is all that is needed to produce the correctly formatted output.",
+    "related": [
+      2878,
+      2879
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2356,
+    "title": "Number of Unique Subjects Taught by Each Teacher",
+    "slug": "number-of-unique-subjects-taught-by-each-teacher",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/number-of-unique-subjects-taught-by-each-teacher/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "Group rows by teacher_id to aggregate per-teacher statistics.",
+      "Use COUNT(DISTINCT ...) to avoid counting the same subject twice for a teacher.",
+      "The Teacher table already has one row per (teacher_id, subject_id, dept_id) combination."
+    ],
+    "approach": "Group the Teacher table by teacher_id and use COUNT(DISTINCT subject_id) to compute how many unique subjects each teacher teaches. Since the same subject can appear in multiple departments for the same teacher, DISTINCT is essential to avoid double-counting.",
+    "solution_python": "SELECT teacher_id, COUNT(DISTINCT subject_id) AS cnt\nFROM Teacher\nGROUP BY teacher_id;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single scan of the Teacher table with grouping takes O(n) time where n is the number of rows.",
+    "space_complexity_explanation": "The output has one row per distinct teacher_id, so O(k) space where k is the number of unique teachers.",
+    "key_insight": "COUNT(DISTINCT subject_id) within a GROUP BY teacher_id elegantly handles teachers who teach the same subject in multiple departments.",
+    "related": [
+      1141,
+      1693
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 983,
+    "title": "Minimum Cost For Tickets",
+    "slug": "minimum-cost-for-tickets",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-cost-for-tickets/",
+    "patterns": [
+      "Dynamic Programming",
+      "Greedy"
+    ],
+    "hints": [
+      "Define dp[i] as the minimum cost to cover all travel days up to day i.",
+      "On a non-travel day, dp[i] = dp[i-1] since no new pass is needed.",
+      "On a travel day, consider buying a 1-day, 7-day, or 30-day pass and take the minimum."
+    ],
+    "approach": "Use a DP array indexed by day (1 to 365). For non-travel days, carry forward the previous cost. For travel days, compute the minimum of: dp[i-1] + cost[0] (1-day pass), dp[max(0, i-7)] + cost[1] (7-day pass), dp[max(0, i-30)] + cost[2] (30-day pass). The answer is dp[365].",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def mincostTickets(self, days: List[int], costs: List[int]) -> int:\n        travel_days = set(days)\n        dp = [0] * 366\n        for i in range(1, 366):\n            if i not in travel_days:\n                dp[i] = dp[i-1]\n            else:\n                dp[i] = min(\n                    dp[i-1] + costs[0],\n                    dp[max(0, i-7)] + costs[1],\n                    dp[max(0, i-30)] + costs[2]\n                )\n        return dp[365]",
+    "solution_js": "var mincostTickets = function(days, costs) {\n    const travelDays = new Set(days);\n    const dp = new Array(366).fill(0);\n    for (let i = 1; i <= 365; i++) {\n        if (!travelDays.has(i)) {\n            dp[i] = dp[i-1];\n        } else {\n            dp[i] = Math.min(\n                dp[i-1] + costs[0],\n                dp[Math.max(0, i-7)] + costs[1],\n                dp[Math.max(0, i-30)] + costs[2]\n            );\n        }\n    }\n    return dp[365];\n};",
+    "time_complexity": "O(W)",
+    "space_complexity": "O(W)",
+    "time_complexity_explanation": "W = 365 is constant (days in a year), so the DP runs in O(365) = O(1) effectively, but O(W) in the general sense.",
+    "space_complexity_explanation": "The dp array has W+1 entries, requiring O(W) space.",
+    "key_insight": "By indexing DP on calendar day rather than on the index into the days array, non-travel days naturally propagate the previous minimum cost, simplifying the recurrence.",
+    "related": [
+      322,
+      70
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1861,
+    "title": "Rotating the Box",
+    "slug": "rotating-the-box",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotating-the-box/",
+    "patterns": [
+      "Two Pointers",
+      "Simulation",
+      "Matrix"
+    ],
+    "hints": [
+      "First apply gravity: within each row, make stones fall to the right (toward the end of the row).",
+      "Use a two-pointer approach to efficiently slide stones past empty cells and obstacles.",
+      "After gravity is applied, rotate the entire matrix 90 degrees clockwise."
+    ],
+    "approach": "Process each row independently: use a pointer tracking the next available empty slot from the right, moving stones rightward past empty spaces while stopping at obstacles. After simulating gravity in all rows, rotate the matrix 90 degrees clockwise by transposing and reversing rows (or equivalently, placing row r, col c at position col, (rows-1-r) in the result).",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def rotateTheBox(self, box: List[List[str]]) -> List[List[str]]:\n        rows, cols = len(box), len(box[0])\n        # Apply gravity (stones fall right)\n        for r in range(rows):\n            empty = cols - 1\n            for c in range(cols - 1, -1, -1):\n                if box[r][c] == '*':\n                    empty = c - 1\n                elif box[r][c] == '#':\n                    box[r][c] = '.'\n                    box[r][empty] = '#'\n                    empty -= 1\n        # Rotate 90 degrees clockwise\n        result = [['.'] * rows for _ in range(cols)]\n        for r in range(rows):\n            for c in range(cols):\n                result[c][rows - 1 - r] = box[r][c]\n        return result",
+    "solution_js": "var rotateTheBox = function(box) {\n    const rows = box.length, cols = box[0].length;\n    for (let r = 0; r < rows; r++) {\n        let empty = cols - 1;\n        for (let c = cols - 1; c >= 0; c--) {\n            if (box[r][c] === '*') {\n                empty = c - 1;\n            } else if (box[r][c] === '#') {\n                box[r][c] = '.';\n                box[r][empty] = '#';\n                empty--;\n            }\n        }\n    }\n    const result = Array.from({length: cols}, () => new Array(rows).fill('.'));\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            result[c][rows - 1 - r] = box[r][c];\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Both the gravity simulation and the rotation pass visit every cell exactly once, giving O(m*n) total.",
+    "space_complexity_explanation": "The rotated result matrix requires O(m*n) additional space.",
+    "key_insight": "Decoupling the two operations \u2014 first apply gravity within each row using a right-side pointer, then rotate \u2014 makes the implementation straightforward and avoids complex diagonal logic.",
+    "related": [
+      48,
+      1260
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3660,
+    "title": "Jump Game IX",
+    "slug": "jump-game-ix",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/jump-game-ix/",
+    "patterns": [
+      "Greedy",
+      "Stack",
+      "Graph"
+    ],
+    "hints": [
+      "Think about which indices can reach which other indices directly based on the jump rules.",
+      "Use a monotonic stack to efficiently find the range of indices reachable from each position.",
+      "Model the reachability as a graph and find the minimum cost path to the last index."
+    ],
+    "approach": "Build a graph of direct jump connections using two monotonic stacks \u2014 one for forward same-sign jumps and one for backward opposite-sign jumps \u2014 then run a BFS/Dijkstra-style traversal (or Greedy with a priority queue) to find the minimum cost path from index 0 to index n-1. The cost to reach an index is the sum of costs along the path.",
+    "solution_python": "from typing import List\nimport heapq\n\nclass Solution:\n    def minCost(self, nums: List[int], costs: List[int]) -> int:\n        n = len(nums)\n        # Build adjacency using monotonic stacks\n        graph = [[] for _ in range(n)]\n        stack = []  # indices for nums[i] >= 0 jumps\n        for i in range(n):\n            while stack and nums[stack[-1]] < nums[i]:\n                graph[stack[-1]].append(i)\n                stack.pop()\n            if stack:\n                graph[stack[-1]].append(i)\n            stack.append(i)\n        stack = []  # indices for nums[i] < 0 jumps\n        for i in range(n):\n            while stack and nums[stack[-1]] > nums[i]:\n                graph[stack[-1]].append(i)\n                stack.pop()\n            if stack:\n                graph[stack[-1]].append(i)\n            stack.append(i)\n        # Dijkstra\n        dist = [float('inf')] * n\n        dist[0] = 0\n        heap = [(0, 0)]\n        while heap:\n            d, u = heapq.heappop(heap)\n            if d > dist[u]:\n                continue\n            for v in graph[u]:\n                nd = d + costs[v]\n                if nd < dist[v]:\n                    dist[v] = nd\n                    heapq.heappush(heap, (nd, v))\n        return dist[n-1]",
+    "solution_js": "var minCost = function(nums, costs) {\n    const n = nums.length;\n    const graph = Array.from({length: n}, () => []);\n    let stack = [];\n    for (let i = 0; i < n; i++) {\n        while (stack.length && nums[stack[stack.length-1]] < nums[i]) {\n            graph[stack.pop()].push(i);\n        }\n        if (stack.length) graph[stack[stack.length-1]].push(i);\n        stack.push(i);\n    }\n    stack = [];\n    for (let i = 0; i < n; i++) {\n        while (stack.length && nums[stack[stack.length-1]] > nums[i]) {\n            graph[stack.pop()].push(i);\n        }\n        if (stack.length) graph[stack[stack.length-1]].push(i);\n        stack.push(i);\n    }\n    const dist = new Array(n).fill(Infinity);\n    dist[0] = 0;\n    // Simple Dijkstra with array (ok for this problem size)\n    const visited = new Array(n).fill(false);\n    for (let iter = 0; iter < n; iter++) {\n        let u = -1;\n        for (let i = 0; i < n; i++) if (!visited[i] && (u === -1 || dist[i] < dist[u])) u = i;\n        if (dist[u] === Infinity) break;\n        visited[u] = true;\n        for (const v of graph[u]) {\n            if (dist[u] + costs[v] < dist[v]) dist[v] = dist[u] + costs[v];\n        }\n    }\n    return dist[n-1];\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the graph with monotonic stacks takes O(n); Dijkstra over at most O(n) edges runs in O(n log n).",
+    "space_complexity_explanation": "The graph, distance array, and heap each use O(n) space.",
+    "key_insight": "Using monotonic stacks to precompute jump targets reduces the number of edges in the graph from O(n^2) to O(n), making the shortest-path search tractable.",
+    "related": [
+      45,
+      1696,
+      1871
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 931,
+    "title": "Minimum Falling Path Sum",
+    "slug": "minimum-falling-path-sum",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-falling-path-sum/",
+    "patterns": [
+      "Dynamic Programming",
+      "Matrix"
+    ],
+    "hints": [
+      "Process the matrix row by row; for each cell, consider the minimum cost to reach it from the row above.",
+      "From row i-1, column j, you can move to row i at columns j-1, j, or j+1.",
+      "You can modify the matrix in-place or use a separate DP table."
+    ],
+    "approach": "Use dynamic programming where dp[i][j] represents the minimum sum to reach cell (i, j) from any cell in the first row. For each cell in row i, take the minimum of the three cells diagonally above it from row i-1 and add the current cell value. The answer is the minimum value in the last row.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def minFallingPathSum(self, matrix: List[List[int]]) -> int:\n        n = len(matrix)\n        for i in range(1, n):\n            for j in range(n):\n                best = matrix[i-1][j]\n                if j > 0:\n                    best = min(best, matrix[i-1][j-1])\n                if j < n - 1:\n                    best = min(best, matrix[i-1][j+1])\n                matrix[i][j] += best\n        return min(matrix[n-1])",
+    "solution_js": "var minFallingPathSum = function(matrix) {\n    const n = matrix.length;\n    for (let i = 1; i < n; i++) {\n        for (let j = 0; j < n; j++) {\n            let best = matrix[i-1][j];\n            if (j > 0) best = Math.min(best, matrix[i-1][j-1]);\n            if (j < n-1) best = Math.min(best, matrix[i-1][j+1]);\n            matrix[i][j] += best;\n        }\n    }\n    return Math.min(...matrix[n-1]);\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We visit every cell in the n x n matrix exactly once, giving O(n^2) time.",
+    "space_complexity_explanation": "The DP is done in-place on the input matrix, so no additional space is required beyond O(1) variables.",
+    "key_insight": "In-place modification of the matrix row-by-row avoids allocating an extra DP table while correctly propagating minimum path sums from top to bottom.",
+    "related": [
+      1289,
+      120
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 933,
+    "title": "Number of Recent Calls",
+    "slug": "number-of-recent-calls",
+    "category": "Design",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/number-of-recent-calls/",
+    "patterns": [
+      "Queue",
+      "Sliding Window",
+      "Design"
+    ],
+    "hints": [
+      "Keep a queue of all request timestamps seen so far.",
+      "On each ping(t), add t to the queue and remove all timestamps older than t - 3000.",
+      "The queue length after cleanup is the answer."
+    ],
+    "approach": "Maintain a deque of request times. On each call to ping(t), append t to the deque. Then pop from the front of the deque while the oldest element is less than t - 3000. The number of remaining elements is the count of requests in the last 3000 milliseconds.",
+    "solution_python": "from collections import deque\n\nclass RecentCounter:\n    def __init__(self):\n        self.q = deque()\n\n    def ping(self, t: int) -> int:\n        self.q.append(t)\n        while self.q[0] < t - 3000:\n            self.q.popleft()\n        return len(self.q)",
+    "solution_js": "var RecentCounter = function() {\n    this.q = [];\n    this.head = 0;\n};\n\nRecentCounter.prototype.ping = function(t) {\n    this.q.push(t);\n    while (this.q[this.head] < t - 3000) this.head++;\n    return this.q.length - this.head;\n};",
+    "time_complexity": "O(1) amortized",
+    "space_complexity": "O(W)",
+    "time_complexity_explanation": "Each timestamp is added to and removed from the queue at most once, so the total work across all pings is O(n) amortized O(1) per call.",
+    "space_complexity_explanation": "The queue holds at most W = 3000 milliseconds worth of requests, bounded by the sliding window size.",
+    "key_insight": "A queue naturally models a sliding window of recent events \u2014 append new arrivals at the back and evict expired entries from the front in O(1) per operation.",
+    "related": [
+      346,
+      239
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1518,
+    "title": "Water Bottles",
+    "slug": "water-bottles",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/water-bottles/",
+    "patterns": [
+      "Math",
+      "Simulation",
+      "Greedy"
+    ],
+    "hints": [
+      "Simulate the process: drink numBottles full bottles, then exchange empty ones.",
+      "Each round you drink numBottles full bottles and get numBottles // numExchange new full bottles.",
+      "Continue until you have fewer full bottles than numExchange."
+    ],
+    "approach": "Simulate the process iteratively: drink all full bottles (adding to total), exchange as many empties as possible to get new full bottles, and carry over any remaining empties. Repeat until you can no longer make an exchange. Alternatively, use the closed-form formula: total = numBottles + (numBottles - 1) / (numExchange - 1).",
+    "solution_python": "class Solution:\n    def numWaterBottles(self, numBottles: int, numExchange: int) -> int:\n        total = 0\n        empty = 0\n        full = numBottles\n        while full > 0:\n            total += full\n            empty += full\n            full = empty // numExchange\n            empty = empty % numExchange\n        return total",
+    "solution_js": "var numWaterBottles = function(numBottles, numExchange) {\n    let total = 0, empty = 0, full = numBottles;\n    while (full > 0) {\n        total += full;\n        empty += full;\n        full = Math.floor(empty / numExchange);\n        empty = empty % numExchange;\n    }\n    return total;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Each exchange round reduces the number of full bottles by a factor of numExchange, so the loop runs O(log_{numExchange} n) times.",
+    "space_complexity_explanation": "Only a constant number of variables are used regardless of input size.",
+    "key_insight": "Tracking empties separately and performing integer division each round cleanly simulates the exchange process; there is also a one-line closed-form solution for this specific problem.",
+    "related": [
+      3100
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 636,
+    "title": "Exclusive Time of Functions",
+    "slug": "exclusive-time-of-functions",
+    "category": "Stack",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/exclusive-time-of-functions/",
+    "patterns": [
+      "Stack",
+      "Simulation"
+    ],
+    "hints": [
+      "Use a stack to track the currently executing function at each point in time.",
+      "When a function starts, push it; when it ends, pop it and accumulate its exclusive time.",
+      "Remember to subtract nested function time from the parent's exclusive time."
+    ],
+    "approach": "Parse each log entry into (function_id, type, timestamp). Maintain a stack of active function IDs and a variable tracking the previous timestamp. On a 'start' event, if the stack is non-empty, credit the elapsed time since prev_time to the current top function, then push the new function. On an 'end' event, credit elapsed time (end - prev_time + 1) to the current top function and pop it, setting prev_time to end + 1.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def exclusiveTime(self, n: int, logs: List[str]) -> List[int]:\n        result = [0] * n\n        stack = []\n        prev_time = 0\n        for log in logs:\n            fid, typ, t = log.split(':')\n            fid, t = int(fid), int(t)\n            if typ == 'start':\n                if stack:\n                    result[stack[-1]] += t - prev_time\n                stack.append(fid)\n                prev_time = t\n            else:  # end\n                result[stack.pop()] += t - prev_time + 1\n                prev_time = t + 1\n        return result",
+    "solution_js": "var exclusiveTime = function(n, logs) {\n    const result = new Array(n).fill(0);\n    const stack = [];\n    let prevTime = 0;\n    for (const log of logs) {\n        const parts = log.split(':');\n        const fid = parseInt(parts[0]);\n        const typ = parts[1];\n        const t = parseInt(parts[2]);\n        if (typ === 'start') {\n            if (stack.length > 0) result[stack[stack.length-1]] += t - prevTime;\n            stack.push(fid);\n            prevTime = t;\n        } else {\n            result[stack.pop()] += t - prevTime + 1;\n            prevTime = t + 1;\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(m)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each log entry is processed exactly once, where m is the total number of log entries.",
+    "space_complexity_explanation": "The stack holds at most n function IDs in the worst case of maximally nested calls.",
+    "key_insight": "The key is tracking prev_time as the start of the current unaccounted interval \u2014 on each event, accumulate the time since prev_time to the currently running function (top of stack) before updating the stack.",
+    "related": [
+      394,
+      726
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
