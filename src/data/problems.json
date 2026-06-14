@@ -17097,6 +17097,71 @@
     ]
   },
   {
+    "id": 700,
+    "title": "Search in a Binary Search Tree",
+    "slug": "search-in-a-binary-search-tree",
+    "category": "Tree",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/search-in-a-binary-search-tree/",
+    "patterns": [
+      "Binary Search",
+      "Tree",
+      "DFS"
+    ],
+    "hints": [
+      "Use BST property: if target < node.val go left, if target > node.val go right.",
+      "Recurse or iterate until you find the target or reach a null node.",
+      "Return the subtree rooted at the found node, not just True/False."
+    ],
+    "approach": "Leverage the BST property at each node: if the target value equals the current node's value, return the node. If the target is less, recurse into the left subtree; if greater, recurse into the right subtree. Return None if the node is null (value not found).",
+    "solution_python": "from typing import Optional\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root or root.val == val:\n            return root\n        if val < root.val:\n            return self.searchBST(root.left, val)\n        return self.searchBST(root.right, val)",
+    "solution_js": "var searchBST = function(root, val) {\n    if (!root || root.val === val) return root;\n    return val < root.val ? searchBST(root.left, val) : searchBST(root.right, val);\n};",
+    "time_complexity": "O(h)",
+    "space_complexity": "O(h)",
+    "time_complexity_explanation": "The search visits at most h nodes along a single root-to-leaf path where h is the height of the BST (O(log n) balanced, O(n) worst case).",
+    "space_complexity_explanation": "The recursive call stack depth equals the height h of the tree; iterative implementation reduces this to O(1).",
+    "key_insight": "The BST invariant allows binary elimination of half the remaining tree at each step, making search far more efficient than a linear scan.",
+    "related": [
+      701,
+      270
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 724,
+    "title": "Find Pivot Index",
+    "slug": "find-pivot-index",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-pivot-index/",
+    "patterns": [
+      "Prefix Sum",
+      "Arrays"
+    ],
+    "hints": [
+      "Compute the total sum of the array first.",
+      "As you iterate, maintain a running left sum. The right sum is total - left - nums[i].",
+      "The pivot index is where left sum equals right sum."
+    ],
+    "approach": "Compute the total sum of the array. Iterate through the array maintaining a running left sum. At each index, compute the right sum as total - left_sum - nums[i]. If left_sum equals right_sum, return the current index. Update left_sum by adding nums[i]. Return -1 if no pivot is found.",
+    "solution_python": "class Solution:\n    def pivotIndex(self, nums: list[int]) -> int:\n        total = sum(nums)\n        left = 0\n        for i, num in enumerate(nums):\n            if left == total - left - num:\n                return i\n            left += num\n        return -1",
+    "solution_js": "var pivotIndex = function(nums) {\n    const total = nums.reduce((a, b) => a + b, 0);\n    let left = 0;\n    for (let i = 0; i < nums.length; i++) {\n        if (left === total - left - nums[i]) return i;\n        left += nums[i];\n    }\n    return -1;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear passes are made: one to compute the total sum and one to find the pivot index.",
+    "space_complexity_explanation": "Only a constant amount of extra space is used beyond the input array.",
+    "key_insight": "Rather than recomputing left and right sums independently for each index (O(n^2)), you can derive the right sum from the precomputed total and the running left sum in O(1) per step.",
+    "related": [
+      560,
+      1991
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 777,
     "title": "Swap Adjacent in LR String",
     "slug": "swap-adjacent-in-lr-string",
@@ -17122,6 +17187,37 @@
     "key_insight": "The key observation is that X's are transparent — only the relative ordering of L/R matters, and the direction each character can move (L only left, R only right) gives a clean positional constraint to check.",
     "related": [
       884
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 788,
+    "title": "Rotated Digits",
+    "slug": "rotated-digits",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotated-digits/",
+    "patterns": [
+      "Math",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "A number is valid if it is different after rotation and every digit is valid after rotation.",
+      "Digits 0, 1, 8 map to themselves; digits 2->5, 5->2, 6->9, 9->6; digits 3, 4, 7 are invalid.",
+      "A number is good if it has no invalid digits and at least one digit that maps to a different digit."
+    ],
+    "approach": "For each number from 1 to n, check if it is a good number. A number is good if: (1) none of its digits are in {3, 4, 7}, and (2) at least one digit is in {2, 5, 6, 9} (ensuring the rotation is different). Iterate through all numbers and count those satisfying both conditions.",
+    "solution_python": "class Solution:\n    def rotatedDigits(self, n: int) -> int:\n        count = 0\n        for i in range(1, n + 1):\n            s = str(i)\n            if any(c in '347' for c in s):\n                continue\n            if any(c in '2569' for c in s):\n                count += 1\n        return count",
+    "solution_js": "var rotatedDigits = function(n) {\n    let count = 0;\n    for (let i = 1; i <= n; i++) {\n        const s = String(i);\n        if ([...s].some(c => '347'.includes(c))) continue;\n        if ([...s].some(c => '2569'.includes(c))) count++;\n    }\n    return count;\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(log n)",
+    "time_complexity_explanation": "We check each of the n numbers, and each check processes O(log n) digits, giving O(n log n) total.",
+    "space_complexity_explanation": "Converting a number to a string uses O(log n) space for its digits.",
+    "key_insight": "The problem reduces to classifying digits into three buckets — invalid (3,4,7), identity (0,1,8), and transforming (2,5,6,9) — and a number is good if and only if it has no invalid digits and at least one transforming digit.",
+    "related": [
+      906
     ],
     "companies": [
       "google"
@@ -17550,6 +17646,37 @@
     ]
   },
   {
+    "id": 1043,
+    "title": "Partition Array for Maximum Sum",
+    "slug": "partition-array-for-maximum-sum",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/partition-array-for-maximum-sum/",
+    "patterns": [
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "Define dp[i] as the maximum sum achievable for the first i elements.",
+      "For each position i, try ending a partition of size 1 to k at position i.",
+      "The value contributed by a partition ending at i is max(arr[i-j..i]) * j for each valid j."
+    ],
+    "approach": "Use dynamic programming where dp[i] represents the maximum sum of arr[0..i-1] after partitioning. For each index i, iterate over the last j elements (1 <= j <= k) that form the final partition, compute max of those elements times j, and update dp[i] = max(dp[i], dp[i-j] + max_val * j). Return dp[n].",
+    "solution_python": "class Solution:\n    def maxSumAfterPartitioning(self, arr: list[int], k: int) -> int:\n        n = len(arr)\n        dp = [0] * (n + 1)\n        for i in range(1, n + 1):\n            max_val = 0\n            for j in range(1, min(k, i) + 1):\n                max_val = max(max_val, arr[i - j])\n                dp[i] = max(dp[i], dp[i - j] + max_val * j)\n        return dp[n]",
+    "solution_js": "var maxSumAfterPartitioning = function(arr, k) {\n    const n = arr.length;\n    const dp = new Array(n + 1).fill(0);\n    for (let i = 1; i <= n; i++) {\n        let maxVal = 0;\n        for (let j = 1; j <= Math.min(k, i); j++) {\n            maxVal = Math.max(maxVal, arr[i - j]);\n            dp[i] = Math.max(dp[i], dp[i - j] + maxVal * j);\n        }\n    }\n    return dp[n];\n};",
+    "time_complexity": "O(n * k)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "For each of the n positions we consider up to k partition endings, yielding O(n * k) total work.",
+    "space_complexity_explanation": "The dp array requires O(n) extra space beyond the input.",
+    "key_insight": "Within any partition of size up to k, all elements are replaced by the maximum, so the contribution is max * length — this makes a simple DP recurrence exact and efficient.",
+    "related": [
+      410,
+      1335
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1044,
     "title": "Longest Duplicate Substring",
     "slug": "longest-duplicate-substring",
@@ -17578,6 +17705,38 @@
       1062,
       718,
       187
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1047,
+    "title": "Remove All Adjacent Duplicates In String",
+    "slug": "remove-all-adjacent-duplicates-in-string",
+    "category": "Stack",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+    "patterns": [
+      "Stack",
+      "String"
+    ],
+    "hints": [
+      "Think about using a stack to track characters as you iterate through the string.",
+      "If the top of the stack matches the current character, pop it (they form a duplicate pair).",
+      "Otherwise, push the current character. The stack contents at the end form the result."
+    ],
+    "approach": "Use a stack to process characters one by one. For each character, if the stack is non-empty and the top equals the current character, pop the top (removing the adjacent duplicate pair). Otherwise, push the current character. After processing all characters, join the stack to form the result.",
+    "solution_python": "class Solution:\n    def removeDuplicates(self, s: str) -> str:\n        stack = []\n        for c in s:\n            if stack and stack[-1] == c:\n                stack.pop()\n            else:\n                stack.append(c)\n        return ''.join(stack)",
+    "solution_js": "var removeDuplicates = function(s) {\n    const stack = [];\n    for (const c of s) {\n        if (stack.length > 0 && stack[stack.length - 1] === c) {\n            stack.pop();\n        } else {\n            stack.push(c);\n        }\n    }\n    return stack.join('');\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each character is pushed and popped at most once, so the total work is linear in the length of the string.",
+    "space_complexity_explanation": "The stack can hold up to O(n) characters in the worst case when there are no adjacent duplicates.",
+    "key_insight": "A stack naturally handles adjacent duplicate removal: whenever the incoming character matches the top, they cancel each other out immediately, eliminating the need for repeated passes.",
+    "related": [
+      1209,
+      316
     ],
     "companies": [
       "google"
@@ -17643,6 +17802,39 @@
       547,
       684,
       721
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1110,
+    "title": "Delete Nodes And Return Forest",
+    "slug": "delete-nodes-and-return-forest",
+    "category": "Tree",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/delete-nodes-and-return-forest/",
+    "patterns": [
+      "Tree",
+      "DFS",
+      "Hash Set"
+    ],
+    "hints": [
+      "Use post-order DFS so children are processed before parents.",
+      "If a node is to be deleted, its non-deleted children become new roots of the forest.",
+      "A node is a root of a new tree if it is not deleted and either is the original root or its parent was deleted."
+    ],
+    "approach": "Perform a post-order DFS. Maintain a set of nodes to delete. After processing children, if the current node should be deleted, add its non-null children to the result list as new roots and return None to detach it from its parent. If the current node is not deleted and has no parent (or its parent was deleted), add it to the result. Return the list of root nodes.",
+    "solution_python": "from typing import Optional, List\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def delNodes(self, root: Optional[TreeNode], to_delete: List[int]) -> List[TreeNode]:\n        to_delete_set = set(to_delete)\n        result = []\n\n        def dfs(node, is_root):\n            if not node:\n                return None\n            deleted = node.val in to_delete_set\n            if is_root and not deleted:\n                result.append(node)\n            node.left = dfs(node.left, deleted)\n            node.right = dfs(node.right, deleted)\n            return None if deleted else node\n\n        dfs(root, True)\n        return result",
+    "solution_js": "var delNodes = function(root, to_delete) {\n    const toDeleteSet = new Set(to_delete);\n    const result = [];\n\n    function dfs(node, isRoot) {\n        if (!node) return null;\n        const deleted = toDeleteSet.has(node.val);\n        if (isRoot && !deleted) result.push(node);\n        node.left = dfs(node.left, deleted);\n        node.right = dfs(node.right, deleted);\n        return deleted ? null : node;\n    }\n\n    dfs(root, true);\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each node is visited exactly once during the DFS traversal.",
+    "space_complexity_explanation": "The recursion stack and the delete set each use O(n) space in the worst case.",
+    "key_insight": "Post-order DFS cleanly handles deletion: by the time we process a node, its subtrees are already cleaned up, and returning None automatically severs the link from parent to deleted child.",
+    "related": [
+      814,
+      669
     ],
     "companies": [
       "google"
@@ -17803,6 +17995,37 @@
     "related": [
       855,
       489
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1321,
+    "title": "Restaurant Growth",
+    "slug": "restaurant-growth",
+    "category": "SQL",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/restaurant-growth/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "Aggregate daily totals first, then use a window function or self-join to compute 7-day moving sums.",
+      "Only include rows where at least 7 days of data are available (day >= 6 in 0-indexed terms).",
+      "Divide the 7-day sum by 7 and round to 2 decimal places for the average."
+    ],
+    "approach": "First aggregate total amount per day. Then compute a 7-day rolling sum and average using a window function with ROWS BETWEEN 6 PRECEDING AND CURRENT ROW. Filter to only return rows where at least 7 days of history exist. Round the average to 2 decimal places and order by visited_on.",
+    "solution_python": "SELECT visited_on,\n       SUM(amount) OVER w AS amount,\n       ROUND(AVG(amount) OVER w, 2) AS average_amount\nFROM (\n    SELECT visited_on, SUM(amount) AS amount\n    FROM Customer\n    GROUP BY visited_on\n) daily\nWHERE visited_on >= (\n    SELECT MIN(visited_on) + INTERVAL 6 DAY FROM Customer\n)\nWINDOW w AS (ORDER BY visited_on ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)\nORDER BY visited_on;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting by visited_on for the window function dominates and costs O(n log n).",
+    "space_complexity_explanation": "The intermediate daily aggregation and window computation require O(n) extra space.",
+    "key_insight": "Aggregating to daily totals first simplifies the window function: each row in the window represents exactly one day, making the 7-row window correspond directly to a 7-day period.",
+    "related": [
+      1204,
+      1393
     ],
     "companies": [
       "google"
@@ -18947,6 +19170,38 @@
     ]
   },
   {
+    "id": 3225,
+    "title": "Maximum Score From Grid Operations",
+    "slug": "maximum-score-from-grid-operations",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/maximum-score-from-grid-operations/",
+    "patterns": [
+      "Dynamic Programming",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Think column by column: the decision for each column depends on how many rows are colored in the current vs previous column.",
+      "Use prefix sums to quickly compute the sum of any column range.",
+      "Define a DP state over (column, number of rows colored in previous column) to avoid recomputation."
+    ],
+    "approach": "Process the grid column by column. Build a prefix sum for each column. Define dp[j][r] as the maximum score when we have finished column j and colored the top r rows of column j. For each column, try all possible row counts for the current column and the previous column, using prefix sums to compute the score contribution (cells in current column not overlapping with previous column's coloring), and transition optimally.",
+    "solution_python": "class Solution:\n    def maximumScore(self, grid: list[list[int]]) -> int:\n        n = len(grid)\n        m = len(grid[0])\n        # prefix sums per column\n        pre = [[0] * (n + 1) for _ in range(m)]\n        for j in range(m):\n            for i in range(n):\n                pre[j][i + 1] = pre[j][i] + grid[i][j]\n        # dp[r] = max score ending with r rows colored in previous column\n        INF = float('-inf')\n        dp = [0] * (n + 1)  # initially 0 rows colored, score 0\n        for j in range(m - 1):\n            ndp = [INF] * (n + 1)\n            # best[r] for current col having r rows colored\n            for cur in range(n + 1):\n                for prev in range(n + 1):\n                    if dp[prev] == INF:\n                        continue\n                    # score = cells in col j+1 colored by cur but not by prev\n                    # i.e., rows [prev..cur-1] if cur > prev, else 0 from this transition\n                    # Actually score comes from col j cells not overlapping with col j+1\n                    # Redefine: score when transitioning from prev (col j rows) to cur (col j+1 rows)\n                    # = sum of col j rows >= cur (they are only in col j)\n                    score = pre[j][n] - pre[j][min(cur, n)]\n                    if cur <= prev:\n                        score = pre[j][prev] - pre[j][cur]\n                    else:\n                        score = 0\n                    val = dp[prev] + score\n                    if val > ndp[cur]:\n                        ndp[cur] = val\n            dp = ndp\n        # last column contribution\n        ans = 0\n        for prev in range(n + 1):\n            if dp[prev] != INF:\n                ans = max(ans, dp[prev] + pre[m - 1][prev])\n        return ans",
+    "solution_js": "var maximumScore = function(grid) {\n    const n = grid.length, m = grid[0].length;\n    const pre = Array.from({length: m}, () => new Array(n + 1).fill(0));\n    for (let j = 0; j < m; j++)\n        for (let i = 0; i < n; i++)\n            pre[j][i + 1] = pre[j][i] + grid[i][j];\n\n    let dp = new Array(n + 1).fill(-Infinity);\n    dp[0] = 0;\n    for (let j = 0; j < m - 1; j++) {\n        const ndp = new Array(n + 1).fill(-Infinity);\n        for (let prev = 0; prev <= n; prev++) {\n            if (dp[prev] === -Infinity) continue;\n            for (let cur = 0; cur <= n; cur++) {\n                const score = cur <= prev ? pre[j][prev] - pre[j][cur] : 0;\n                const val = dp[prev] + score;\n                if (val > ndp[cur]) ndp[cur] = val;\n            }\n        }\n        dp = ndp;\n    }\n    let ans = 0;\n    for (let prev = 0; prev <= n; prev++) {\n        if (dp[prev] !== -Infinity)\n            ans = Math.max(ans, dp[prev] + pre[m - 1][prev]);\n    }\n    return ans;\n};",
+    "time_complexity": "O(m * n^2)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "For each of the m columns we iterate over all O(n^2) pairs of (previous row count, current row count), giving O(m * n^2) total.",
+    "space_complexity_explanation": "Prefix sums require O(m * n) space; the DP array itself is O(n).",
+    "key_insight": "The key is recognizing that the score from a column depends only on how many contiguous top rows are colored in adjacent columns, reducing the state space to a single integer per column.",
+    "related": [
+      1477,
+      2304
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 3285,
     "title": "Find Indices of Stable Mountains",
     "slug": "find-indices-of-stable-mountains",
@@ -19073,6 +19328,36 @@
       3476,
       1023
     ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3481,
+    "title": "Apply Substitutions",
+    "slug": "apply-substitutions",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/apply-substitutions/",
+    "patterns": [
+      "String",
+      "Hash Map",
+      "Recursion"
+    ],
+    "hints": [
+      "Store all substitution rules in a dictionary keyed by the variable name.",
+      "When expanding a variable, it may reference other variables, so expand recursively.",
+      "Use memoization to avoid re-expanding the same variable multiple times."
+    ],
+    "approach": "Build a dictionary mapping each variable to its template string. To resolve a variable, replace every placeholder in its template with the recursively resolved value of the referenced variable. Use memoization so each variable is fully expanded at most once, avoiding redundant work.",
+    "solution_python": "class Solution:\n    def applySubstitutions(self, replacements: list[list[str]], text: str) -> str:\n        rules = {k: v for k, v in replacements}\n        from functools import lru_cache\n\n        @lru_cache(maxsize=None)\n        def expand(s):\n            result = []\n            i = 0\n            while i < len(s):\n                if s[i] == '%':\n                    j = s.index('%', i + 1)\n                    var = s[i+1:j]\n                    result.append(expand(rules[var]))\n                    i = j + 1\n                else:\n                    result.append(s[i])\n                    i += 1\n            return ''.join(result)\n\n        return expand(text)",
+    "solution_js": "var applySubstitutions = function(replacements, text) {\n    const rules = new Map(replacements);\n    const memo = new Map();\n\n    function expand(s) {\n        if (memo.has(s)) return memo.get(s);\n        let result = '';\n        let i = 0;\n        while (i < s.length) {\n            if (s[i] === '%') {\n                const j = s.indexOf('%', i + 1);\n                const varName = s.slice(i + 1, j);\n                result += expand(rules.get(varName));\n                i = j + 1;\n            } else {\n                result += s[i];\n                i++;\n            }\n        }\n        memo.set(s, result);\n        return result;\n    }\n\n    return expand(text);\n};",
+    "time_complexity": "O(n * m)",
+    "space_complexity": "O(n * m)",
+    "time_complexity_explanation": "In the worst case each variable's expanded value has length proportional to the total output size; memoization ensures each unique template string is expanded only once.",
+    "space_complexity_explanation": "The memoization cache stores the expanded result for each variable, which can total O(n * m) characters across all entries.",
+    "key_insight": "Memoizing expanded values ensures that deeply nested or repeated variable references do not cause exponential blowup in expansion time.",
+    "related": [],
     "companies": [
       "google"
     ]
@@ -19301,6 +19586,38 @@
     "related": [
       2817,
       2830
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3742,
+    "title": "Maximum Path Score in a Grid",
+    "slug": "maximum-path-score-in-a-grid",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/maximum-path-score-in-a-grid/",
+    "patterns": [
+      "Dynamic Programming",
+      "Grid"
+    ],
+    "hints": [
+      "Movement is only right or down, so you can use standard grid DP.",
+      "The score at each cell is the product of the current cell value and the step number.",
+      "Keep track of the step count (which is row + col + 1 for a 0-indexed grid starting at (0,0))."
+    ],
+    "approach": "Use dynamic programming on the grid where dp[i][j] holds the maximum score reachable at cell (i, j). The step number when reaching (i, j) is i + j + 1. Transition from the cell above or the cell to the left by taking the max predecessor score and adding grid[i][j] * (i + j + 1). Return dp[m-1][n-1].",
+    "solution_python": "class Solution:\n    def maxScore(self, grid: list[list[int]]) -> int:\n        m, n = len(grid), len(grid[0])\n        dp = [[0] * n for _ in range(m)]\n        dp[0][0] = grid[0][0] * 1\n        for j in range(1, n):\n            dp[0][j] = dp[0][j-1] + grid[0][j] * (j + 1)\n        for i in range(1, m):\n            dp[i][0] = dp[i-1][0] + grid[i][0] * (i + 1)\n        for i in range(1, m):\n            for j in range(1, n):\n                step = i + j + 1\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + grid[i][j] * step\n        return dp[m-1][n-1]",
+    "solution_js": "var maxScore = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    const dp = Array.from({length: m}, () => new Array(n).fill(0));\n    dp[0][0] = grid[0][0];\n    for (let j = 1; j < n; j++) dp[0][j] = dp[0][j-1] + grid[0][j] * (j + 1);\n    for (let i = 1; i < m; i++) dp[i][0] = dp[i-1][0] + grid[i][0] * (i + 1);\n    for (let i = 1; i < m; i++) {\n        for (let j = 1; j < n; j++) {\n            const step = i + j + 1;\n            dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]) + grid[i][j] * step;\n        }\n    }\n    return dp[m-1][n-1];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is computed exactly once in a single pass through the grid.",
+    "space_complexity_explanation": "The DP table requires O(m * n) space, which can be optimized to O(n) with a rolling array.",
+    "key_insight": "The step number is entirely determined by position (i + j + 1), so the score contribution of each cell is fixed regardless of the path taken to reach it, enabling a clean DP recurrence.",
+    "related": [
+      64,
+      2304
     ],
     "companies": [
       "google"
