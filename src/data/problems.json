@@ -18289,6 +18289,38 @@
     ]
   },
   {
+    "id": 1295,
+    "title": "Find Numbers with Even Number of Digits",
+    "slug": "find-numbers-with-even-number-of-digits",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-numbers-with-even-number-of-digits/",
+    "patterns": [
+      "Array",
+      "Math"
+    ],
+    "hints": [
+      "Think about how many digits a number has — how can you determine that without converting to a string?",
+      "You can use logarithms: the number of digits of n is floor(log10(n)) + 1.",
+      "Alternatively, convert each number to a string and check if its length is even — simpler and still O(n)."
+    ],
+    "approach": "Iterate through the array and for each number determine the count of its digits. The simplest approach is to convert each number to a string and check if the length is even. Alternatively, use integer division or math.log10 to count digits without string conversion. Count and return how many numbers have an even digit count.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findNumbers(self, nums: List[int]) -> int:\n        count = 0\n        for n in nums:\n            if len(str(n)) % 2 == 0:\n                count += 1\n        return count",
+    "solution_js": "var findNumbers = function(nums) {\n    let count = 0;\n    for (const n of nums) {\n        if (String(n).length % 2 === 0) count++;\n    }\n    return count;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "We iterate through all n numbers once, and converting each number to a string takes O(log n) time, but since numbers are bounded by 10^5 this is effectively O(1) per element.",
+    "space_complexity_explanation": "Only a counter variable is used; no additional data structures proportional to input size are needed.",
+    "key_insight": "The simplest and most readable approach is string conversion — checking if len(str(n)) % 2 == 0 is clear and efficient for the given constraints (nums[i] <= 10^5, so at most 6 digits).",
+    "related": [
+      1313,
+      1323
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1296,
     "title": "Divide Array in Sets of K Consecutive Numbers",
     "slug": "divide-array-in-sets-of-k-consecutive-numbers",
@@ -18773,6 +18805,39 @@
       684,
       785,
       1971
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1590,
+    "title": "Make Sum Divisible by P",
+    "slug": "make-sum-divisible-by-p",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/make-sum-divisible-by-p/",
+    "patterns": [
+      "Prefix Sum",
+      "Hash Map",
+      "Modular Arithmetic"
+    ],
+    "hints": [
+      "First compute the total sum modulo p. If it is already 0, the answer is 0 (no removal needed).",
+      "You need to remove the smallest subarray whose sum modulo p equals (total_sum % p). Think prefix sums.",
+      "Use a hash map to store the most recent index where each prefix sum modulo p was seen, similar to the subarray sum equals k technique."
+    ],
+    "approach": "Compute the total sum mod p; call it target. If target is 0, return 0. Otherwise, find the shortest subarray to remove whose sum mod p equals target. Use prefix sums mod p and a hash map: for each prefix sum cur, check if (cur - target) mod p exists in the map. Track the minimum length of any such subarray found, and return it if it is less than n (we cannot remove the entire array).",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def minSubarray(self, nums: List[int], p: int) -> int:\n        target = sum(nums) % p\n        if target == 0:\n            return 0\n        \n        # Map from prefix_sum_mod_p -> most recent index\n        prefix_map = {0: -1}\n        cur = 0\n        min_len = len(nums)\n        \n        for i, num in enumerate(nums):\n            cur = (cur + num) % p\n            need = (cur - target) % p\n            if need in prefix_map:\n                min_len = min(min_len, i - prefix_map[need])\n            prefix_map[cur] = i\n        \n        return min_len if min_len < len(nums) else -1",
+    "solution_js": "var minSubarray = function(nums, p) {\n    const total = nums.reduce((a, b) => a + b, 0);\n    const target = Number(BigInt(total) % BigInt(p));\n    if (target === 0) return 0;\n    \n    const prefixMap = new Map([[0, -1]]);\n    let cur = 0;\n    let minLen = nums.length;\n    \n    for (let i = 0; i < nums.length; i++) {\n        cur = (cur + nums[i]) % p;\n        const need = ((cur - target) % p + p) % p;\n        if (prefixMap.has(need)) {\n            minLen = Math.min(minLen, i - prefixMap.get(need));\n        }\n        prefixMap.set(cur, i);\n    }\n    \n    return minLen < nums.length ? minLen : -1;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the array is made, and each hash map lookup and insertion is O(1) on average.",
+    "space_complexity_explanation": "The hash map stores at most n distinct prefix sum mod p values, one per index.",
+    "key_insight": "The problem reduces to finding the shortest subarray with sum congruent to (total % p) mod p — the same prefix-sum-plus-hash-map trick used in \"Subarray Sum Equals K\" but applied in modular arithmetic.",
+    "related": [
+      974,
+      560
     ],
     "companies": [
       "google"
