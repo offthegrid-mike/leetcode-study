@@ -17746,6 +17746,37 @@
     ]
   },
   {
+    "id": 1320,
+    "title": "Minimum Distance to Type a Word Using Two Fingers",
+    "slug": "minimum-distance-to-type-a-word-using-two-fingers",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/",
+    "patterns": [
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "Define state as (finger1_position, finger2_position, current_character_index).",
+      "At each step, either finger can move to type the next character; compute the cost and recurse.",
+      "Use memoization; note that one finger position can be derived implicitly to reduce state space."
+    ],
+    "approach": "Use DP where the state is (index in word, position of finger 1, position of finger 2). At each step, one finger types the current character and moves there. The distance between two keys is computed from their row/column positions on the phone keypad layout. Memoize the recursive calls. The space can be reduced by noting that the previous character is always on one of the two fingers.",
+    "solution_python": "from functools import lru_cache\n\nclass Solution:\n    def minimumDistance(self, word: str) -> int:\n        def dist(a, b):\n            if a == 26: return 0  # finger not yet placed\n            r1, c1 = divmod(a, 6)\n            r2, c2 = divmod(b, 6)\n            return abs(r1 - r2) + abs(c1 - c2)\n        \n        n = len(word)\n        \n        @lru_cache(maxsize=None)\n        def dp(i, f2):\n            if i == n:\n                return 0\n            c = ord(word[i]) - ord('A')\n            f1 = ord(word[i-1]) - ord('A') if i > 0 else 26\n            opt1 = dist(f1, c) + dp(i + 1, f2)\n            opt2 = dist(f2, c) + dp(i + 1, f1)\n            return min(opt1, opt2)\n        \n        return dp(0, 26)",
+    "solution_js": "var minimumDistance = function(word) {\n    const dist = (a, b) => {\n        if (a === 26) return 0;\n        return Math.abs(Math.floor(a/6) - Math.floor(b/6)) + Math.abs(a%6 - b%6);\n    };\n    const n = word.length;\n    const memo = new Map();\n    \n    function dp(i, f2) {\n        if (i === n) return 0;\n        const key = `${i},${f2}`;\n        if (memo.has(key)) return memo.get(key);\n        const c = word.charCodeAt(i) - 65;\n        const f1 = i > 0 ? word.charCodeAt(i-1) - 65 : 26;\n        const opt1 = dist(f1, c) + dp(i+1, f2);\n        const opt2 = dist(f2, c) + dp(i+1, f1);\n        const res = Math.min(opt1, opt2);\n        memo.set(key, res);\n        return res;\n    }\n    \n    return dp(0, 26);\n};",
+    "time_complexity": "O(n * 27)",
+    "space_complexity": "O(n * 27)",
+    "time_complexity_explanation": "The DP has n * 27 states (index times possible second-finger positions including not placed), each computed in O(1).",
+    "space_complexity_explanation": "The memoization table stores n * 27 entries.",
+    "key_insight": "By always tracking which finger just typed the previous character implicitly (it is always on word[i-1]), the state space collapses to just (index, other_finger_position), making the DP tractable.",
+    "related": [
+      855,
+      489
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1356,
     "title": "Sort Integers by The Number of 1 Bits",
     "slug": "sort-integers-by-the-number-of-1-bits",
@@ -18101,6 +18132,39 @@
     ]
   },
   {
+    "id": 1722,
+    "title": "Minimize Hamming Distance After Swap Operations",
+    "slug": "minimize-hamming-distance-after-swap-operations",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/",
+    "patterns": [
+      "Union Find",
+      "Graph",
+      "Greedy"
+    ],
+    "hints": [
+      "Model allowed swaps as edges in a graph; indices in the same connected component can be freely rearranged.",
+      "Use Union-Find to group indices that can reach each other through the allowed swaps.",
+      "For each connected component, greedily match source values to target values to minimize mismatches."
+    ],
+    "approach": "Use Union-Find to group source indices by connectivity through allowed swaps. For each connected component, collect the multiset of source[i] values and target[i] values. Greedily cancel matching values using a Counter: for each value present in source, subtract from the target Counter. Elements that cannot be matched contribute to the Hamming distance.",
+    "solution_python": "from collections import Counter\n\nclass Solution:\n    def minimizeHammingDistance(self, source: list[int], target: list[int], allowedSwaps: list[list[int]]) -> int:\n        n = len(source)\n        parent = list(range(n))\n        \n        def find(x):\n            while parent[x] != x:\n                parent[x] = parent[parent[x]]\n                x = parent[x]\n            return x\n        \n        def union(a, b):\n            parent[find(a)] = find(b)\n        \n        for a, b in allowedSwaps:\n            union(a, b)\n        \n        groups = {}\n        for i in range(n):\n            r = find(i)\n            if r not in groups:\n                groups[r] = []\n            groups[r].append(i)\n        \n        hamming = 0\n        for indices in groups.values():\n            src_cnt = Counter(source[i] for i in indices)\n            tgt_cnt = Counter(target[i] for i in indices)\n            matched = sum((src_cnt & tgt_cnt).values())\n            hamming += len(indices) - matched\n        \n        return hamming",
+    "solution_js": "var minimizeHammingDistance = function(source, target, allowedSwaps) {\n    const n = source.length;\n    const parent = Array.from({length: n}, (_, i) => i);\n    \n    const find = (x) => {\n        while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n        return x;\n    };\n    \n    for (const [a, b] of allowedSwaps) parent[find(a)] = find(b);\n    \n    const groups = new Map();\n    for (let i = 0; i < n; i++) {\n        const r = find(i);\n        if (!groups.has(r)) groups.set(r, []);\n        groups.get(r).push(i);\n    }\n    \n    let hamming = 0;\n    for (const indices of groups.values()) {\n        const srcCnt = new Map(), tgtCnt = new Map();\n        for (const i of indices) {\n            srcCnt.set(source[i], (srcCnt.get(source[i])||0)+1);\n            tgtCnt.set(target[i], (tgtCnt.get(target[i])||0)+1);\n        }\n        let matched = 0;\n        for (const [v, c] of srcCnt) matched += Math.min(c, tgtCnt.get(v)||0);\n        hamming += indices.length - matched;\n    }\n    return hamming;\n};",
+    "time_complexity": "O(n * alpha(n) + m)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Union-Find operations with path compression are near O(1) each; processing all components visits each index once.",
+    "space_complexity_explanation": "The Union-Find structure and group maps use O(n) space.",
+    "key_insight": "Within each connected component, elements can be freely rearranged — so the minimum Hamming distance contribution from a component is the size of the component minus the size of the intersection of its source and target multisets.",
+    "related": [
+      990,
+      1202
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1727,
     "title": "Largest Submatrix With Rearrangements",
     "slug": "largest-submatrix-with-rearrangements",
@@ -18198,6 +18262,38 @@
     ]
   },
   {
+    "id": 2011,
+    "title": "Final Value of Variable After Performing Operations",
+    "slug": "final-value-of-variable-after-performing-operations",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/final-value-of-variable-after-performing-operations/",
+    "patterns": [
+      "Simulation",
+      "String"
+    ],
+    "hints": [
+      "Parse each operation string to determine if it increments or decrements X.",
+      "Operations containing '++' increment X by 1; operations containing '--' decrement X by 1.",
+      "Simply iterate through all operations and accumulate the result."
+    ],
+    "approach": "Initialize a variable X to 0. Iterate through each operation string. If the operation contains '++', increment X; if it contains '--', decrement X. Return the final value of X.",
+    "solution_python": "class Solution:\n    def finalValueAfterOperations(self, operations: list[str]) -> int:\n        x = 0\n        for op in operations:\n            if '+' in op:\n                x += 1\n            else:\n                x -= 1\n        return x",
+    "solution_js": "var finalValueAfterOperations = function(operations) {\n    let x = 0;\n    for (const op of operations) {\n        if (op.includes(\"+\")) x++;\n        else x--;\n    }\n    return x;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass through the n operations performs a constant-time check per operation.",
+    "space_complexity_explanation": "Only one integer variable is maintained regardless of input size.",
+    "key_insight": "All four operation forms ('++X', 'X++', '--X', 'X--') can be distinguished by simply checking for the presence of '+' or '-', making parsing trivial.",
+    "related": [
+      1672,
+      1108
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 2095,
     "title": "Delete the Middle Node of a Linked List",
     "slug": "delete-the-middle-node-of-a-linked-list",
@@ -18257,6 +18353,39 @@
       905,
       922,
       1822
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2344,
+    "title": "Minimum Deletions to Make Array Divisible",
+    "slug": "minimum-deletions-to-make-array-divisible",
+    "category": "Math",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/minimum-deletions-to-make-array-divisible/",
+    "patterns": [
+      "Math",
+      "Greedy",
+      "Sorting"
+    ],
+    "hints": [
+      "The element of nums that divides all elements of numsDivide must be a divisor of the GCD of numsDivide.",
+      "Sort nums and iterate from the smallest element; check if it divides the GCD of numsDivide.",
+      "Count how many elements from the front of sorted nums you must delete before finding a valid divisor."
+    ],
+    "approach": "Compute the GCD of all elements in numsDivide. Sort nums. Iterate through sorted nums and for each element check if it divides the GCD. The first such element requires deleting all elements before it. If no element divides the GCD, return -1.",
+    "solution_python": "from math import gcd\nfrom functools import reduce\n\nclass Solution:\n    def minOperations(self, nums: list[int], numsDivide: list[int]) -> int:\n        g = reduce(gcd, numsDivide)\n        nums_sorted = sorted(nums)\n        for i, v in enumerate(nums_sorted):\n            if g % v == 0:\n                return i\n        return -1",
+    "solution_js": "var minOperations = function(nums, numsDivide) {\n    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);\n    const g = numsDivide.reduce(gcd);\n    nums.sort((a, b) => a - b);\n    for (let i = 0; i < nums.length; i++) {\n        if (g % nums[i] === 0) return i;\n    }\n    return -1;\n};",
+    "time_complexity": "O(n log n + m log M)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting nums is O(n log n); computing GCD across m elements is O(m log M) where M is the max value.",
+    "space_complexity_explanation": "Only a constant amount of extra space is used beyond input.",
+    "key_insight": "Any valid element in nums must divide the GCD of numsDivide — so you only need to find the smallest such element after sorting, eliminating all smaller ones.",
+    "related": [
+      1979,
+      2183
     ],
     "companies": [
       "google"
@@ -18620,6 +18749,39 @@
     ]
   },
   {
+    "id": 3488,
+    "title": "Closest Equal Element Queries",
+    "slug": "closest-equal-element-queries",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/closest-equal-element-queries/",
+    "patterns": [
+      "Hash Map",
+      "Binary Search",
+      "Two Pointers"
+    ],
+    "hints": [
+      "Group indices by their values using a hash map.",
+      "For a query index, find the value at that index, look up its index list, and binary search for the nearest occurrence.",
+      "Account for the circular nature of the array when computing distances."
+    ],
+    "approach": "Precompute a map from each value to the sorted list of its indices. For each query index i, find value nums[i], look up its index list, and binary search for position i. The closest equal element is either the immediate predecessor or successor in the index list, considering circular wrap-around by comparing distances.",
+    "solution_python": "from collections import defaultdict\nimport bisect\n\nclass Solution:\n    def solveQueries(self, nums: list[int], queries: list[int]) -> list[int]:\n        n = len(nums)\n        idx_map = defaultdict(list)\n        for i, v in enumerate(nums):\n            idx_map[v].append(i)\n        \n        ans = []\n        for q in queries:\n            v = nums[q]\n            idxs = idx_map[v]\n            if len(idxs) == 1:\n                ans.append(-1)\n                continue\n            pos = bisect.bisect_left(idxs, q)\n            best = float('inf')\n            for delta in [-1, 0, 1]:\n                p = (pos + delta) % len(idxs)\n                j = idxs[p]\n                if j != q:\n                    d = min(abs(j - q), n - abs(j - q))\n                    best = min(best, d)\n            ans.append(best if best < float('inf') else -1)\n        return ans",
+    "solution_js": "var solveQueries = function(nums, queries) {\n    const n = nums.length;\n    const idxMap = new Map();\n    for (let i = 0; i < n; i++) {\n        if (!idxMap.has(nums[i])) idxMap.set(nums[i], []);\n        idxMap.get(nums[i]).push(i);\n    }\n    \n    const bisectLeft = (arr, val) => {\n        let lo = 0, hi = arr.length;\n        while (lo < hi) { const mid = (lo+hi)>>1; if (arr[mid] < val) lo=mid+1; else hi=mid; }\n        return lo;\n    };\n    \n    return queries.map(q => {\n        const idxs = idxMap.get(nums[q]);\n        if (idxs.length === 1) return -1;\n        const pos = bisectLeft(idxs, q);\n        let best = Infinity;\n        for (const delta of [-1, 0, 1]) {\n            const p = ((pos + delta) % idxs.length + idxs.length) % idxs.length;\n            const j = idxs[p];\n            if (j !== q) best = Math.min(best, Math.min(Math.abs(j-q), n-Math.abs(j-q)));\n        }\n        return best === Infinity ? -1 : best;\n    });\n};",
+    "time_complexity": "O((n + q) log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Building the index map is O(n); each of q queries does a binary search in O(log n).",
+    "space_complexity_explanation": "The index map stores all n indices distributed across value groups.",
+    "key_insight": "Grouping indices by value and binary searching within each group gives O(log n) per query; checking only the two neighbors in the sorted index list with circular wrap is sufficient to find the closest.",
+    "related": [
+      2239,
+      1658
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 3546,
     "title": "Equal Sum Grid Partition I",
     "slug": "equal-sum-grid-partition-i",
@@ -18679,6 +18841,38 @@
     "related": [
       3546,
       1292
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3592,
+    "title": "Inverse Coin Change",
+    "slug": "inverse-coin-change",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/inverse-coin-change/",
+    "patterns": [
+      "Dynamic Programming",
+      "Math"
+    ],
+    "hints": [
+      "Given the number of ways to make each amount, reconstruct the coin denominations.",
+      "Think about how adding a new coin denomination changes the ways array incrementally.",
+      "A coin of value c causes ways[c] to increase by 1 compared to having no coin of that value."
+    ],
+    "approach": "Iterate through the ways array and identify positions where the count increased compared to what a standard coin-change DP would produce without that coin. Simulate the coin-change DP incrementally: try adding a coin of each denomination and check if it produces the observed ways array. The coin is valid if the resulting DP matches.",
+    "solution_python": "class Solution:\n    def findCoins(self, ways: list[int]) -> list[int]:\n        n = len(ways)\n        dp = [0] * (n + 1)\n        dp[0] = 1\n        coins = []\n        \n        for c in range(1, n + 1):\n            expected = dp[c]\n            if ways[c - 1] != expected:\n                coins.append(c)\n                for j in range(c, n + 1):\n                    dp[j] += dp[j - c]\n        \n        for i in range(n):\n            if dp[i + 1] != ways[i]:\n                return []\n        return coins",
+    "solution_js": "var findCoins = function(ways) {\n    const n = ways.length;\n    const dp = new Array(n + 1).fill(0);\n    dp[0] = 1;\n    const coins = [];\n    \n    for (let c = 1; c <= n; c++) {\n        if (dp[c] !== ways[c-1]) {\n            coins.push(c);\n            for (let j = c; j <= n; j++) dp[j] += dp[j-c];\n        }\n    }\n    \n    for (let i = 0; i < n; i++) {\n        if (dp[i+1] !== ways[i]) return [];\n    }\n    return coins;\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "For each potential coin denomination up to n, updating the DP array takes O(n) time.",
+    "space_complexity_explanation": "The DP array uses O(n) space.",
+    "key_insight": "The standard coin-change DP is reversible: by scanning denominations in order, a discrepancy between the expected and observed count at position c signals a coin of value c, which is then incorporated into the DP.",
+    "related": [
+      322,
+      518
     ],
     "companies": [
       "google"
@@ -18784,6 +18978,71 @@
     ]
   },
   {
+    "id": 3743,
+    "title": "Maximize Cyclic Partition Score",
+    "slug": "maximize-cyclic-partition-score",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/maximize-cyclic-partition-score/",
+    "patterns": [
+      "Dynamic Programming",
+      "Greedy",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Think about partitioning a circular array into contiguous segments and scoring each segment.",
+      "For a cyclic array, fix the starting cut point and use DP to find the maximum score partition.",
+      "Prefix sums and careful state tracking help handle the wrap-around efficiently."
+    ],
+    "approach": "Model the problem as partitioning a circular array into k non-empty contiguous segments to maximize total score. Duplicate the array to handle circularity, then use dynamic programming where dp[i][j] represents the maximum score using j cuts among the first i elements. Prefix sums allow O(1) segment score queries, making the DP efficient.",
+    "solution_python": "class Solution:\n    def maxScore(self, nums: list[int], k: int) -> int:\n        n = len(nums)\n        arr = nums + nums\n        m = 2 * n\n        prefix = [0] * (m + 1)\n        for i in range(m):\n            prefix[i+1] = prefix[i] + arr[i]\n        \n        NEG_INF = float('-inf')\n        prev = [NEG_INF] * (m + 1)\n        prev[0] = 0\n        \n        for j in range(1, k + 1):\n            curr = [NEG_INF] * (m + 1)\n            running_max = NEG_INF\n            for i in range(j, m + 1):\n                if prev[i-1] != NEG_INF:\n                    running_max = max(running_max, prev[i-1] - prefix[i-1])\n                if running_max != NEG_INF:\n                    curr[i] = running_max + prefix[i]\n            prev = curr\n        \n        ans = prev[n]\n        return max(0, ans) if ans != NEG_INF else 0",
+    "solution_js": "var maxScore = function(nums, k) {\n    const n = nums.length;\n    const arr = [...nums, ...nums];\n    const m = 2 * n;\n    const prefix = new Array(m + 1).fill(0);\n    for (let i = 0; i < m; i++) prefix[i+1] = prefix[i] + arr[i];\n    \n    const NEG_INF = -Infinity;\n    let prev = new Array(m + 1).fill(NEG_INF);\n    prev[0] = 0;\n    \n    for (let j = 1; j <= k; j++) {\n        const curr = new Array(m + 1).fill(NEG_INF);\n        let runMax = NEG_INF;\n        for (let i = j; i <= m; i++) {\n            if (prev[i-1] !== NEG_INF) runMax = Math.max(runMax, prev[i-1] - prefix[i-1]);\n            if (runMax !== NEG_INF) curr[i] = runMax + prefix[i];\n        }\n        prev = curr;\n    }\n    \n    return prev[n] !== NEG_INF ? Math.max(0, prev[n]) : 0;\n};",
+    "time_complexity": "O(n * k)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The DP iterates k layers each scanning 2n positions, giving O(nk) total.",
+    "space_complexity_explanation": "Rolling DP arrays use O(n) space after optimization.",
+    "key_insight": "By reformulating the DP recurrence to maximize prev[l] - prefix[l] over l, we convert an O(n^2 k) DP into O(nk) using a running maximum.",
+    "related": [
+      1547,
+      813
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3783,
+    "title": "Mirror Distance of an Integer",
+    "slug": "mirror-distance-of-an-integer",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/mirror-distance-of-an-integer/",
+    "patterns": [
+      "Math",
+      "String"
+    ],
+    "hints": [
+      "The mirror of an integer is formed by reversing its digits.",
+      "Compute the absolute difference between the number and its digit-reversal.",
+      "Be careful with leading zeros when reversing — the mirror may have fewer digits."
+    ],
+    "approach": "Convert the integer to a string, reverse the string to get the mirror, convert back to integer (which handles leading zeros), then return the absolute difference between the original and mirror integer.",
+    "solution_python": "class Solution:\n    def mirrorDistance(self, n: int) -> int:\n        mirror = int(str(n)[::-1])\n        return abs(n - mirror)",
+    "solution_js": "var mirrorDistance = function(n) {\n    const mirror = parseInt(String(n).split(\"\").reverse().join(\"\"));\n    return Math.abs(n - mirror);\n};",
+    "time_complexity": "O(d)",
+    "space_complexity": "O(d)",
+    "time_complexity_explanation": "Reversing d digits (where d is the number of digits) takes O(d) time.",
+    "space_complexity_explanation": "String representation uses O(d) space proportional to number of digits.",
+    "key_insight": "Converting to string for reversal elegantly handles leading zeros in the mirror — int('0123') yields 123, correctly representing the mirrored value.",
+    "related": [
+      564,
+      906
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 3875,
     "title": "Construct Uniform Parity Array I",
     "slug": "construct-uniform-parity-array-i",
@@ -18810,6 +19069,71 @@
     "related": [
       2654,
       2946
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3894,
+    "title": "Traffic Signal Color",
+    "slug": "traffic-signal-color",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/traffic-signal-color/",
+    "patterns": [
+      "Math",
+      "Simulation"
+    ],
+    "hints": [
+      "A traffic light cycles through green, yellow, red with given durations.",
+      "Use the modulo operation to find which phase a given time falls into.",
+      "Sum the durations to find the cycle length, then determine the color from the remainder."
+    ],
+    "approach": "Compute the total cycle length as the sum of green, yellow, and red durations. Use modulo to find the position within the current cycle. Compare against cumulative durations to determine which color is active at the given time.",
+    "solution_python": "class Solution:\n    def trafficSignal(self, query: int, green: int, yellow: int, red: int) -> str:\n        cycle = green + yellow + red\n        t = query % cycle\n        if t == 0:\n            t = cycle\n        if t <= green:\n            return \"green\"\n        elif t <= green + yellow:\n            return \"yellow\"\n        else:\n            return \"red\"",
+    "solution_js": "var trafficSignal = function(query, green, yellow, red) {\n    const cycle = green + yellow + red;\n    let t = query % cycle;\n    if (t === 0) t = cycle;\n    if (t <= green) return \"green\";\n    if (t <= green + yellow) return \"yellow\";\n    return \"red\";\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "All operations are arithmetic with no iteration, so runtime is constant.",
+    "space_complexity_explanation": "Only a constant number of variables are used.",
+    "key_insight": "Reducing the query time modulo the full cycle length maps any query time to a position within a single cycle, making color determination a simple range check.",
+    "related": [
+      3065,
+      1550
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3896,
+    "title": "Minimum Operations to Transform Array into Alternating Prime",
+    "slug": "minimum-operations-to-transform-array-into-alternating-prime",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-operations-to-transform-array-into-alternating-prime/",
+    "patterns": [
+      "Sieve of Eratosthenes",
+      "Greedy",
+      "Math"
+    ],
+    "hints": [
+      "An alternating array has all even-indexed elements equal and all odd-indexed elements equal, with both values being prime.",
+      "Precompute primes up to the maximum value using a sieve, then find the most frequent element at even and odd positions.",
+      "For each position, the cost is 1 if the current value differs from the chosen prime, 0 otherwise; minimize total cost by picking the best prime pair."
+    ],
+    "approach": "Use the Sieve of Eratosthenes to precompute all primes. For even-indexed positions and odd-indexed positions separately, count the frequency of each prime. The minimum operations needed is n minus the count of elements already equal to the most frequent prime at even positions plus the most frequent prime at odd positions. The two chosen primes must be different.",
+    "solution_python": "from collections import Counter\n\nclass Solution:\n    def minOperations(self, nums: list[int]) -> int:\n        n = len(nums)\n        max_val = max(nums) if nums else 2\n        limit = max(max_val, 3)\n        sieve = [True] * (limit + 1)\n        sieve[0] = sieve[1] = False\n        for i in range(2, int(limit**0.5) + 1):\n            if sieve[i]:\n                for j in range(i*i, limit + 1, i):\n                    sieve[j] = False\n        \n        even_cnt = Counter()\n        odd_cnt = Counter()\n        for i, v in enumerate(nums):\n            if i % 2 == 0:\n                even_cnt[v] += 1\n            else:\n                odd_cnt[v] += 1\n        \n        even_primes = sorted([(cnt, v) for v, cnt in even_cnt.items() if v <= limit and sieve[v]], reverse=True)\n        odd_primes = sorted([(cnt, v) for v, cnt in odd_cnt.items() if v <= limit and sieve[v]], reverse=True)\n        \n        if not even_primes:\n            even_primes = [(0, 2)]\n        if not odd_primes:\n            odd_primes = [(0, 3)]\n        \n        best = float('inf')\n        for i in range(min(2, len(even_primes))):\n            for j in range(min(2, len(odd_primes))):\n                ec, ev = even_primes[i]\n                oc, ov = odd_primes[j]\n                if ev != ov:\n                    cost = n - ec - oc\n                    best = min(best, cost)\n        \n        return best if best < float('inf') else n",
+    "solution_js": "var minOperations = function(nums) {\n    const n = nums.length;\n    const maxVal = Math.max(...nums, 3);\n    const sieve = new Array(maxVal + 1).fill(true);\n    sieve[0] = sieve[1] = false;\n    for (let i = 2; i * i <= maxVal; i++) {\n        if (sieve[i]) for (let j = i*i; j <= maxVal; j += i) sieve[j] = false;\n    }\n    \n    const evenCnt = new Map(), oddCnt = new Map();\n    for (let i = 0; i < n; i++) {\n        const m = i % 2 === 0 ? evenCnt : oddCnt;\n        m.set(nums[i], (m.get(nums[i]) || 0) + 1);\n    }\n    \n    const topPrimes = (map) => [...map.entries()]\n        .filter(([v]) => v <= maxVal && sieve[v])\n        .sort((a,b) => b[1]-a[1]).slice(0,2);\n    \n    const ep = topPrimes(evenCnt), op = topPrimes(oddCnt);\n    if (!ep.length) ep.push([2, 0]);\n    if (!op.length) op.push([3, 0]);\n    \n    let best = Infinity;\n    for (const [ev, ec] of ep)\n        for (const [ov, oc] of op)\n            if (ev !== ov) best = Math.min(best, n - ec - oc);\n    \n    return best === Infinity ? n : best;\n};",
+    "time_complexity": "O(N + M log log M)",
+    "space_complexity": "O(M)",
+    "time_complexity_explanation": "Sieve runs in O(M log log M) where M is the max value; counting elements is O(N).",
+    "space_complexity_explanation": "The sieve array uses O(M) space proportional to the maximum element value.",
+    "key_insight": "Only check the top-2 most frequent primes at even and odd positions — the optimal pair must come from these candidates since any other choice can only be worse.",
+    "related": [
+      2601,
+      866
     ],
     "companies": [
       "google"
