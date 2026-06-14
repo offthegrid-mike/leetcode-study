@@ -6268,5 +6268,37 @@
     "companies": [
       "google"
     ]
+  },
+  {
+    "id": 414,
+    "title": "Third Maximum Number",
+    "slug": "third-maximum-number",
+    "category": "Array",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/third-maximum-number/",
+    "patterns": [
+      "Sorting",
+      "Set"
+    ],
+    "hints": [
+      "Think about tracking the top three distinct values seen so far without sorting the entire array.",
+      "Use a sorted set (or three variables) to maintain the top 3 distinct maximums as you iterate.",
+      "If fewer than 3 distinct values exist, return the overall maximum instead."
+    ],
+    "approach": "Use a sorted set of size at most 3 to track the top three distinct values. Iterate through the array, inserting each element and removing the smallest if the set exceeds size 3. If the set has 3 elements, the minimum is the third maximum; otherwise return the maximum.",
+    "solution_python": "class Solution:\n    def thirdMax(self, nums: List[int]) -> int:\n        top = sorted(set(nums), reverse=True)\n        return top[2] if len(top) >= 3 else top[0]",
+    "solution_js": "var thirdMax = function(nums) {\n    const top = [...new Set(nums)].sort((a, b) => b - a);\n    return top.length >= 3 ? top[2] : top[0];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "One pass through the array; the set is bounded at size 3 so all operations are O(1).",
+    "space_complexity_explanation": "The set holds at most 3 elements regardless of input size.",
+    "key_insight": "Keeping only the top 3 distinct values avoids a full sort; fall back to the maximum when fewer than 3 distinct values exist.",
+    "related": [
+      215,
+      347
+    ],
+    "companies": [
+      "google"
+    ]
   }
 ]
