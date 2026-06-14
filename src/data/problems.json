@@ -5341,6 +5341,37 @@
     ]
   },
   {
+    "id": 182,
+    "title": "Duplicate Emails",
+    "slug": "duplicate-emails",
+    "category": "SQL",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/duplicate-emails/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "Group rows by the email column and count occurrences.",
+      "Filter groups where the count is greater than 1.",
+      "Use HAVING to filter after GROUP BY."
+    ],
+    "approach": "Group the Person table by email and count occurrences. Use HAVING COUNT(*) > 1 to retain only emails that appear more than once. SELECT that email column as the result.",
+    "solution_python": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The database scans all n rows to build the group aggregates.",
+    "space_complexity_explanation": "Intermediate grouping may require O(n) space for the hash table of email counts.",
+    "key_insight": "GROUP BY + HAVING is the idiomatic SQL pattern for finding duplicates; the HAVING clause filters aggregated groups, unlike WHERE which filters individual rows.",
+    "related": [
+      196,
+      183
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 189,
     "title": "Reverse String",
     "slug": "reverse-string",
@@ -17131,6 +17162,38 @@
     ]
   },
   {
+    "id": 1009,
+    "title": "Complement of Base 10 Integer",
+    "slug": "complement-of-base-10-integer",
+    "category": "Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/complement-of-base-10-integer/",
+    "patterns": [
+      "Bit Manipulation",
+      "Math"
+    ],
+    "hints": [
+      "To flip all bits of n, XOR with a mask of all 1s of the same bit-length.",
+      "The mask is 2^(bit_length) - 1, where bit_length = floor(log2(n)) + 1.",
+      "Special case: n = 0 has no set bits; its complement is 1."
+    ],
+    "approach": "Find the number of bits in n using bit_length (or log2). Construct a mask with all those bits set to 1 (mask = 2^bit_length - 1). XOR n with the mask to flip all bits. Handle n=0 as a special case returning 1.",
+    "solution_python": "class Solution:\n    def bitwiseComplement(self, n: int) -> int:\n        if n == 0:\n            return 1\n        mask = (1 << n.bit_length()) - 1\n        return n ^ mask",
+    "solution_js": "var bitwiseComplement = function(n) {\n    if (n === 0) return 1;\n    let mask = 1;\n    while (mask <= n) mask <<= 1;\n    return (mask - 1) ^ n;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Computing the bit length requires O(log n) iterations (or O(1) with built-in bit_length).",
+    "space_complexity_explanation": "Only a constant number of integer variables are used.",
+    "key_insight": "XORing with an all-ones mask of the same bit-width flips every bit cleanly without affecting higher bits, making this a one-liner once you compute the right mask.",
+    "related": [
+      476,
+      1009
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1022,
     "title": "Sum of Root To Leaf Binary Numbers",
     "slug": "sum-of-root-to-leaf-binary-numbers",
@@ -17264,6 +17327,40 @@
     ]
   },
   {
+    "id": 1235,
+    "title": "Maximum Profit in Job Scheduling",
+    "slug": "maximum-profit-in-job-scheduling",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/maximum-profit-in-job-scheduling/",
+    "patterns": [
+      "Dynamic Programming",
+      "Binary Search",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort jobs by end time so you can build up the DP from left to right.",
+      "For each job, binary search for the latest job that ends at or before this job's start time.",
+      "dp[i] = max(dp[i-1], profit[i] + dp[last_non_overlapping_index])."
+    ],
+    "approach": "Sort all jobs by end time. Define dp[i] as the maximum profit considering the first i jobs. For job i, use binary search to find the latest job j whose end time <= start time of job i. Then dp[i] = max(dp[i-1], dp[j] + profit[i]). The base case dp[0] = 0 represents taking no jobs.",
+    "solution_python": "from bisect import bisect_right\nclass Solution:\n    def jobScheduling(self, startTime, endTime, profit):\n        jobs = sorted(zip(endTime, startTime, profit))\n        end_times = [0]\n        dp = [0]\n        for end, start, p in jobs:\n            # find latest job ending <= start\n            idx = bisect_right(end_times, start) - 1\n            best = dp[idx] + p\n            if best > dp[-1]:\n                dp.append(best)\n                end_times.append(end)\n            else:\n                dp.append(dp[-1])\n                end_times.append(end)\n        return dp[-1]",
+    "solution_js": "var jobScheduling = function(startTime, endTime, profit) {\n    const n = startTime.length;\n    const jobs = Array.from({length: n}, (_, i) => [endTime[i], startTime[i], profit[i]]);\n    jobs.sort((a, b) => a[0] - b[0]);\n    const endTimes = [0], dp = [0];\n    for (const [end, start, p] of jobs) {\n        let lo = 0, hi = endTimes.length - 1;\n        while (lo < hi) {\n            const mid = (lo + hi + 1) >> 1;\n            if (endTimes[mid] <= start) lo = mid; else hi = mid - 1;\n        }\n        const best = dp[lo] + p;\n        if (best > dp[dp.length - 1]) { dp.push(best); endTimes.push(end); }\n        else { dp.push(dp[dp.length - 1]); endTimes.push(end); }\n    }\n    return dp[dp.length - 1];\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting takes O(n log n) and each of the n jobs does one O(log n) binary search.",
+    "space_complexity_explanation": "The dp array and end_times array each store at most n+1 entries.",
+    "key_insight": "Sorting by end time enables a clean left-to-right DP where binary search on end times pinpoints the best compatible previous state in O(log n), making the overall approach O(n log n).",
+    "related": [
+      435,
+      646,
+      2008
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1296,
     "title": "Divide Array in Sets of K Consecutive Numbers",
     "slug": "divide-array-in-sets-of-k-consecutive-numbers",
@@ -17322,6 +17419,40 @@
     "related": [
       461,
       191
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1358,
+    "title": "Number of Substrings Containing All Three Characters",
+    "slug": "number-of-substrings-containing-all-three-characters",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/",
+    "patterns": [
+      "Sliding Window",
+      "Two Pointers",
+      "String"
+    ],
+    "hints": [
+      "For every right pointer position, find the leftmost left such that s[left..right] contains all three characters.",
+      "Any substring ending at right that starts at or before that left index is also valid.",
+      "Track the last seen index of each character 'a', 'b', 'c' to compute the boundary in O(1)."
+    ],
+    "approach": "Use a sliding window by tracking the last occurrence of each character 'a', 'b', 'c'. For each right index, the earliest valid left boundary is min(last['a'], last['b'], last['c']) + 1. All substrings from indices 0..boundary are valid (there are boundary + 1 of them). Accumulate this count across all right positions.",
+    "solution_python": "class Solution:\n    def numberOfSubstrings(self, s: str) -> int:\n        count = 0\n        last = {'a': -1, 'b': -1, 'c': -1}\n        for right, ch in enumerate(s):\n            last[ch] = right\n            count += min(last['a'], last['b'], last['c']) + 1\n        return count",
+    "solution_js": "var numberOfSubstrings = function(s) {\n    let count = 0;\n    const last = {a: -1, b: -1, c: -1};\n    for (let right = 0; right < s.length; right++) {\n        last[s[right]] = right;\n        count += Math.min(last.a, last.b, last.c) + 1;\n    }\n    return count;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single left-to-right pass over the string of length n.",
+    "space_complexity_explanation": "Only three variables track the last seen positions of 'a', 'b', 'c'.",
+    "key_insight": "Tracking the last occurrence of each character lets you count valid substrings ending at the current position in O(1) — the number of valid left endpoints equals min(last_a, last_b, last_c) + 1.",
+    "related": [
+      3,
+      76,
+      904
     ],
     "companies": [
       "google"
@@ -17393,6 +17524,38 @@
     ]
   },
   {
+    "id": 1545,
+    "title": "Find Kth Bit in Nth Binary String",
+    "slug": "find-kth-bit-in-nth-binary-string",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-kth-bit-in-nth-binary-string/",
+    "patterns": [
+      "Recursion",
+      "String",
+      "Divide and Conquer"
+    ],
+    "hints": [
+      "The nth string has length 2^n - 1. The middle element is always '1'.",
+      "If k is in the second half, it mirrors a position in the first half but flipped.",
+      "Recurse: map k in the second half to its mirror in the first half via k' = 2^n - k, then flip the result."
+    ],
+    "approach": "Use recursion. The nth binary string S_n has length L = 2^n - 1. The middle index is (L+1)/2. If k equals the middle, return '1'. If k < middle, recurse with find(n-1, k). Otherwise (k > middle), recurse with find(n-1, L+1-k) and flip the returned bit. Base case: n=1 returns '0'.",
+    "solution_python": "class Solution:\n    def findKthBit(self, n: int, k: int) -> str:\n        if n == 1:\n            return '0'\n        length = (1 << n) - 1  # 2^n - 1\n        mid = length // 2 + 1\n        if k == mid:\n            return '1'\n        elif k < mid:\n            return self.findKthBit(n - 1, k)\n        else:\n            bit = self.findKthBit(n - 1, length + 1 - k)\n            return '1' if bit == '0' else '0'",
+    "solution_js": "var findKthBit = function(n, k) {\n    if (n === 1) return '0';\n    const length = (1 << n) - 1;\n    const mid = Math.floor(length / 2) + 1;\n    if (k === mid) return '1';\n    if (k < mid) return findKthBit(n - 1, k);\n    const bit = findKthBit(n - 1, length + 1 - k);\n    return bit === '0' ? '1' : '0';\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each recursive call decrements n by 1, so there are at most n levels of recursion.",
+    "space_complexity_explanation": "The recursion stack depth is at most n frames.",
+    "key_insight": "The second half of S_n is the reverse-and-complement of S_{n-1}, so any query in the second half can be mapped to an equivalent query in the first half via index mirroring plus a bit flip.",
+    "related": [
+      779
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1680,
     "title": "Concatenation of Consecutive Binary Numbers",
     "slug": "concatenation-of-consecutive-binary-numbers",
@@ -17418,6 +17581,70 @@
     "key_insight": "Detecting bit-length increases in O(1) using the power-of-two check (i & (i-1) == 0) avoids a log computation each iteration, keeping the whole solution clean at O(n) time and O(1) space.",
     "related": [
       1837
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1689,
+    "title": "Partitioning Into Minimum Number Of Deci-Binary Numbers",
+    "slug": "partitioning-into-minimum-number-of-deci-binary-numbers",
+    "category": "Greedy",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/partitioning-into-minimum-number-of-deci-binary-numbers/",
+    "patterns": [
+      "Greedy",
+      "Math"
+    ],
+    "hints": [
+      "A deci-binary number only has digits 0 and 1.",
+      "Each deci-binary number can contribute at most 1 to any digit position.",
+      "To build a digit d at some position, you need at least d deci-binary numbers."
+    ],
+    "approach": "Since each deci-binary number contributes at most 1 to each digit position, to reconstruct a digit of value d you need at least d numbers. Therefore the minimum count is determined by the maximum digit in the string. The answer is simply the maximum digit character in n.",
+    "solution_python": "class Solution:\n    def minPartitions(self, n: str) -> int:\n        return int(max(n))",
+    "solution_js": "var minPartitions = function(n) {\n    return parseInt(Math.max(...n.split('').map(Number)));\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Scanning all digits of the string once to find the maximum.",
+    "space_complexity_explanation": "Only a single variable is needed to track the maximum digit.",
+    "key_insight": "Each deci-binary number contributes at most 1 per digit position, so the hardest digit to satisfy is the maximum digit — that digit alone dictates how many numbers are needed.",
+    "related": [
+      1689
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1888,
+    "title": "Minimum Number of Flips to Make the Binary String Alternating",
+    "slug": "minimum-number-of-flips-to-make-the-binary-string-alternating",
+    "category": "Sliding Window",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/",
+    "patterns": [
+      "Sliding Window",
+      "Greedy",
+      "String"
+    ],
+    "hints": [
+      "An alternating binary string of length n is either '010101...' or '101010...'.",
+      "Type-1 operations (cyclic rotation) correspond to a sliding window of size n over s+s.",
+      "Count mismatches against both target patterns within the window; the answer is min of the two mismatch counts."
+    ],
+    "approach": "Double the string (s = s + s) to simulate cyclic rotations. Build two target alternating strings of the doubled length. Use a sliding window of size n over the doubled string; as you slide, maintain the number of mismatches with each target using O(1) updates. The answer is the minimum mismatch count seen across all windows.",
+    "solution_python": "class Solution:\n    def minFlips(self, s: str) -> int:\n        n = len(s)\n        s2 = s + s\n        t1 = ''.join('0' if i % 2 == 0 else '1' for i in range(2 * n))\n        t2 = ''.join('1' if i % 2 == 0 else '0' for i in range(2 * n))\n        diff1 = sum(s2[i] != t1[i] for i in range(n))\n        diff2 = sum(s2[i] != t2[i] for i in range(n))\n        ans = min(diff1, diff2)\n        for i in range(n, 2 * n):\n            if s2[i] != t1[i]: diff1 += 1\n            if s2[i] != t2[i]: diff2 += 1\n            if s2[i - n] != t1[i - n]: diff1 -= 1\n            if s2[i - n] != t2[i - n]: diff2 -= 1\n            ans = min(ans, diff1, diff2)\n        return ans",
+    "solution_js": "var minFlips = function(s) {\n    const n = s.length;\n    const s2 = s + s;\n    const t1 = Array.from({length: 2*n}, (_, i) => i % 2 === 0 ? '0' : '1').join('');\n    const t2 = Array.from({length: 2*n}, (_, i) => i % 2 === 0 ? '1' : '0').join('');\n    let d1 = 0, d2 = 0;\n    for (let i = 0; i < n; i++) { if (s2[i] !== t1[i]) d1++; if (s2[i] !== t2[i]) d2++; }\n    let ans = Math.min(d1, d2);\n    for (let i = n; i < 2*n; i++) {\n        if (s2[i] !== t1[i]) d1++; if (s2[i] !== t2[i]) d2++;\n        if (s2[i-n] !== t1[i-n]) d1--; if (s2[i-n] !== t2[i-n]) d2--;\n        ans = Math.min(ans, d1, d2);\n    }\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "One O(n) pass to initialize the window and one O(n) pass to slide it, both over the doubled string.",
+    "space_complexity_explanation": "The doubled string and two target strings each require O(n) space.",
+    "key_insight": "Doubling the string converts cyclic rotations into a standard sliding window problem; tracking mismatches incrementally as the window slides gives O(n) total work.",
+    "related": [
+      1703,
+      926
     ],
     "companies": [
       "google"
@@ -17517,6 +17744,107 @@
       645,
       287,
       41
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3129,
+    "title": "Find All Possible Stable Binary Arrays I",
+    "slug": "find-all-possible-stable-binary-arrays-i",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/find-all-possible-stable-binary-arrays-i/",
+    "patterns": [
+      "Dynamic Programming",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Define dp[i][j][last] = number of stable arrays using i zeros and j ones, ending with 'last'.",
+      "A transition is valid only if it doesn't create a run of more than limit identical values.",
+      "Use prefix sums over dp states to efficiently subtract out invalid transitions."
+    ],
+    "approach": "Use 3D DP: dp[i][j][k] = number of stable arrays with i zeros, j ones, ending with digit k (0 or 1). For each state, sum over all valid previous run lengths up to limit. Use prefix sums to compute range sums efficiently, achieving O(zero * one * limit) overall. Take results modulo 10^9 + 7.",
+    "solution_python": "class Solution:\n    def numberOfStableArrays(self, zero: int, one: int, limit: int) -> int:\n        MOD = 10**9 + 7\n        # dp[i][j][k]: arrays with i zeros, j ones, ending in k\n        dp = [[[0, 0] for _ in range(one + 1)] for _ in range(zero + 1)]\n        dp[0][0][0] = dp[0][0][1] = 1  # empty base\n        # Actually use iterative build\n        from functools import lru_cache\n        @lru_cache(maxsize=None)\n        def solve(z, o, last):\n            if z == 0 and o == 0:\n                return 1\n            res = 0\n            if last == 0 and z > 0:\n                for run in range(1, min(limit, z) + 1):\n                    res += solve(z - run, o, 1)\n            elif last == 1 and o > 0:\n                for run in range(1, min(limit, o) + 1):\n                    res += solve(z, o - run, 0)\n            return res % MOD\n        return (solve(zero, one, 0) + solve(zero, one, 1)) % MOD",
+    "solution_js": "var numberOfStableArrays = function(zero, one, limit) {\n    const MOD = 1000000007n;\n    const memo = new Map();\n    function solve(z, o, last) {\n        if (z === 0 && o === 0) return 1n;\n        const key = ;\n        if (memo.has(key)) return memo.get(key);\n        let res = 0n;\n        if (last === 0 && z > 0) {\n            for (let run = 1; run <= Math.min(limit, z); run++)\n                res += solve(z - run, o, 1);\n        } else if (last === 1 && o > 0) {\n            for (let run = 1; run <= Math.min(limit, o); run++)\n                res += solve(z, o - run, 0);\n        }\n        res %= MOD;\n        memo.set(key, res);\n        return res;\n    }\n    return Number((solve(zero, one, 0) + solve(zero, one, 1)) % MOD);\n};",
+    "time_complexity": "O(zero * one * limit)",
+    "space_complexity": "O(zero * one)",
+    "time_complexity_explanation": "There are O(zero * one) distinct (z, o, last) states and each transition iterates up to limit times.",
+    "space_complexity_explanation": "The memoization table stores O(zero * one * 2) entries.",
+    "key_insight": "Modeling runs of same-digit values as the DP dimension keeps transitions straightforward; prefix sums can further reduce per-transition cost to O(1) for larger inputs.",
+    "related": [
+      3130,
+      2826
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3296,
+    "title": "Minimum Number of Seconds to Make Mountain Height Zero",
+    "slug": "minimum-number-of-seconds-to-make-mountain-height-zero",
+    "category": "Binary Search",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/minimum-number-of-seconds-to-make-mountain-height-zero/",
+    "patterns": [
+      "Binary Search",
+      "Greedy",
+      "Math"
+    ],
+    "hints": [
+      "Binary search on the total time T.",
+      "For a given T, compute how much height each worker can reduce and check if the total >= mountainHeight.",
+      "Worker i takes i*(i+1)/2 seconds to reduce height by i; use this to find the max reduction in time T."
+    ],
+    "approach": "Binary search on the answer T (total seconds). For each worker with speed workerTimes[i], the time to reduce height by h is workerTimes[i] * h*(h+1)/2. Given T seconds, binary search or use the quadratic formula to find the maximum h each worker can achieve. Sum up reductions across all workers; if >= mountainHeight, T is feasible.",
+    "solution_python": "import math\nclass Solution:\n    def minNumberOfSeconds(self, mountainHeight: int, workerTimes: list) -> int:\n        def max_reduction(worker_time, T):\n            # h*(h+1)/2 <= T / worker_time\n            budget = T // worker_time\n            # solve h*(h+1)/2 <= budget => h <= (-1 + sqrt(1+8*budget))/2\n            h = int((-1 + math.isqrt(1 + 8 * budget)) // 2)\n            return h\n        def feasible(T):\n            total = sum(max_reduction(wt, T) for wt in workerTimes)\n            return total >= mountainHeight\n        lo, hi = 1, min(workerTimes) * mountainHeight * (mountainHeight + 1) // 2\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if feasible(mid):\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo",
+    "solution_js": "var minNumberOfSeconds = function(mountainHeight, workerTimes) {\n    function maxReduction(wt, T) {\n        const budget = Math.floor(T / wt);\n        return Math.floor((-1 + Math.sqrt(1 + 8 * budget)) / 2);\n    }\n    function feasible(T) {\n        let total = 0;\n        for (const wt of workerTimes) total += maxReduction(wt, T);\n        return total >= mountainHeight;\n    }\n    const minWt = Math.min(...workerTimes);\n    let lo = 1n, hi = BigInt(minWt) * BigInt(mountainHeight) * BigInt(mountainHeight + 1) / 2n;\n    while (lo < hi) {\n        const mid = (lo + hi) / 2n;\n        if (feasible(Number(mid))) hi = mid; else lo = mid + 1n;\n    }\n    return Number(lo);\n};",
+    "time_complexity": "O(n log(max_T))",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Binary search runs O(log(max_T)) iterations, each doing O(n) work across all workers.",
+    "space_complexity_explanation": "Only a constant amount of extra space is used beyond the input array.",
+    "key_insight": "Binary searching on time T with an O(1) per-worker feasibility check (via the closed-form quadratic inverse) turns an otherwise complex scheduling problem into a clean O(n log T) solution.",
+    "related": [
+      875,
+      1011,
+      2594
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3600,
+    "title": "Maximize Spanning Tree Stability with Upgrades",
+    "slug": "maximize-spanning-tree-stability-with-upgrades",
+    "category": "Graph",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/maximize-spanning-tree-stability-with-upgrades/",
+    "patterns": [
+      "Graph",
+      "Binary Search",
+      "Union-Find",
+      "Greedy"
+    ],
+    "hints": [
+      "Binary search on the answer: for a given stability threshold t, check if a spanning tree with minimum edge weight >= t is achievable after at most k upgrades.",
+      "Sort edges by weight descending and greedily include them; edges below the threshold can be upgraded if k allows.",
+      "Use Union-Find to efficiently check connectivity while accounting for upgraded edges."
+    ],
+    "approach": "Binary search on the answer (minimum edge weight in the spanning tree). For a candidate answer t, sort edges by weight descending and use a greedy approach with Union-Find: include edges with weight >= t directly; for edges with weight < t, count how many upgrades would be needed. If the total needed upgrades <= k and the graph becomes connected, t is feasible. Return the maximum feasible t.",
+    "solution_python": "class Solution:\n    def maxStability(self, n: int, edges: list, k: int) -> int:\n        def find(p, x):\n            while p[x] != x: p[x] = p[p[x]]; x = p[x]\n            return x\n        def union(p, rank, x, y):\n            rx, ry = find(p, x), find(p, y)\n            if rx == ry: return False\n            if rank[rx] < rank[ry]: rx, ry = ry, rx\n            p[ry] = rx\n            if rank[rx] == rank[ry]: rank[rx] += 1\n            return True\n        def feasible(t):\n            p = list(range(n + 1))\n            rank = [0] * (n + 1)\n            upgrades_used = 0\n            components = n\n            for w, u, v in sorted_edges:\n                if w >= t:\n                    if union(p, rank, u, v):\n                        components -= 1\n                else:\n                    if upgrades_used < k:\n                        if union(p, rank, u, v):\n                            components -= 1\n                            upgrades_used += 1\n            return components == 1\n        sorted_edges = sorted([(w, u, v) for u, v, w in edges], reverse=True)\n        weights = sorted(set(w for u, v, w in edges))\n        lo, hi = 0, len(weights) - 1\n        ans = weights[0] if weights else 0\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            if feasible(weights[mid]):\n                ans = weights[mid]\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        return ans",
+    "solution_js": "var maxStability = function(n, edges, k) {\n    function find(p, x) { while (p[x] !== x) { p[x] = p[p[x]]; x = p[x]; } return x; }\n    function union(p, rank, x, y) {\n        let rx = find(p, x), ry = find(p, y);\n        if (rx === ry) return false;\n        if (rank[rx] < rank[ry]) [rx, ry] = [ry, rx];\n        p[ry] = rx; if (rank[rx] === rank[ry]) rank[rx]++;\n        return true;\n    }\n    const sorted = edges.map(([u,v,w]) => [w,u,v]).sort((a,b) => b[0]-a[0]);\n    const weights = [...new Set(edges.map(([u,v,w])=>w))].sort((a,b)=>a-b);\n    function feasible(t) {\n        const p = Array.from({length:n+1},(_,i)=>i), rank = new Array(n+1).fill(0);\n        let upg = 0, comp = n;\n        for (const [w,u,v] of sorted) {\n            if (w >= t) { if (union(p,rank,u,v)) comp--; }\n            else if (upg < k) { if (union(p,rank,u,v)) { comp--; upg++; } }\n        }\n        return comp === 1;\n    }\n    let lo = 0, hi = weights.length-1, ans = weights[0] || 0;\n    while (lo <= hi) {\n        const mid = (lo+hi)>>1;\n        if (feasible(weights[mid])) { ans = weights[mid]; lo = mid+1; } else hi = mid-1;\n    }\n    return ans;\n};",
+    "time_complexity": "O(E log E log W)",
+    "space_complexity": "O(E + V)",
+    "time_complexity_explanation": "Binary search over O(E) distinct weights gives O(log E) iterations, each running a O(E log E) Kruskal-like pass, for O(E log E log E) total.",
+    "space_complexity_explanation": "Union-Find and edge storage require O(V + E) space.",
+    "key_insight": "Binary searching on the answer threshold converts a maximization problem into a series of feasibility checks, each solvable greedily with Union-Find by prioritizing high-weight edges and spending upgrade budget only when needed.",
+    "related": [
+      1489,
+      1135,
+      1584
     ],
     "companies": [
       "google"
