@@ -17065,6 +17065,38 @@
     ]
   },
   {
+    "id": 657,
+    "title": "Robot Return to Origin",
+    "slug": "robot-return-to-origin",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/robot-return-to-origin/",
+    "patterns": [
+      "String",
+      "Simulation"
+    ],
+    "hints": [
+      "Track the robot's x and y coordinates as you process each move.",
+      "Count the number of U/D and L/R moves separately.",
+      "The robot returns to origin if and only if the counts of U equals D and L equals R."
+    ],
+    "approach": "Simulate the robot's movements by counting the occurrences of each direction. The robot returns to the origin if and only if the number of 'U' moves equals 'D' moves and the number of 'L' moves equals 'R' moves. This can be done in a single pass.",
+    "solution_python": "class Solution:\n    def judgeCircle(self, moves: str) -> bool:\n        return moves.count('U') == moves.count('D') and moves.count('L') == moves.count('R')",
+    "solution_js": "var judgeCircle = function(moves) {\n    let x = 0, y = 0;\n    for (const m of moves) {\n        if (m === 'U') y++;\n        else if (m === 'D') y--;\n        else if (m === 'L') x--;\n        else x++;\n    }\n    return x === 0 && y === 0;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The string of n moves is scanned a constant number of times.",
+    "space_complexity_explanation": "Only a constant number of counters are maintained.",
+    "key_insight": "Net displacement in each axis must be zero; counting moves per direction and checking equality is sufficient — no actual coordinate simulation is needed.",
+    "related": [
+      2120,
+      874
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 777,
     "title": "Swap Adjacent in LR String",
     "slug": "swap-adjacent-in-lr-string",
@@ -17876,6 +17908,41 @@
     ]
   },
   {
+    "id": 1391,
+    "title": "Check if There is a Valid Path in a Grid",
+    "slug": "check-if-there-is-a-valid-path-in-a-grid",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/check-if-there-is-a-valid-path-in-a-grid/",
+    "patterns": [
+      "BFS",
+      "DFS",
+      "Union Find",
+      "Graph"
+    ],
+    "hints": [
+      "Each street type has a fixed set of two directions it connects; encode these as a lookup table.",
+      "Use BFS/DFS: from each reachable cell, follow only connections allowed by the current cell's street type and verify the neighbor's street type connects back.",
+      "Two cells are validly connected if the current cell's exit direction matches the neighbor cell's entry direction."
+    ],
+    "approach": "Encode each of the 6 street types as a pair of directions it connects. Perform a BFS/DFS starting from (0,0). From each visited cell, try all directions the current street type allows. Move to the neighbor only if that neighbor's street type also connects back toward the current cell. Return whether (m-1, n-1) is ever reached.",
+    "solution_python": "from collections import deque\n\nclass Solution:\n    def hasValidPath(self, grid: list[list[int]]) -> bool:\n        # connections[t] = list of (dr, dc, required_back_directions_index)\n        # direction indices: 0=left, 1=right, 2=up, 3=down\n        connects = {\n            1: [(0,-1,1),(0,1,0)],\n            2: [(-1,0,3),(1,0,2)],\n            3: [(0,-1,1),(1,0,2)],\n            4: [(0,1,0),(1,0,2)],\n            5: [(0,-1,1),(-1,0,3)],\n            6: [(0,1,0),(-1,0,3)],\n        }\n        m, n = len(grid), len(grid[0])\n        visited = [[False]*n for _ in range(m)]\n        queue = deque([(0,0)])\n        visited[0][0] = True\n        while queue:\n            r, c = queue.popleft()\n            if r == m-1 and c == n-1:\n                return True\n            for dr, dc, back in connects[grid[r][c]]:\n                nr, nc = r+dr, c+dc\n                if 0 <= nr < m and 0 <= nc < n and not visited[nr][nc]:\n                    if any(b == back for _, _, b in [(0,0,back)] if True):\n                        # check neighbor connects back\n                        if any(bdr == -dr and bdc == -dc for bdr, bdc, _ in connects[grid[nr][nc]]):\n                            visited[nr][nc] = True\n                            queue.append((nr,nc))\n        return visited[m-1][n-1]",
+    "solution_js": "var hasValidPath = function(grid) {\n    const connects = {\n        1: [[0,-1,1],[0,1,0]],\n        2: [[-1,0,3],[1,0,2]],\n        3: [[0,-1,1],[1,0,2]],\n        4: [[0,1,0],[1,0,2]],\n        5: [[0,-1,1],[-1,0,3]],\n        6: [[0,1,0],[-1,0,3]],\n    };\n    const m = grid.length, n = grid[0].length;\n    const visited = Array.from({length: m}, () => new Array(n).fill(false));\n    const queue = [[0,0]];\n    visited[0][0] = true;\n    let qi = 0;\n    while (qi < queue.length) {\n        const [r, c] = queue[qi++];\n        if (r === m-1 && c === n-1) return true;\n        for (const [dr, dc] of connects[grid[r][c]]) {\n            const nr = r+dr, nc = c+dc;\n            if (nr>=0 && nr<m && nc>=0 && nc<n && !visited[nr][nc]) {\n                const back = connects[grid[nr][nc]].some(([bdr,bdc]) => bdr===-dr && bdc===-dc);\n                if (back) { visited[nr][nc]=true; queue.push([nr,nc]); }\n            }\n        }\n    }\n    return visited[m-1][n-1];\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is enqueued at most once, so the BFS visits O(m * n) cells total.",
+    "space_complexity_explanation": "The visited array and BFS queue each hold up to O(m * n) entries.",
+    "key_insight": "Model street connectivity as a directed adjacency lookup; two adjacent cells are connected if and only if each cell's street type allows movement toward the other, making BFS straightforward.",
+    "related": [
+      1559,
+      864,
+      1293
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 1404,
     "title": "Number of Steps to Reduce a Number in Binary Representation to One",
     "slug": "number-of-steps-to-reduce-a-number-in-binary-representation-to-one",
@@ -18031,6 +18098,41 @@
     "key_insight": "The second half of S_n is the reverse-and-complement of S_{n-1}, so any query in the second half can be mapped to an equivalent query in the first half via index mirroring plus a bit flip.",
     "related": [
       779
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1559,
+    "title": "Detect Cycles in 2D Grid",
+    "slug": "detect-cycles-in-2d-grid",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/detect-cycles-in-2d-grid/",
+    "patterns": [
+      "DFS",
+      "BFS",
+      "Union Find",
+      "Graph"
+    ],
+    "hints": [
+      "Treat each cell as a graph node; add edges between adjacent cells that share the same character.",
+      "Use DFS (or BFS) with a visited array; if you reach an already-visited cell that is not the parent you came from, a cycle exists.",
+      "Alternatively, use Union-Find: if two same-character adjacent cells are already in the same component, a cycle is detected."
+    ],
+    "approach": "Use DFS on the grid. Mark cells as visited. For each unvisited cell, start a DFS tracking the parent cell to avoid immediately backtracking. If during the DFS we encounter a visited cell that is not the parent (and has the same character), a cycle is detected. Return True as soon as any cycle is found.",
+    "solution_python": "class Solution:\n    def containsCycle(self, grid: list[list[str]]) -> bool:\n        m, n = len(grid), len(grid[0])\n        visited = [[False] * n for _ in range(m)]\n        \n        def dfs(r, c, pr, pc):\n            visited[r][c] = True\n            for dr, dc in ((0,1),(0,-1),(1,0),(-1,0)):\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < m and 0 <= nc < n and grid[nr][nc] == grid[r][c]:\n                    if not visited[nr][nc]:\n                        if dfs(nr, nc, r, c):\n                            return True\n                    elif (nr, nc) != (pr, pc):\n                        return True\n            return False\n        \n        for i in range(m):\n            for j in range(n):\n                if not visited[i][j]:\n                    if dfs(i, j, -1, -1):\n                        return True\n        return False",
+    "solution_js": "var containsCycle = function(grid) {\n    const m = grid.length, n = grid[0].length;\n    const visited = Array.from({length: m}, () => new Array(n).fill(false));\n    const dirs = [[0,1],[0,-1],[1,0],[-1,0]];\n    \n    const dfs = (r, c, pr, pc) => {\n        visited[r][c] = true;\n        for (const [dr, dc] of dirs) {\n            const nr = r + dr, nc = c + dc;\n            if (nr >= 0 && nr < m && nc >= 0 && nc < n && grid[nr][nc] === grid[r][c]) {\n                if (!visited[nr][nc]) {\n                    if (dfs(nr, nc, r, c)) return true;\n                } else if (nr !== pr || nc !== pc) return true;\n            }\n        }\n        return false;\n    };\n    \n    for (let i = 0; i < m; i++)\n        for (let j = 0; j < n; j++)\n            if (!visited[i][j] && dfs(i, j, -1, -1)) return true;\n    return false;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is visited at most once during the DFS traversal.",
+    "space_complexity_explanation": "The visited array and DFS call stack each use O(m * n) space in the worst case.",
+    "key_insight": "The classic cycle-detection trick in undirected graph DFS applies directly: if a neighbor is already visited and is not the immediate parent, a cycle exists.",
+    "related": [
+      684,
+      785,
+      1971
     ],
     "companies": [
       "google"
@@ -18294,6 +18396,70 @@
     ]
   },
   {
+    "id": 2022,
+    "title": "Convert 1D Array Into 2D Array",
+    "slug": "convert-1d-array-into-2d-array",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/convert-1d-array-into-2d-array/",
+    "patterns": [
+      "Arrays",
+      "Matrix"
+    ],
+    "hints": [
+      "First verify that original.length == m * n; if not, return an empty array.",
+      "Fill the 2D matrix row by row using integer division and modulo to map flat index to (row, col).",
+      "Python list slicing can build each row in one expression."
+    ],
+    "approach": "Check that the total number of elements equals m * n; return an empty list if not. Otherwise, construct the 2D matrix by slicing the original array into m consecutive chunks of size n, which directly forms the rows of the result matrix.",
+    "solution_python": "class Solution:\n    def construct2DArray(self, original: list[int], m: int, n: int) -> list[list[int]]:\n        if len(original) != m * n:\n            return []\n        return [original[i * n:(i + 1) * n] for i in range(m)]",
+    "solution_js": "var construct2DArray = function(original, m, n) {\n    if (original.length !== m * n) return [];\n    const result = [];\n    for (let i = 0; i < m; i++) {\n        result.push(original.slice(i * n, (i + 1) * n));\n    }\n    return result;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Every element of the original array is placed exactly once into the output matrix.",
+    "space_complexity_explanation": "The output 2D array contains m * n elements.",
+    "key_insight": "The flat-to-2D mapping is trivially achieved with slicing or index arithmetic; the only guard needed is checking total element count.",
+    "related": [
+      867,
+      566
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2078,
+    "title": "Two Furthest Houses With Different Colors",
+    "slug": "two-furthest-houses-with-different-colors",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/two-furthest-houses-with-different-colors/",
+    "patterns": [
+      "Greedy",
+      "Two Pointers"
+    ],
+    "hints": [
+      "The maximum distance pair must include either the first or the last house.",
+      "Scan from the right looking for any house with a different color than colors[0], then scan from the left looking for any house with a different color than colors[n-1].",
+      "Take the maximum of the two distances found."
+    ],
+    "approach": "The optimal pair always involves the first or the last house. Scan from right to left to find the rightmost house whose color differs from colors[0], recording that distance. Scan from left to right to find the leftmost house whose color differs from colors[n-1], recording that distance. Return the maximum of the two.",
+    "solution_python": "class Solution:\n    def maxDistance(self, colors: list[int]) -> int:\n        n = len(colors)\n        ans = 0\n        for i in range(n - 1, 0, -1):\n            if colors[i] != colors[0]:\n                ans = max(ans, i)\n                break\n        for i in range(n - 2, -1, -1):\n            if colors[i] != colors[n - 1]:\n                ans = max(ans, n - 1 - i)\n                break\n        return ans",
+    "solution_js": "var maxDistance = function(colors) {\n    const n = colors.length;\n    let ans = 0;\n    for (let i = n - 1; i > 0; i--) {\n        if (colors[i] !== colors[0]) { ans = Math.max(ans, i); break; }\n    }\n    for (let i = n - 2; i >= 0; i--) {\n        if (colors[i] !== colors[n - 1]) { ans = Math.max(ans, n - 1 - i); break; }\n    }\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Two linear scans over the array of n houses are performed.",
+    "space_complexity_explanation": "Only a constant number of variables are used regardless of input size.",
+    "key_insight": "The furthest pair must involve one endpoint of the array; checking both endpoints and greedily scanning inward from each gives the answer in two passes.",
+    "related": [
+      1855,
+      2099
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 2095,
     "title": "Delete the Middle Node of a Linked List",
     "slug": "delete-the-middle-node-of-a-linked-list",
@@ -18392,6 +18558,72 @@
     ]
   },
   {
+    "id": 2452,
+    "title": "Words Within Two Edits of Dictionary",
+    "slug": "words-within-two-edits-of-dictionary",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/words-within-two-edits-of-dictionary/",
+    "patterns": [
+      "String",
+      "Brute Force",
+      "Trie"
+    ],
+    "hints": [
+      "For each query word, compare it character by character with every dictionary word.",
+      "Count the number of positions where the two words differ — if it is 2 or fewer the query is valid.",
+      "Because all words have the same length you can short-circuit as soon as the difference count exceeds 2."
+    ],
+    "approach": "Since all words share the same length, compare each query word against every dictionary word by counting character mismatches. If any dictionary word differs in at most 2 positions, the query word is included in the result. Short-circuit comparison once mismatches exceed 2 to improve practical performance.",
+    "solution_python": "class Solution:\n    def twoEditWords(self, queries: list[str], dictionary: list[str]) -> list[str]:\n        result = []\n        for q in queries:\n            for d in dictionary:\n                diff = sum(a != b for a, b in zip(q, d))\n                if diff <= 2:\n                    result.append(q)\n                    break\n        return result",
+    "solution_js": "var twoEditWords = function(queries, dictionary) {\n    const result = [];\n    for (const q of queries) {\n        for (const d of dictionary) {\n            let diff = 0;\n            for (let i = 0; i < q.length; i++) {\n                if (q[i] !== d[i]) diff++;\n                if (diff > 2) break;\n            }\n            if (diff <= 2) { result.push(q); break; }\n        }\n    }\n    return result;\n};",
+    "time_complexity": "O(q * d * L)",
+    "space_complexity": "O(q)",
+    "time_complexity_explanation": "For each of q query words we compare against each of d dictionary words character by character up to length L.",
+    "space_complexity_explanation": "The output list holds at most q query words.",
+    "key_insight": "Because all words have the same length, edit distance reduces to simple Hamming distance (substitutions only), making the comparison a straightforward character-by-character scan.",
+    "related": [
+      72,
+      161,
+      2468
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2615,
+    "title": "Sum of Distances",
+    "slug": "sum-of-distances",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/sum-of-distances/",
+    "patterns": [
+      "Prefix Sum",
+      "Hash Map"
+    ],
+    "hints": [
+      "Group indices by their value; all same-value indices form a sorted list.",
+      "For a group of size k, compute prefix sums so each element's contribution can be found in O(1).",
+      "Use the formula: left sum contribution = index * (position in group) - prefix[position], right = (suffix[position]) - index * (k - position - 1)."
+    ],
+    "approach": "Group indices by their value. For each group, maintain a running prefix sum of indices. For the i-th element in the group (0-indexed), the sum of absolute distances to all other elements in the group equals index * i - prefixSum (left part) plus (suffixSum - index * (count - i - 1)) (right part). Accumulate these into the answer array.",
+    "solution_python": "from collections import defaultdict\n\nclass Solution:\n    def distance(self, nums: list[int]) -> list[int]:\n        n = len(nums)\n        ans = [0] * n\n        groups = defaultdict(list)\n        for i, v in enumerate(nums):\n            groups[v].append(i)\n        for indices in groups.values():\n            k = len(indices)\n            prefix = 0\n            for pos, idx in enumerate(indices):\n                ans[idx] += idx * pos - prefix\n                prefix += idx\n            suffix = 0\n            for pos in range(k - 1, -1, -1):\n                idx = indices[pos]\n                right_count = k - 1 - pos\n                ans[idx] += suffix - idx * right_count\n                suffix += idx\n        return ans",
+    "solution_js": "var distance = function(nums) {\n    const n = nums.length;\n    const ans = new Array(n).fill(0);\n    const groups = new Map();\n    for (let i = 0; i < n; i++) {\n        if (!groups.has(nums[i])) groups.set(nums[i], []);\n        groups.get(nums[i]).push(i);\n    }\n    for (const indices of groups.values()) {\n        const k = indices.length;\n        let prefix = 0;\n        for (let pos = 0; pos < k; pos++) {\n            const idx = indices[pos];\n            ans[idx] += idx * pos - prefix;\n            prefix += idx;\n        }\n        let suffix = 0;\n        for (let pos = k - 1; pos >= 0; pos--) {\n            const idx = indices[pos];\n            ans[idx] += suffix - idx * (k - 1 - pos);\n            suffix += idx;\n        }\n    }\n    return ans;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Each index is visited a constant number of times across the grouping and two-pass prefix/suffix steps.",
+    "space_complexity_explanation": "The groups map and answer array together use O(n) space.",
+    "key_insight": "Instead of computing pairwise distances naively in O(n^2), use prefix sums within each sorted group to compute each element's total distance contribution in O(1) amortized.",
+    "related": [
+      2121,
+      1685
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 2619,
     "title": "Array Prototype Last",
     "slug": "array-prototype-last",
@@ -18450,6 +18682,38 @@
     "related": [
       2725,
       2721
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2833,
+    "title": "Furthest Point From Origin",
+    "slug": "furthest-point-from-origin",
+    "category": "String",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/furthest-point-from-origin/",
+    "patterns": [
+      "Greedy",
+      "String"
+    ],
+    "hints": [
+      "Count the number of 'L', 'R', and '_' (wildcard) moves.",
+      "The net displacement ignoring wildcards is |count('L') - count('R')|.",
+      "Assign all wildcards to whichever direction (L or R) has more moves; if tied, assign them all to either direction."
+    ],
+    "approach": "Count occurrences of 'L', 'R', and '_'. The furthest reachable position is the absolute difference between the L-count and R-count plus the number of wildcards, because all wildcards can be assigned to the dominant direction. Return this sum.",
+    "solution_python": "class Solution:\n    def furthestDistanceFromOrigin(self, moves: str) -> int:\n        l = moves.count('L')\n        r = moves.count('R')\n        wild = moves.count('_')\n        return abs(l - r) + wild",
+    "solution_js": "var furthestDistanceFromOrigin = function(moves) {\n    let l = 0, r = 0, wild = 0;\n    for (const m of moves) {\n        if (m === 'L') l++;\n        else if (m === 'R') r++;\n        else wild++;\n    }\n    return Math.abs(l - r) + wild;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "A single pass counts each character type in the moves string of length n.",
+    "space_complexity_explanation": "Only three integer counters are maintained regardless of input length.",
+    "key_insight": "All wildcard '_' moves should be assigned to the currently dominant direction; the maximum distance is simply the imbalance between L and R plus the total wildcards.",
+    "related": [
+      657,
+      2120
     ],
     "companies": [
       "google"
@@ -18683,6 +18947,37 @@
     ]
   },
   {
+    "id": 3285,
+    "title": "Find Indices of Stable Mountains",
+    "slug": "find-indices-of-stable-mountains",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-indices-of-stable-mountains/",
+    "patterns": [
+      "Arrays"
+    ],
+    "hints": [
+      "A mountain at index i is stable if height[i-1] > threshold.",
+      "Iterate from index 1 to n-1 and check the previous element.",
+      "Collect all qualifying indices into the result list."
+    ],
+    "approach": "Iterate through indices 1 to n-1. For each index i, check whether height[i-1] exceeds the threshold. If so, index i is a stable mountain and is added to the result list. This is a single linear scan.",
+    "solution_python": "class Solution:\n    def stableMountains(self, height: list[int], threshold: int) -> list[int]:\n        return [i for i in range(1, len(height)) if height[i - 1] > threshold]",
+    "solution_js": "var stableMountains = function(height, threshold) {\n    const result = [];\n    for (let i = 1; i < height.length; i++) {\n        if (height[i - 1] > threshold) result.push(i);\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(k)",
+    "time_complexity_explanation": "A single pass over the n elements checks each predecessor once.",
+    "space_complexity_explanation": "The output holds at most k stable mountain indices where k <= n.",
+    "key_insight": "Stability depends solely on the immediately preceding element; there is no need to look further back or maintain any running state.",
+    "related": [
+      1095,
+      852
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 3296,
     "title": "Minimum Number of Seconds to Make Mountain Height Zero",
     "slug": "minimum-number-of-seconds-to-make-mountain-height-zero",
@@ -18711,6 +19006,40 @@
       875,
       1011,
       2594
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 3464,
+    "title": "Maximize the Distance Between Points on a Square",
+    "slug": "maximize-the-distance-between-points-on-a-square",
+    "category": "Greedy",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/maximize-the-distance-between-points-on-a-square/",
+    "patterns": [
+      "Binary Search",
+      "Greedy",
+      "Geometry"
+    ],
+    "hints": [
+      "Binary search on the answer: the minimum distance d between any two consecutive chosen points.",
+      "For a fixed d, greedily check if k points can be chosen on the square's perimeter such that consecutive points are at least d apart.",
+      "Represent all candidate points by their arc-length position along the perimeter, then greedily pick the next valid point."
+    ],
+    "approach": "Binary search on the minimum gap d between consecutive chosen points. For a given d, map all candidate points to their perimeter arc-length positions and sort them. Use a greedy scan starting from each candidate as the first point, advancing to the next point at least d ahead along the circular perimeter, and check if k points can be selected. If any starting point allows k selections, d is feasible.",
+    "solution_python": "class Solution:\n    def maxDistance(self, side: int, points: list[list[int]], k: int) -> int:\n        def arc(x, y):\n            if y == 0: return x\n            if x == side: return side + y\n            if y == side: return 2 * side + (side - x)\n            return 3 * side + (side - y)\n        \n        pos = sorted(arc(x, y) for x, y in points)\n        n = len(pos)\n        perimeter = 4 * side\n        \n        def feasible(d):\n            for start in range(n):\n                cur = pos[start]\n                count = 1\n                j = start\n                while count < k:\n                    nxt = cur + d\n                    lo, hi = 0, n - 1\n                    found = -1\n                    while lo <= hi:\n                        mid = (lo + hi) // 2\n                        cand = pos[(j + 1 + (mid)) % n] if False else None\n                        break\n                    # linear scan for simplicity within binary search\n                    advanced = False\n                    for idx in range(j + 1, j + n):\n                        real_idx = idx % n\n                        p = pos[real_idx]\n                        if real_idx <= start:\n                            p += perimeter\n                        if p - pos[start] > perimeter:\n                            break\n                        if p >= cur + d:\n                            cur = p\n                            j = real_idx\n                            count += 1\n                            advanced = True\n                            break\n                    if not advanced:\n                        break\n                if count >= k:\n                    return True\n            return False\n        \n        lo, hi = 0, perimeter // k\n        ans = 0\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            if feasible(mid):\n                ans = mid\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        return ans",
+    "solution_js": "var maxDistance = function(side, points, k) {\n    const arc = (x, y) => {\n        if (y === 0) return x;\n        if (x === side) return side + y;\n        if (y === side) return 2 * side + (side - x);\n        return 3 * side + (side - y);\n    };\n    const pos = points.map(([x, y]) => arc(x, y)).sort((a, b) => a - b);\n    const n = pos.length;\n    const perimeter = 4 * side;\n    \n    const feasible = (d) => {\n        for (let start = 0; start < n; start++) {\n            let cur = pos[start], count = 1, j = start;\n            while (count < k) {\n                let advanced = false;\n                for (let idx = j + 1; idx < j + n; idx++) {\n                    const ri = idx % n;\n                    let p = pos[ri];\n                    if (ri <= start) p += perimeter;\n                    if (p - pos[start] > perimeter) break;\n                    if (p >= cur + d) { cur = p; j = ri; count++; advanced = true; break; }\n                }\n                if (!advanced) break;\n            }\n            if (count >= k) return true;\n        }\n        return false;\n    };\n    \n    let lo = 0, hi = Math.floor(perimeter / k), ans = 0;\n    while (lo <= hi) {\n        const mid = (lo + hi) >> 1;\n        if (feasible(mid)) { ans = mid; lo = mid + 1; } else hi = mid - 1;\n    }\n    return ans;\n};",
+    "time_complexity": "O(n^2 log(perimeter/k))",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Binary search runs O(log(perimeter/k)) iterations, and each feasibility check does an O(n^2) greedy scan in the worst case.",
+    "space_complexity_explanation": "The sorted arc-length array uses O(n) space.",
+    "key_insight": "Parameterize the square's perimeter as a 1D circular arc; then binary search on the minimum gap d and greedily verify feasibility by advancing along the sorted arc positions.",
+    "related": [
+      1011,
+      410,
+      2616
     ],
     "companies": [
       "google"
