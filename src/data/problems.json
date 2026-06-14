@@ -5309,6 +5309,38 @@
     ]
   },
   {
+    "id": 176,
+    "title": "Second Highest Salary",
+    "slug": "second-highest-salary",
+    "category": "SQL",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/second-highest-salary/",
+    "patterns": [
+      "SQL"
+    ],
+    "hints": [
+      "Use LIMIT and OFFSET to skip the highest salary and grab the next one.",
+      "Wrap the query in a subquery or use IFNULL/COALESCE to return NULL when no second salary exists.",
+      "Use DISTINCT to avoid counting duplicate top salaries as distinct ranks."
+    ],
+    "approach": "Select the maximum salary that is strictly less than the overall maximum, or equivalently use LIMIT 1 OFFSET 1 on a DESC-ordered DISTINCT salary list. Wrapping in IFNULL/COALESCE ensures NULL is returned when fewer than two distinct salaries exist.",
+    "solution_python": "-- SQL Solution\nSELECT IFNULL(\n    (SELECT DISTINCT salary\n     FROM Employee\n     ORDER BY salary DESC\n     LIMIT 1 OFFSET 1),\n    NULL\n) AS SecondHighestSalary;",
+    "solution_js": "-- SQL Problem: No JavaScript solution applicable",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Sorting all employee salaries to find the second distinct maximum takes O(n log n).",
+    "space_complexity_explanation": "Only a constant amount of extra space is needed beyond the input table.",
+    "key_insight": "Using DISTINCT before ordering ensures duplicate top salaries don't masquerade as the second-highest; IFNULL handles the edge case of fewer than two distinct values.",
+    "related": [
+      177,
+      178,
+      184
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 189,
     "title": "Reverse String",
     "slug": "reverse-string",
@@ -6299,6 +6331,39 @@
     ],
     "companies": [
       "microsoft"
+    ]
+  },
+  {
+    "id": 233,
+    "title": "Number of Digit One",
+    "slug": "number-of-digit-one",
+    "category": "Math",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/number-of-digit-one/",
+    "patterns": [
+      "Math",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "Count the contribution of digit '1' at each position (ones, tens, hundreds, etc.) separately.",
+      "For a digit position with factor f, compute: higher = n // (f * 10), current = (n // f) % 10, lower = n % f.",
+      "If current == 0: count += higher * f; if current == 1: count += higher * f + lower + 1; if current > 1: count += (higher + 1) * f."
+    ],
+    "approach": "Iterate over each digit position (factor = 1, 10, 100, ...). For each position compute: higher digits (n // (factor*10)), current digit ((n // factor) % 10), and lower digits (n % factor). The number of 1s contributed by this position follows three cases based on whether the current digit is 0, 1, or greater than 1. Sum contributions across all positions.",
+    "solution_python": "class Solution:\n    def countDigitOne(self, n: int) -> int:\n        count = 0\n        factor = 1\n        while factor <= n:\n            higher = n // (factor * 10)\n            current = (n // factor) % 10\n            lower = n % factor\n            if current == 0:\n                count += higher * factor\n            elif current == 1:\n                count += higher * factor + lower + 1\n            else:\n                count += (higher + 1) * factor\n            factor *= 10\n        return count",
+    "solution_js": "var countDigitOne = function(n) {\n    let count = 0;\n    for (let factor = 1; factor <= n; factor *= 10) {\n        const higher = Math.floor(n / (factor * 10));\n        const current = Math.floor(n / factor) % 10;\n        const lower = n % factor;\n        if (current === 0) count += higher * factor;\n        else if (current === 1) count += higher * factor + lower + 1;\n        else count += (higher + 1) * factor;\n    }\n    return count;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The loop iterates once per digit of n, which is O(log n) iterations.",
+    "space_complexity_explanation": "Only a constant number of variables are used regardless of input size.",
+    "key_insight": "Counting digit '1' position by position and using the three-case formula (current < 1, == 1, > 1) avoids brute-force enumeration entirely, reducing complexity from O(n log n) to O(log n).",
+    "related": [
+      172,
+      357,
+      600
+    ],
+    "companies": [
+      "google"
     ]
   },
   {
@@ -16864,6 +16929,275 @@
     "related": [
       743,
       787
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 645,
+    "title": "Set Mismatch",
+    "slug": "set-mismatch",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/set-mismatch/",
+    "patterns": [
+      "Arrays",
+      "Hash Map",
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "Count the frequency of each number; the one with frequency 2 is the duplicate.",
+      "The missing number is the one with frequency 0, or equivalently compute expected sum minus actual sum after finding the duplicate.",
+      "Alternatively, use the XOR trick: XOR all indices and all values to isolate the duplicate and missing."
+    ],
+    "approach": "Use a frequency count array of size n+1. Iterate over nums, incrementing counts. The number whose count is 2 is the duplicate; the number whose count is 0 is the missing. Alternatively, compute the difference between the expected sum 1..n and the actual sum; combined with the duplicate found from the count, derive both answers.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findErrorNums(self, nums: List[int]) -> List[int]:\n        count = [0] * (len(nums) + 1)\n        for n in nums:\n            count[n] += 1\n        duplicate = missing = -1\n        for i in range(1, len(count)):\n            if count[i] == 2:\n                duplicate = i\n            elif count[i] == 0:\n                missing = i\n        return [duplicate, missing]",
+    "solution_js": "var findErrorNums = function(nums) {\n    const count = new Array(nums.length + 1).fill(0);\n    for (const n of nums) count[n]++;\n    let duplicate = -1, missing = -1;\n    for (let i = 1; i < count.length; i++) {\n        if (count[i] === 2) duplicate = i;\n        else if (count[i] === 0) missing = i;\n    }\n    return [duplicate, missing];\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Two linear passes over the input and count array, each O(n).",
+    "space_complexity_explanation": "A count array of size n+1 is allocated to track frequencies.",
+    "key_insight": "A simple frequency array makes it trivial to spot both the duplicate (count 2) and the missing (count 0) in two passes, avoiding the complexity of sorting.",
+    "related": [
+      41,
+      287,
+      442
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 844,
+    "title": "Backspace String Compare",
+    "slug": "backspace-string-compare",
+    "category": "Two Pointers",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/backspace-string-compare/",
+    "patterns": [
+      "Two Pointers",
+      "Stack",
+      "String"
+    ],
+    "hints": [
+      "Simulate the backspace with a stack: push characters, pop on '#'.",
+      "Compare the resulting stacks (or rebuilt strings) for equality.",
+      "For O(1) space, traverse both strings from the end using two pointers and a skip counter to handle backspaces without building new strings."
+    ],
+    "approach": "Two approaches: (1) Stack simulation — iterate each string and push characters onto a stack, popping on '#'. Compare final stacks. O(n) time and space. (2) Two-pointer from the end — traverse both strings right-to-left maintaining a skip count that increments on '#' and causes characters to be skipped. Compare character by character. O(n) time, O(1) space.",
+    "solution_python": "class Solution:\n    def backspaceCompare(self, s: str, t: str) -> bool:\n        def build(string):\n            stack = []\n            for c in string:\n                if c != '#':\n                    stack.append(c)\n                elif stack:\n                    stack.pop()\n            return stack\n        return build(s) == build(t)",
+    "solution_js": "var backspaceCompare = function(s, t) {\n    function build(str) {\n        const stack = [];\n        for (const c of str) {\n            if (c !== '#') stack.push(c);\n            else if (stack.length) stack.pop();\n        }\n        return stack.join('');\n    }\n    return build(s) === build(t);\n};",
+    "time_complexity": "O(n + m)",
+    "space_complexity": "O(n + m)",
+    "time_complexity_explanation": "Each character in both strings is processed exactly once by the stack simulation.",
+    "space_complexity_explanation": "In the worst case the stacks hold all characters from both strings.",
+    "key_insight": "A stack perfectly models backspace behavior; the two-pointer from-the-end approach upgrades space to O(1) by lazily consuming backspaces as a skip counter.",
+    "related": [
+      20,
+      1047,
+      1598
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 912,
+    "title": "Sort an Array",
+    "slug": "sort-an-array",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/sort-an-array/",
+    "patterns": [
+      "Merge Sort",
+      "Divide and Conquer",
+      "Heap Sort"
+    ],
+    "hints": [
+      "Think about which O(n log n) sorting algorithm can be implemented without using built-in sort.",
+      "Merge sort divides the array in half recursively, sorts each half, then merges the two sorted halves.",
+      "For the merge step, use a temporary array; copy elements back once merged."
+    ],
+    "approach": "Implement merge sort: recursively split the array into two halves until size 1, then merge sorted halves back together in O(n) time. The merge step uses a two-pointer technique to interleave elements from both halves in sorted order. This achieves O(n log n) in all cases with O(n) auxiliary space.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def sortArray(self, nums: List[int]) -> List[int]:\n        if len(nums) <= 1:\n            return nums\n        mid = len(nums) // 2\n        left = self.sortArray(nums[:mid])\n        right = self.sortArray(nums[mid:])\n        return self.merge(left, right)\n\n    def merge(self, left, right):\n        result = []\n        i = j = 0\n        while i < len(left) and j < len(right):\n            if left[i] <= right[j]:\n                result.append(left[i])\n                i += 1\n            else:\n                result.append(right[j])\n                j += 1\n        result.extend(left[i:])\n        result.extend(right[j:])\n        return result",
+    "solution_js": "var sortArray = function(nums) {\n    if (nums.length <= 1) return nums;\n    const mid = Math.floor(nums.length / 2);\n    const left = sortArray(nums.slice(0, mid));\n    const right = sortArray(nums.slice(mid));\n    return merge(left, right);\n};\n\nfunction merge(left, right) {\n    const result = [];\n    let i = 0, j = 0;\n    while (i < left.length && j < right.length) {\n        if (left[i] <= right[j]) result.push(left[i++]);\n        else result.push(right[j++]);\n    }\n    return result.concat(left.slice(i)).concat(right.slice(j));\n}",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Merge sort divides the array log n times and each level does O(n) work during the merge step.",
+    "space_complexity_explanation": "Auxiliary arrays created during merging total O(n) space across all levels of recursion.",
+    "key_insight": "Merge sort is the go-to when a stable O(n log n) sort is needed; the divide-and-conquer structure guarantees worst-case performance unlike quicksort.",
+    "related": [
+      148,
+      215,
+      75
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1044,
+    "title": "Longest Duplicate Substring",
+    "slug": "longest-duplicate-substring",
+    "category": "String",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/longest-duplicate-substring/",
+    "patterns": [
+      "Binary Search",
+      "Rolling Hash",
+      "Sliding Window"
+    ],
+    "hints": [
+      "Binary search on the answer: if a duplicate substring of length k exists, one of length k-1 also exists.",
+      "Use Rabin-Karp rolling hash to check for duplicate substrings of a given length in O(n) time.",
+      "Choose a large prime modulus to minimise hash collisions; verify candidate matches when a collision is found."
+    ],
+    "approach": "Binary search on the length L of the duplicate substring. For each candidate L, use a rolling hash (Rabin-Karp) to compute hashes of all substrings of length L in O(n) time and store them in a set. If any hash appears twice, a duplicate of length L exists. Return the longest L for which a duplicate is found. Use a large modulus to keep collision probability low.",
+    "solution_python": "class Solution:\n    def longestDupSubstring(self, s: str) -> str:\n        n = len(s)\n        nums = [ord(c) - ord('a') for c in s]\n        MOD = (1 << 61) - 1\n        BASE = 31\n\n        def check(length):\n            h = 0\n            power = pow(BASE, length, MOD)\n            for i in range(length):\n                h = (h * BASE + nums[i]) % MOD\n            seen = {h: [0]}\n            for i in range(1, n - length + 1):\n                h = (h * BASE - nums[i - 1] * power + nums[i + length - 1]) % MOD\n                if h in seen:\n                    for start in seen[h]:\n                        if s[start:start + length] == s[i:i + length]:\n                            return i\n                    seen[h].append(i)\n                else:\n                    seen[h] = [i]\n            return -1\n\n        lo, hi = 0, n - 1\n        start = 0\n        best_len = 0\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            idx = check(mid)\n            if idx != -1:\n                best_len = mid\n                start = idx\n                lo = mid + 1\n            else:\n                hi = mid - 1\n        return s[start:start + best_len]",
+    "solution_js": "var longestDupSubstring = function(s) {\n    const n = s.length;\n    const BASE = 31n, MOD = (1n << 61n) - 1n;\n    const nums = Array.from(s, c => BigInt(c.charCodeAt(0) - 97));\n\n    function check(length) {\n        const power = modpow(BASE, BigInt(length), MOD);\n        let h = 0n;\n        for (let i = 0; i < length; i++) h = (h * BASE + nums[i]) % MOD;\n        const seen = new Map([[h, [0]]]);\n        for (let i = 1; i <= n - length; i++) {\n            h = (h * BASE - nums[i - 1] * power % MOD + MOD + nums[i + length - 1]) % MOD;\n            if (seen.has(h)) {\n                for (const start of seen.get(h)) {\n                    if (s.slice(start, start + length) === s.slice(i, i + length)) return i;\n                }\n                seen.get(h).push(i);\n            } else {\n                seen.set(h, [i]);\n            }\n        }\n        return -1;\n    }\n\n    function modpow(base, exp, mod) {\n        let result = 1n;\n        base %= mod;\n        while (exp > 0n) {\n            if (exp % 2n === 1n) result = result * base % mod;\n            base = base * base % mod;\n            exp >>= 1n;\n        }\n        return result;\n    }\n\n    let lo = 0, hi = n - 1, start = 0, bestLen = 0;\n    while (lo <= hi) {\n        const mid = (lo + hi) >> 1;\n        const idx = check(mid);\n        if (idx !== -1) { bestLen = mid; start = idx; lo = mid + 1; }\n        else hi = mid - 1;\n    }\n    return s.slice(start, start + bestLen);\n};",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Binary search runs O(log n) iterations; each rolling hash check scans O(n) characters, giving O(n log n) overall.",
+    "space_complexity_explanation": "The hash set stores up to O(n) entries for each candidate length check.",
+    "key_insight": "Combining binary search on length with Rabin-Karp rolling hash converts an O(n^2) brute-force into O(n log n); the monotone property (if length k works, k-1 works too) makes binary search valid.",
+    "related": [
+      1062,
+      718,
+      187
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 1101,
+    "title": "The Earliest Moment When Everyone Become Friends",
+    "slug": "the-earliest-moment-when-everyone-become-friends",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/the-earliest-moment-when-everyone-become-friends/",
+    "patterns": [
+      "Union-Find",
+      "Graph",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort all friendship logs by timestamp so you can process them in chronological order.",
+      "Use Union-Find (DSU) to merge groups of friends; track the number of connected components.",
+      "When the number of components drops to 1, the current timestamp is the answer."
+    ],
+    "approach": "Sort the logs by timestamp. Use a Union-Find structure initialised with n components (one per person). For each log entry in order, union the two people; if they were in different components, decrement the component count. The first timestamp at which the component count reaches 1 is the answer. If it never reaches 1, return -1.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def earliestAcq(self, logs: List[List[int]], n: int) -> int:\n        parent = list(range(n))\n        rank = [0] * n\n        components = n\n\n        def find(x):\n            while parent[x] != x:\n                parent[x] = parent[parent[x]]\n                x = parent[x]\n            return x\n\n        def union(x, y):\n            nonlocal components\n            rx, ry = find(x), find(y)\n            if rx == ry:\n                return\n            if rank[rx] < rank[ry]:\n                rx, ry = ry, rx\n            parent[ry] = rx\n            if rank[rx] == rank[ry]:\n                rank[rx] += 1\n            components -= 1\n\n        logs.sort()\n        for t, a, b in logs:\n            union(a, b)\n            if components == 1:\n                return t\n        return -1",
+    "solution_js": "var earliestAcq = function(logs, n) {\n    const parent = Array.from({length: n}, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    let components = n;\n\n    function find(x) {\n        while (parent[x] !== x) {\n            parent[x] = parent[parent[x]];\n            x = parent[x];\n        }\n        return x;\n    }\n\n    function union(x, y) {\n        const rx = find(x), ry = find(y);\n        if (rx === ry) return;\n        if (rank[rx] >= rank[ry]) {\n            parent[ry] = rx;\n            if (rank[rx] === rank[ry]) rank[rx]++;\n        } else {\n            parent[rx] = ry;\n        }\n        components--;\n    }\n\n    logs.sort((a, b) => a[0] - b[0]);\n    for (const [t, a, b] of logs) {\n        union(a, b);\n        if (components === 1) return t;\n    }\n    return -1;\n};",
+    "time_complexity": "O(m log m)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "Sorting the m logs dominates; each union/find operation is nearly O(1) amortised with path compression and union by rank.",
+    "space_complexity_explanation": "Union-Find arrays (parent and rank) each have n entries.",
+    "key_insight": "Union-Find is ideal here because we only need to track connected components and detect when they merge into one; sorting logs first ensures we process friendships in the correct chronological order.",
+    "related": [
+      547,
+      684,
+      721
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2149,
+    "title": "Rearrange Array Elements by Sign",
+    "slug": "rearrange-array-elements-by-sign",
+    "category": "Arrays",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rearrange-array-elements-by-sign/",
+    "patterns": [
+      "Two Pointers",
+      "Arrays"
+    ],
+    "hints": [
+      "The result array alternates: positive at even indices, negative at odd indices.",
+      "Maintain two separate pointers/indices — one for the next positive slot (even) and one for the next negative slot (odd).",
+      "Iterate through nums once and place each element directly into its correct position in the output array."
+    ],
+    "approach": "Create an output array of the same size. Keep two indices: posIdx starting at 0 (even positions) and negIdx starting at 1 (odd positions). Iterate through nums; when a positive number is encountered place it at posIdx and advance posIdx by 2; when negative, place at negIdx and advance negIdx by 2. This fills the output in a single pass.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def rearrangeArray(self, nums: List[int]) -> List[int]:\n        result = [0] * len(nums)\n        pos, neg = 0, 1\n        for n in nums:\n            if n > 0:\n                result[pos] = n\n                pos += 2\n            else:\n                result[neg] = n\n                neg += 2\n        return result",
+    "solution_js": "var rearrangeArray = function(nums) {\n    const result = new Array(nums.length);\n    let pos = 0, neg = 1;\n    for (const n of nums) {\n        if (n > 0) { result[pos] = n; pos += 2; }\n        else { result[neg] = n; neg += 2; }\n    }\n    return result;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single pass through the input array of n elements fills the output array.",
+    "space_complexity_explanation": "An output array of the same size n is allocated.",
+    "key_insight": "Because equal numbers of positives and negatives are guaranteed, two independent pointers advancing by 2 will exactly fill all even/odd slots without any collision.",
+    "related": [
+      905,
+      922,
+      1822
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2619,
+    "title": "Array Prototype Last",
+    "slug": "array-prototype-last",
+    "category": "JavaScript",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/array-prototype-last/",
+    "patterns": [
+      "JavaScript"
+    ],
+    "hints": [
+      "Extend the Array prototype by adding a method called 'last'.",
+      "Return the last element using index length-1, or -1 if the array is empty.",
+      "No loops or recursion needed — a single conditional expression suffices."
+    ],
+    "approach": "Add a 'last' method to Array.prototype. The method checks whether the array is empty; if so it returns -1, otherwise it returns the element at index this.length - 1.",
+    "solution_python": "# JavaScript-only problem: Python equivalent shown\nclass Array:\n    def __init__(self, arr):\n        self.arr = arr\n\n    def last(self):\n        return self.arr[-1] if self.arr else -1",
+    "solution_js": "Array.prototype.last = function() {\n    return this.length === 0 ? -1 : this[this.length - 1];\n};",
+    "time_complexity": "O(1)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Accessing the last element of an array by index is a constant-time operation.",
+    "space_complexity_explanation": "No additional data structures are allocated.",
+    "key_insight": "Prototype extension in JavaScript lets you add utility methods to built-in types; the empty-array guard is the only edge case.",
+    "related": [
+      2620,
+      2621,
+      2622
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
+    "id": 2965,
+    "title": "Find Missing and Repeated Values",
+    "slug": "find-missing-and-repeated-values",
+    "category": "Arrays",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/find-missing-and-repeated-values/",
+    "patterns": [
+      "Arrays",
+      "Hash Map",
+      "Math"
+    ],
+    "hints": [
+      "Flatten the 2D grid into a 1D list of numbers to simplify processing.",
+      "Count frequencies; the number appearing twice is the repeated value.",
+      "The missing number is in range 1..n*n and has frequency 0."
+    ],
+    "approach": "Flatten the n x n grid to a list of all values. Build a frequency counter. Iterate from 1 to n*n: the value with count 2 is the repeated number, and the value with count 0 is the missing number. Return them as [repeated, missing].",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findMissingAndRepeatedValues(self, grid: List[List[int]]) -> List[int]:\n        n = len(grid)\n        count = [0] * (n * n + 1)\n        for row in grid:\n            for val in row:\n                count[val] += 1\n        repeated = missing = -1\n        for i in range(1, n * n + 1):\n            if count[i] == 2:\n                repeated = i\n            elif count[i] == 0:\n                missing = i\n        return [repeated, missing]",
+    "solution_js": "var findMissingAndRepeatedValues = function(grid) {\n    const n = grid.length;\n    const count = new Array(n * n + 1).fill(0);\n    for (const row of grid) for (const val of row) count[val]++;\n    let repeated = -1, missing = -1;\n    for (let i = 1; i <= n * n; i++) {\n        if (count[i] === 2) repeated = i;\n        else if (count[i] === 0) missing = i;\n    }\n    return [repeated, missing];\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n^2)",
+    "time_complexity_explanation": "Every cell in the n x n grid is visited once, and the count array is scanned once over n^2 entries.",
+    "space_complexity_explanation": "A count array of size n^2 + 1 is allocated to store frequencies.",
+    "key_insight": "The problem is structurally identical to Set Mismatch on a 2D grid; flattening and frequency counting reduces it to the same O(n^2) linear scan.",
+    "related": [
+      645,
+      287,
+      41
     ],
     "companies": [
       "google"
