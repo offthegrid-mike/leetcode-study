@@ -2849,6 +2849,36 @@
     "neetcode150": true
   },
   {
+    "id": 87,
+    "title": "Scramble String",
+    "slug": "scramble-string",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/scramble-string/",
+    "patterns": [
+      "Dynamic Programming",
+      "Memoization",
+      "Recursion"
+    ],
+    "hints": [
+      "A scramble split of s1 into (s1[:k], s1[k:]) matches s2 either as (s2[:k], s2[k:]) without swap or as (s2[n-k:], s2[:n-k]) with swap.",
+      "Add memoization: cache the result of isScramble(s1, s2) since the same pair can be queried many times during recursion.",
+      "Prune early: if sorted(s1) != sorted(s2) the strings cannot be scrambles of each other, avoiding deep recursion."
+    ],
+    "approach": "Use top-down memoized recursion. For each possible split position k (1 to n-1), check if either the non-swapped split (s1[:k] scrambles s2[:k] AND s1[k:] scrambles s2[k:]) or the swapped split (s1[:k] scrambles s2[n-k:] AND s1[k:] scrambles s2[:n-k]) holds. Cache results by (s1, s2) pair and prune branches where character frequencies differ.",
+    "solution_python": "from functools import lru_cache\n\nclass Solution:\n    def isScramble(self, s1: str, s2: str) -> bool:\n        @lru_cache(maxsize=None)\n        def dp(a, b):\n            if a == b:\n                return True\n            if sorted(a) != sorted(b):\n                return False\n            n = len(a)\n            for k in range(1, n):\n                # No swap\n                if dp(a[:k], b[:k]) and dp(a[k:], b[k:]):\n                    return True\n                # Swap\n                if dp(a[:k], b[n-k:]) and dp(a[k:], b[:n-k]):\n                    return True\n            return False\n        return dp(s1, s2)",
+    "solution_js": "var isScramble = function(s1, s2) {\n    const memo = new Map();\n    function dp(a, b) {\n        if (a === b) return true;\n        const key = a + '|' + b;\n        if (memo.has(key)) return memo.get(key);\n        if ([...a].sort().join('') !== [...b].sort().join('')) { memo.set(key, false); return false; }\n        const n = a.length;\n        for (let k = 1; k < n; k++) {\n            if (dp(a.slice(0, k), b.slice(0, k)) && dp(a.slice(k), b.slice(k))) { memo.set(key, true); return true; }\n            if (dp(a.slice(0, k), b.slice(n - k)) && dp(a.slice(k), b.slice(0, n - k))) { memo.set(key, true); return true; }\n        }\n        memo.set(key, false);\n        return false;\n    }\n    return dp(s1, s2);\n};",
+    "time_complexity": "O(n^4)",
+    "space_complexity": "O(n^4)",
+    "time_complexity_explanation": "There are O(n^2) distinct substrings for each of s1 and s2, giving O(n^4) unique (a, b) pairs, each computed in O(n) time with the sorted check.",
+    "space_complexity_explanation": "The memoization cache stores O(n^4) entries corresponding to all pairs of substrings.",
+    "key_insight": "The recursive structure naturally mirrors the scramble definition; memoizing on (s1, s2) string pairs avoids exponential re-computation, and frequency pruning eliminates most branches early.",
+    "related": [],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 88,
     "title": "Course Schedule II",
     "slug": "course-schedule-ii",
@@ -4102,6 +4132,39 @@
       127
     ],
     "neetcode150": true
+  },
+  {
+    "id": 126,
+    "title": "Word Ladder II",
+    "slug": "word-ladder-ii",
+    "category": "Graph",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/word-ladder-ii/",
+    "patterns": [
+      "BFS",
+      "Backtracking",
+      "Graph"
+    ],
+    "hints": [
+      "Use BFS to find the shortest transformation distance from beginWord to endWord, recording which words can precede each word on a shortest path.",
+      "Build a 'parent' map during BFS: for each word at level d+1 reached from a word at level d, record that predecessor relationship.",
+      "Once BFS completes, use DFS/backtracking from endWord back to beginWord using the parent map to reconstruct all shortest paths."
+    ],
+    "approach": "Perform a level-by-level BFS from beginWord to endWord, tracking the shortest distance to each word and a parents map recording which words can lead to each word on a shortest path. After BFS, backtrack from endWord to beginWord using the parents map to enumerate all shortest transformation sequences.",
+    "solution_python": "from typing import List\nfrom collections import defaultdict, deque\n\nclass Solution:\n    def findLadders(self, beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:\n        word_set = set(wordList)\n        if endWord not in word_set:\n            return []\n        \n        parents = defaultdict(set)\n        layer = {beginWord}\n        found = False\n        \n        while layer and not found:\n            word_set -= layer\n            next_layer = set()\n            for word in layer:\n                for i in range(len(word)):\n                    for c in 'abcdefghijklmnopqrstuvwxyz':\n                        nw = word[:i] + c + word[i+1:]\n                        if nw in word_set:\n                            next_layer.add(nw)\n                            parents[nw].add(word)\n            if endWord in next_layer:\n                found = True\n            layer = next_layer\n        \n        if not found:\n            return []\n        \n        res = []\n        def dfs(word, path):\n            if word == beginWord:\n                res.append(list(reversed(path)))\n                return\n            for parent in parents[word]:\n                path.append(parent)\n                dfs(parent, path)\n                path.pop()\n        \n        dfs(endWord, [endWord])\n        return res",
+    "solution_js": "var findLadders = function(beginWord, endWord, wordList) {\n    const wordSet = new Set(wordList);\n    if (!wordSet.has(endWord)) return [];\n    \n    const parents = new Map();\n    let layer = new Set([beginWord]);\n    let found = false;\n    \n    while (layer.size > 0 && !found) {\n        layer.forEach(w => wordSet.delete(w));\n        const nextLayer = new Set();\n        for (const word of layer) {\n            for (let i = 0; i < word.length; i++) {\n                for (let c = 97; c <= 122; c++) {\n                    const nw = word.slice(0, i) + String.fromCharCode(c) + word.slice(i + 1);\n                    if (wordSet.has(nw)) {\n                        nextLayer.add(nw);\n                        if (!parents.has(nw)) parents.set(nw, new Set());\n                        parents.get(nw).add(word);\n                    }\n                }\n            }\n        }\n        if (nextLayer.has(endWord)) found = true;\n        layer = nextLayer;\n    }\n    \n    if (!found) return [];\n    \n    const res = [];\n    function dfs(word, path) {\n        if (word === beginWord) { res.push([...path].reverse()); return; }\n        if (!parents.has(word)) return;\n        for (const p of parents.get(word)) {\n            path.push(p);\n            dfs(p, path);\n            path.pop();\n        }\n    }\n    dfs(endWord, [endWord]);\n    return res;\n};",
+    "time_complexity": "O(N * M^2)",
+    "space_complexity": "O(N * M)",
+    "time_complexity_explanation": "BFS visits each of N words and for each generates M * 26 neighbors by replacing each of M characters, giving O(N * M * 26) = O(N * M^2) total work.",
+    "space_complexity_explanation": "The parents map and BFS layers together store at most O(N) words each of length M.",
+    "key_insight": "Building a parent map during BFS lets you reconstruct all shortest paths with a single backtracking DFS pass without re-exploring the word graph.",
+    "related": [
+      127,
+      433
+    ],
+    "companies": [
+      "google"
+    ]
   },
   {
     "id": 127,
@@ -5688,6 +5751,38 @@
     ],
     "companies": [
       "microsoft"
+    ]
+  },
+  {
+    "id": 191,
+    "title": "Number of 1 Bits",
+    "slug": "number-of-1-bits",
+    "category": "Bit Manipulation",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/number-of-1-bits/",
+    "patterns": [
+      "Bit Manipulation"
+    ],
+    "hints": [
+      "Repeatedly check whether the lowest bit of n is 1, then shift n right by 1.",
+      "A cleaner trick: n & (n-1) clears the lowest set bit; count how many times you can do this before n becomes 0.",
+      "Python's built-in bin() converts n to a binary string; counting '1' characters gives the answer in one line."
+    ],
+    "approach": "Use the bit trick n & (n-1) which clears the lowest set bit of n. Count how many times this operation can be applied before n reaches 0 — that count equals the number of 1 bits (Hamming weight).",
+    "solution_python": "class Solution:\n    def hammingWeight(self, n: int) -> int:\n        count = 0\n        while n:\n            n &= n - 1\n            count += 1\n        return count",
+    "solution_js": "var hammingWeight = function(n) {\n    let count = 0;\n    while (n !== 0) {\n        n &= (n - 1);\n        count++;\n    }\n    return count;\n};",
+    "time_complexity": "O(k)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "The loop iterates exactly k times where k is the number of set bits, which is at most 32 for a 32-bit integer.",
+    "space_complexity_explanation": "Only a single counter variable is used regardless of input size.",
+    "key_insight": "The expression n & (n-1) always clears exactly the lowest set bit, so looping until n is zero counts set bits with minimal iterations.",
+    "related": [
+      190,
+      231,
+      338
+    ],
+    "companies": [
+      "google"
     ]
   },
   {
@@ -9173,6 +9268,37 @@
     ]
   },
   {
+    "id": 326,
+    "title": "Power of Three",
+    "slug": "power-of-three",
+    "category": "Math",
+    "difficulty": "Easy",
+    "leetcode_url": "https://leetcode.com/problems/power-of-three/",
+    "patterns": [
+      "Math"
+    ],
+    "hints": [
+      "Repeatedly divide n by 3 while it's divisible, then check if n equals 1.",
+      "For an integer-only approach: the largest power of 3 fitting in a 32-bit int is 3^19 = 1162261467; n is a power of 3 iff n > 0 and 1162261467 % n == 0.",
+      "Avoid using logarithms directly due to floating-point precision issues with large inputs."
+    ],
+    "approach": "The iterative approach repeatedly divides n by 3 while n is divisible by 3, then checks if the result is 1. Alternatively, since 3^19 = 1162261467 is the largest power of 3 within a 32-bit integer, n is a power of 3 if and only if n > 0 and 1162261467 % n == 0.",
+    "solution_python": "class Solution:\n    def isPowerOfThree(self, n: int) -> bool:\n        if n <= 0:\n            return False\n        while n % 3 == 0:\n            n //= 3\n        return n == 1",
+    "solution_js": "var isPowerOfThree = function(n) {\n    if (n <= 0) return false;\n    while (n % 3 === 0) n = Math.floor(n / 3);\n    return n === 1;\n};",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Dividing n by 3 repeatedly takes O(log_3 n) = O(log n) iterations.",
+    "space_complexity_explanation": "Only a single variable is modified in place with no additional data structures.",
+    "key_insight": "Dividing out all factors of 3 and checking whether 1 remains is the cleanest approach; the modulo-of-max-power trick provides an O(1) solution for bounded integer inputs.",
+    "related": [
+      231,
+      342
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 327,
     "title": "Design Authentication Manager",
     "slug": "design-authentication-manager",
@@ -10399,6 +10525,38 @@
     ]
   },
   {
+    "id": 368,
+    "title": "Largest Divisible Subset",
+    "slug": "largest-divisible-subset",
+    "category": "Dynamic Programming",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/largest-divisible-subset/",
+    "patterns": [
+      "Dynamic Programming",
+      "Sorting"
+    ],
+    "hints": [
+      "Sort the array first: if a < b and b % a == 0, then any element that divides a also divides b, so divisibility is transitive in sorted order.",
+      "Let dp[i] = length of the largest divisible subset ending at nums[i]; for each i, check all j < i where nums[i] % nums[j] == 0 and update dp[i] = max(dp[i], dp[j] + 1).",
+      "Track a 'parent' array alongside dp to reconstruct the actual subset by backtracking from the index with the maximum dp value."
+    ],
+    "approach": "Sort the array, then use dynamic programming where dp[i] is the length of the largest divisible subset ending at nums[i]. For each i, iterate over all j < i and update dp[i] if nums[i] % nums[j] == 0. Track a parent pointer to reconstruct the subset by backtracking from the index with the maximum dp value.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def largestDivisibleSubset(self, nums: List[int]) -> List[int]:\n        if not nums:\n            return []\n        nums.sort()\n        n = len(nums)\n        dp = [1] * n\n        parent = [-1] * n\n        max_len, max_idx = 1, 0\n        for i in range(1, n):\n            for j in range(i):\n                if nums[i] % nums[j] == 0 and dp[j] + 1 > dp[i]:\n                    dp[i] = dp[j] + 1\n                    parent[i] = j\n            if dp[i] > max_len:\n                max_len = dp[i]\n                max_idx = i\n        result = []\n        idx = max_idx\n        while idx != -1:\n            result.append(nums[idx])\n            idx = parent[idx]\n        return result[::-1]",
+    "solution_js": "var largestDivisibleSubset = function(nums) {\n    if (!nums.length) return [];\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    const dp = Array(n).fill(1);\n    const parent = Array(n).fill(-1);\n    let maxLen = 1, maxIdx = 0;\n    for (let i = 1; i < n; i++) {\n        for (let j = 0; j < i; j++) {\n            if (nums[i] % nums[j] === 0 && dp[j] + 1 > dp[i]) {\n                dp[i] = dp[j] + 1;\n                parent[i] = j;\n            }\n        }\n        if (dp[i] > maxLen) { maxLen = dp[i]; maxIdx = i; }\n    }\n    const result = [];\n    let idx = maxIdx;\n    while (idx !== -1) { result.push(nums[idx]); idx = parent[idx]; }\n    return result.reverse();\n};",
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "The nested loops over n elements give O(n^2) comparisons; sorting is O(n log n) which is dominated.",
+    "space_complexity_explanation": "The dp and parent arrays each require O(n) space.",
+    "key_insight": "Sorting makes divisibility transitive along the sorted order, reducing the problem to a longest increasing subsequence variant where the 'increase' condition is divisibility.",
+    "related": [
+      300,
+      354
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 369,
     "title": "Minimum Genetic Mutation",
     "slug": "minimum-genetic-mutation",
@@ -11216,6 +11374,37 @@
     "related": [],
     "companies": [
       "microsoft"
+    ]
+  },
+  {
+    "id": 396,
+    "title": "Rotate Function",
+    "slug": "rotate-function",
+    "category": "Math",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/rotate-function/",
+    "patterns": [
+      "Math",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "Write out F(0) and F(1) explicitly and look for a pattern relating F(k) to F(k-1).",
+      "F(k) - F(k-1) = sum(nums) - n * nums[n-k], which lets you compute each F(k) in O(1) from the previous.",
+      "Precompute the total sum of nums once, then iterate through all rotations updating F incrementally."
+    ],
+    "approach": "Observe that F(k) = F(k-1) + sum(nums) - n * nums[n-k]. Compute F(0) and the total sum once, then iterate through all n rotations using this recurrence in O(1) per step, tracking the maximum.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def maxRotateFunction(self, nums: List[int]) -> int:\n        n = len(nums)\n        total = sum(nums)\n        f = sum(i * nums[i] for i in range(n))\n        max_f = f\n        for k in range(1, n):\n            f = f + total - n * nums[n - k]\n            max_f = max(max_f, f)\n        return max_f",
+    "solution_js": "var maxRotateFunction = function(nums) {\n    const n = nums.length;\n    const total = nums.reduce((a, b) => a + b, 0);\n    let f = nums.reduce((acc, val, i) => acc + i * val, 0);\n    let maxF = f;\n    for (let k = 1; k < n; k++) {\n        f = f + total - n * nums[n - k];\n        maxF = Math.max(maxF, f);\n    }\n    return maxF;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Computing the initial sum and F(0) each take O(n), and the n-1 rotation updates each take O(1).",
+    "space_complexity_explanation": "Only a constant number of variables are maintained regardless of input size.",
+    "key_insight": "Each rotation shifts all indices up by 1 (wrapping around), which changes F by exactly sum(nums) minus n times the element that wraps from the back to the front.",
+    "related": [
+      189
+    ],
+    "companies": [
+      "google"
     ]
   },
   {
@@ -13604,6 +13793,34 @@
     ]
   },
   {
+    "id": 468,
+    "title": "Validate IP Address",
+    "slug": "validate-ip-address",
+    "category": "String",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/validate-ip-address/",
+    "patterns": [
+      "String"
+    ],
+    "hints": [
+      "First determine whether the string could be IPv4 (contains dots) or IPv6 (contains colons), then validate accordingly.",
+      "For IPv4: split on '.', check there are exactly 4 parts, each part is a decimal integer in [0, 255] with no leading zeros.",
+      "For IPv6: split on ':', check there are exactly 8 parts, each part is a 1-4 character hex string (0-9, a-f, A-F)."
+    ],
+    "approach": "Check if the queryIP contains a dot to classify as potential IPv4, or a colon for IPv6. For IPv4, split on '.' and verify exactly 4 numeric tokens each in [0, 255] with no leading zeros. For IPv6, split on ':' and verify exactly 8 tokens each consisting of 1-4 valid hexadecimal characters.",
+    "solution_python": "class Solution:\n    def validIPAddress(self, queryIP: str) -> str:\n        def is_valid_ipv4(s):\n            parts = s.split('.')\n            if len(parts) != 4:\n                return False\n            for part in parts:\n                if not part or not part.isdigit():\n                    return False\n                if part != str(int(part)):  # leading zeros\n                    return False\n                if not 0 <= int(part) <= 255:\n                    return False\n            return True\n        \n        def is_valid_ipv6(s):\n            parts = s.split(':')\n            if len(parts) != 8:\n                return False\n            hex_chars = set('0123456789abcdefABCDEF')\n            for part in parts:\n                if not 1 <= len(part) <= 4:\n                    return False\n                if not all(c in hex_chars for c in part):\n                    return False\n            return True\n        \n        if '.' in queryIP:\n            return 'IPv4' if is_valid_ipv4(queryIP) else 'Neither'\n        elif ':' in queryIP:\n            return 'IPv6' if is_valid_ipv6(queryIP) else 'Neither'\n        return 'Neither'",
+    "solution_js": "var validIPAddress = function(queryIP) {\n    function isIPv4(s) {\n        const parts = s.split('.');\n        if (parts.length !== 4) return false;\n        for (const p of parts) {\n            if (!p || !/^\\d+$/.test(p)) return false;\n            if (p !== String(parseInt(p, 10))) return false;\n            if (parseInt(p, 10) < 0 || parseInt(p, 10) > 255) return false;\n        }\n        return true;\n    }\n    function isIPv6(s) {\n        const parts = s.split(':');\n        if (parts.length !== 8) return false;\n        for (const p of parts) {\n            if (p.length < 1 || p.length > 4) return false;\n            if (!/^[0-9a-fA-F]+$/.test(p)) return false;\n        }\n        return true;\n    }\n    if (queryIP.includes('.')) return isIPv4(queryIP) ? 'IPv4' : 'Neither';\n    if (queryIP.includes(':')) return isIPv6(queryIP) ? 'IPv6' : 'Neither';\n    return 'Neither';\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "time_complexity_explanation": "Splitting and validating the IP string requires a single linear scan of the input characters.",
+    "space_complexity_explanation": "Only a fixed number of parts (4 for IPv4, 8 for IPv6) are stored at any time.",
+    "key_insight": "The presence of a '.' vs ':' cleanly separates the two validation paths; the trickiest IPv4 edge case is rejecting leading zeros by comparing the token to str(int(token)).",
+    "related": [],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 469,
     "title": "Sum of Two Integers",
     "slug": "sum-of-two-integers",
@@ -15449,6 +15666,38 @@
     ]
   },
   {
+    "id": 525,
+    "title": "Contiguous Array",
+    "slug": "contiguous-array",
+    "category": "Array",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/contiguous-array/",
+    "patterns": [
+      "Hash Map",
+      "Prefix Sum"
+    ],
+    "hints": [
+      "Replace every 0 with -1, then finding equal counts of 0s and 1s becomes finding a subarray with sum 0.",
+      "Use a prefix sum: if prefix[i] == prefix[j] for i < j, then the subarray from i+1 to j has sum 0 (equal 0s and 1s).",
+      "Store the first index where each prefix sum is seen in a hash map; the length of the longest such subarray is max(j - first_seen[prefix[j]])."
+    ],
+    "approach": "Replace 0s with -1s so equal 0/1 counts become zero-sum subarrays. Maintain a running prefix sum and a hash map from sum value to the first index it was seen. When the same prefix sum recurs at index j, the subarray between the two occurrences has sum 0; update the answer with j minus the stored index.",
+    "solution_python": "from typing import List\n\nclass Solution:\n    def findMaxLength(self, nums: List[int]) -> int:\n        count = 0\n        max_len = 0\n        seen = {0: -1}\n        for i, num in enumerate(nums):\n            count += 1 if num == 1 else -1\n            if count in seen:\n                max_len = max(max_len, i - seen[count])\n            else:\n                seen[count] = i\n        return max_len",
+    "solution_js": "var findMaxLength = function(nums) {\n    let count = 0, maxLen = 0;\n    const seen = new Map([[0, -1]]);\n    for (let i = 0; i < nums.length; i++) {\n        count += nums[i] === 1 ? 1 : -1;\n        if (seen.has(count)) {\n            maxLen = Math.max(maxLen, i - seen.get(count));\n        } else {\n            seen.set(count, i);\n        }\n    }\n    return maxLen;\n};",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "time_complexity_explanation": "A single linear pass through the array with O(1) hash map operations at each step gives O(n) total.",
+    "space_complexity_explanation": "The hash map stores at most O(n) distinct prefix sum values.",
+    "key_insight": "Mapping 0s to -1s transforms the equal-count condition into a zero-sum subarray problem, which the prefix-sum + hash-map technique solves in linear time.",
+    "related": [
+      560,
+      523
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 526,
     "title": "Find the Closest Palindrome",
     "slug": "find-the-closest-palindrome",
@@ -15987,6 +16236,38 @@
     ]
   },
   {
+    "id": 542,
+    "title": "01 Matrix",
+    "slug": "01-matrix",
+    "category": "Graph",
+    "difficulty": "Medium",
+    "leetcode_url": "https://leetcode.com/problems/01-matrix/",
+    "patterns": [
+      "BFS",
+      "Dynamic Programming"
+    ],
+    "hints": [
+      "Instead of running BFS from every 1-cell separately, start a multi-source BFS from all 0-cells simultaneously.",
+      "Initialize the distance for every 0-cell as 0 and every 1-cell as infinity, then enqueue all 0-cells at once.",
+      "Process the BFS queue layer by layer; the first time you reach a 1-cell gives the shortest distance to the nearest 0."
+    ],
+    "approach": "Run a multi-source BFS starting from all 0-cells simultaneously. Initialize a distance matrix with 0 for zero-cells and infinity for one-cells, and seed the queue with all zero-cell positions. Expand outward layer by layer, updating each unvisited neighbor's distance to the current cell's distance plus one.",
+    "solution_python": "from typing import List\nfrom collections import deque\n\nclass Solution:\n    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:\n        m, n = len(mat), len(mat[0])\n        dist = [[float('inf')] * n for _ in range(m)]\n        q = deque()\n        for i in range(m):\n            for j in range(n):\n                if mat[i][j] == 0:\n                    dist[i][j] = 0\n                    q.append((i, j))\n        dirs = [(0,1),(0,-1),(1,0),(-1,0)]\n        while q:\n            r, c = q.popleft()\n            for dr, dc in dirs:\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < m and 0 <= nc < n and dist[nr][nc] > dist[r][c] + 1:\n                    dist[nr][nc] = dist[r][c] + 1\n                    q.append((nr, nc))\n        return dist",
+    "solution_js": "var updateMatrix = function(mat) {\n    const m = mat.length, n = mat[0].length;\n    const dist = Array.from({length: m}, () => Array(n).fill(Infinity));\n    const q = [];\n    for (let i = 0; i < m; i++)\n        for (let j = 0; j < n; j++)\n            if (mat[i][j] === 0) { dist[i][j] = 0; q.push([i, j]); }\n    const dirs = [[0,1],[0,-1],[1,0],[-1,0]];\n    let head = 0;\n    while (head < q.length) {\n        const [r, c] = q[head++];\n        for (const [dr, dc] of dirs) {\n            const nr = r + dr, nc = c + dc;\n            if (nr >= 0 && nr < m && nc >= 0 && nc < n && dist[nr][nc] > dist[r][c] + 1) {\n                dist[nr][nc] = dist[r][c] + 1;\n                q.push([nr, nc]);\n            }\n        }\n    }\n    return dist;\n};",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "time_complexity_explanation": "Each cell is enqueued and processed at most once in the BFS, giving O(m * n) total time.",
+    "space_complexity_explanation": "The distance matrix and BFS queue together require O(m * n) space.",
+    "key_insight": "Starting BFS from all 0-cells simultaneously propagates distances outward in one pass, avoiding redundant BFS runs from each individual 1-cell.",
+    "related": [
+      286,
+      994
+    ],
+    "companies": [
+      "google"
+    ]
+  },
+  {
     "id": 543,
     "title": "Asteroid Collision",
     "slug": "asteroid-collision",
@@ -16115,6 +16396,38 @@
     ],
     "companies": [
       "microsoft"
+    ]
+  },
+  {
+    "id": 546,
+    "title": "Remove Boxes",
+    "slug": "remove-boxes",
+    "category": "Dynamic Programming",
+    "difficulty": "Hard",
+    "leetcode_url": "https://leetcode.com/problems/remove-boxes/",
+    "patterns": [
+      "Dynamic Programming",
+      "Memoization"
+    ],
+    "hints": [
+      "Define dp[l][r][k] as the maximum points from boxes[l..r] when there are k boxes identical to boxes[l] attached to the left of boxes[l].",
+      "For the base case, dp[l][r][k] when l > r is 0; when removing boxes[l] along with its k attached peers gives (k+1)^2 points plus dp[l+1][r][0].",
+      "Try merging boxes[l] with any boxes[m] in [l+1..r] that equal boxes[l]: dp[l][r][k] = max over valid m of dp[l+1][m-1][0] + dp[m][r][k+1]."
+    ],
+    "approach": "Use 3D memoized DP where dp[l][r][k] is the max points obtainable from boxes[l..r] with k extra copies of boxes[l] prepended. Either remove the l-group immediately for (k+1)^2 + dp[l+1][r][0], or merge it with some boxes[m] == boxes[l] in the range, gaining dp[l+1][m-1][0] + dp[m][r][k+1].",
+    "solution_python": "from typing import List\nfrom functools import lru_cache\n\nclass Solution:\n    def removeBoxes(self, boxes: List[int]) -> int:\n        @lru_cache(maxsize=None)\n        def dp(l, r, k):\n            if l > r:\n                return 0\n            # Merge consecutive same boxes at the left\n            while l < r and boxes[l] == boxes[l + 1]:\n                l += 1\n                k += 1\n            # Option 1: remove the l group now\n            res = (k + 1) * (k + 1) + dp(l + 1, r, 0)\n            # Option 2: merge with a matching box later\n            for m in range(l + 1, r + 1):\n                if boxes[m] == boxes[l]:\n                    res = max(res, dp(l + 1, m - 1, 0) + dp(m, r, k + 1))\n            return res\n        return dp(0, len(boxes) - 1, 0)",
+    "solution_js": "var removeBoxes = function(boxes) {\n    const n = boxes.length;\n    const memo = {};\n    function dp(l, r, k) {\n        if (l > r) return 0;\n        const key = `${l},${r},${k}`;\n        if (memo[key] !== undefined) return memo[key];\n        // Collapse consecutive same at left\n        while (l < r && boxes[l] === boxes[l + 1]) { l++; k++; }\n        let res = (k + 1) * (k + 1) + dp(l + 1, r, 0);\n        for (let m = l + 1; m <= r; m++) {\n            if (boxes[m] === boxes[l]) {\n                res = Math.max(res, dp(l + 1, m - 1, 0) + dp(m, r, k + 1));\n            }\n        }\n        memo[`${l},${r},${k}`] = res;\n        return res;\n    }\n    return dp(0, n - 1, 0);\n};",
+    "time_complexity": "O(n^4)",
+    "space_complexity": "O(n^3)",
+    "time_complexity_explanation": "There are O(n^3) distinct (l, r, k) states and each state iterates over O(n) potential merge positions.",
+    "space_complexity_explanation": "The memoization table stores O(n^3) states.",
+    "key_insight": "The key insight is adding the k parameter to track how many identical boxes are 'waiting' to be removed with boxes[l], enabling optimal grouping of non-contiguous equal boxes.",
+    "related": [
+      664,
+      312
+    ],
+    "companies": [
+      "google"
     ]
   },
   {
